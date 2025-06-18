@@ -5,48 +5,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Home, 
-  Search, 
-  Calendar, 
-  User, 
-  MapPin, 
-  Star, 
-  Clock, 
-  Users,
-  Trophy,
-  Camera,
-  Settings,
-  ChevronRight,
-  UserPlus,
-  Bell,
-  LogOut
-} from "lucide-react";
-
+import { Home, Search, Calendar, User, MapPin, Star, Clock, Users, Trophy, Camera, Settings, ChevronRight, UserPlus, Bell, LogOut } from "lucide-react";
 const MainApp = () => {
   const [activeTab, setActiveTab] = useState('home');
-
-  const quadras = [
-    {
-      id: 1,
-      name: "Arena Sports Center",
-      location: "Vila Madalena, SP",
-      price: "R$ 120/hora",
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop",
-      amenities: ["Vestiário", "Estacionamento", "Lanchonete"]
-    },
-    {
-      id: 2,
-      name: "Quadra do Parque",
-      location: "Ibirapuera, SP",
-      price: "R$ 80/hora",
-      rating: 4.5,
-      image: "https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop",
-      amenities: ["Vestiário", "Chuveiro"]
-    }
-  ];
-
+  const quadras = [{
+    id: 1,
+    name: "Arena Sports Center",
+    location: "Vila Madalena, SP",
+    price: "R$ 120/hora",
+    rating: 4.8,
+    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop",
+    amenities: ["Vestiário", "Estacionamento", "Lanchonete"]
+  }, {
+    id: 2,
+    name: "Quadra do Parque",
+    location: "Ibirapuera, SP",
+    price: "R$ 80/hora",
+    rating: 4.5,
+    image: "https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop",
+    amenities: ["Vestiário", "Chuveiro"]
+  }];
   const userStats = {
     partidas: 42,
     gols: 18,
@@ -58,9 +36,7 @@ const MainApp = () => {
     proximosJogos: 0,
     amigos: 0
   };
-
-  const renderHomeContent = () => (
-    <div className="space-y-6">
+  const renderHomeContent = () => <div className="space-y-6">
       {/* Welcome Header */}
       <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] rounded-2xl p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">Olá, João! ⚽</h2>
@@ -96,15 +72,10 @@ const MainApp = () => {
       <div>
         <h3 className="text-xl font-semibold text-white mb-4">Quadras Recomendadas</h3>
         <div className="space-y-4">
-          {quadras.map((quadra) => (
-            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer">
+          {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer">
               <CardContent className="p-4">
                 <div className="flex gap-4">
-                  <img 
-                    src={quadra.image} 
-                    alt={quadra.name}
-                    className="w-20 h-20 rounded-xl object-cover"
-                  />
+                  <img src={quadra.image} alt={quadra.name} className="w-20 h-20 rounded-xl object-cover" />
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-semibold text-white">{quadra.name}</h4>
@@ -119,41 +90,27 @@ const MainApp = () => {
                       <span className="text-sm text-white/70">{quadra.rating}</span>
                     </div>
                     <div className="flex gap-2">
-                      {quadra.amenities.map((amenity) => (
-                        <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
+                      {quadra.amenities.map(amenity => <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
                           {amenity}
-                        </Badge>
-                      ))}
+                        </Badge>)}
                     </div>
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
       </div>
-    </div>
-  );
-
-  const renderExploreContent = () => (
-    <div className="space-y-6">
+    </div>;
+  const renderExploreContent = () => <div className="space-y-6">
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-        <Input 
-          placeholder="Buscar quadras, bairros..." 
-          className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60"
-        />
+        <Input placeholder="Buscar quadras, bairros..." className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" />
       </div>
       
       <div className="grid grid-cols-1 gap-4">
-        {quadras.map((quadra) => (
-          <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
+        {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
             <div className="relative">
-              <img 
-                src={quadra.image} 
-                alt={quadra.name}
-                className="w-full h-48 object-cover"
-              />
+              <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
               <div className="absolute top-4 right-4 bg-black/50 rounded-full p-2">
                 <Star className="w-4 h-4 text-yellow-400 fill-current" />
               </div>
@@ -171,21 +128,17 @@ const MainApp = () => {
                 Ver Detalhes
               </Button>
             </CardContent>
-          </Card>
-        ))}
+          </Card>)}
       </div>
-    </div>
-  );
-
-  const renderProfileContent = () => (
-    <div className="space-y-6">
+    </div>;
+  const renderProfileContent = () => <div className="space-y-6">
       {/* Profile Header Card */}
       <Card className="bg-gradient-to-br from-[#F35410] to-[#BA2D0B] border-none text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10">
           <div className="grid grid-cols-8 gap-4 p-4">
-            {Array.from({ length: 32 }).map((_, i) => (
-              <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>
-            ))}
+            {Array.from({
+            length: 32
+          }).map((_, i) => <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>)}
           </div>
         </div>
         <CardContent className="p-6 relative z-10">
@@ -196,9 +149,7 @@ const MainApp = () => {
                   <AvatarImage src="https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face" />
                   <AvatarFallback>JA</AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-[#F35410] text-xs font-bold">⚽</span>
-                </div>
+                
               </div>
               <div>
                 <h3 className="text-xl font-bold">Janderson Almeida</h3>
@@ -314,11 +265,8 @@ const MainApp = () => {
           </Button>
         </CardContent>
       </Card>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+    </div>;
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-[#062B4B]/90 backdrop-blur-lg border-b border-white/10 p-4">
         <div className="flex items-center justify-between">
@@ -336,42 +284,39 @@ const MainApp = () => {
       <div className="p-4 pb-24">
         {activeTab === 'home' && renderHomeContent()}
         {activeTab === 'explore' && renderExploreContent()}
-        {activeTab === 'calendar' && (
-          <div className="text-center text-white py-12">
+        {activeTab === 'calendar' && <div className="text-center text-white py-12">
             <Calendar className="w-16 h-16 mx-auto mb-4 text-white/60" />
             <h3 className="text-xl font-semibold mb-2">Sua Agenda</h3>
             <p className="text-white/70">Gerencie suas partidas agendadas</p>
-          </div>
-        )}
+          </div>}
         {activeTab === 'profile' && renderProfileContent()}
       </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#062B4B]/95 backdrop-blur-lg border-t border-white/10 p-4">
         <div className="flex justify-around">
-          {[
-            { id: 'home', icon: Home, label: 'Início' },
-            { id: 'explore', icon: Search, label: 'Explorar' },
-            { id: 'calendar', icon: Calendar, label: 'Agenda' },
-            { id: 'profile', icon: User, label: 'Perfil' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
-                activeTab === tab.id 
-                ? 'text-[#F35410] bg-[#F35410]/20' 
-                : 'text-white/60 hover:text-white'
-              }`}
-            >
+          {[{
+          id: 'home',
+          icon: Home,
+          label: 'Início'
+        }, {
+          id: 'explore',
+          icon: Search,
+          label: 'Explorar'
+        }, {
+          id: 'calendar',
+          icon: Calendar,
+          label: 'Agenda'
+        }, {
+          id: 'profile',
+          icon: User,
+          label: 'Perfil'
+        }].map(tab => <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${activeTab === tab.id ? 'text-[#F35410] bg-[#F35410]/20' : 'text-white/60 hover:text-white'}`}>
               <tab.icon className="w-5 h-5" />
               <span className="text-xs font-medium">{tab.label}</span>
-            </button>
-          ))}
+            </button>)}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MainApp;
