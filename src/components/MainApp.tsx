@@ -286,7 +286,7 @@ const MainApp = () => {
       <div className="sticky top-0 z-10 bg-[#062B4B]/90 backdrop-blur-lg border-b border-white/10 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Driblus Logo" className="w-8 h-8" />
+            <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Driblus Logo" className="w-8 h-8 object-cover" />
             <h1 className="text-xl font-bold text-white">Driblus</h1>
           </div>
           
