@@ -6,25 +6,34 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Home, Search, Calendar, User, MapPin, Star, Clock, Users, Trophy, Camera, Settings, ChevronRight, UserPlus, Bell, LogOut } from "lucide-react";
+
 const MainApp = () => {
   const [activeTab, setActiveTab] = useState('home');
+  
   const quadras = [{
     id: 1,
-    name: "Arena Sports Center",
-    location: "Vila Madalena, SP",
+    name: "No Alvo Society",
+    location: "Av. Paulista, 1000, São Paulo",
+    distance: "1.2 km",
     price: "R$ 120/hora",
     rating: 4.8,
+    status: "Disponível",
     image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop",
-    amenities: ["Vestiário", "Estacionamento", "Lanchonete"]
+    amenities: ["Estacionamento", "Vestiário", "Chuveiros"],
+    extraInfo: "+2"
   }, {
     id: 2,
-    name: "Quadra do Parque",
-    location: "Ibirapuera, SP",
-    price: "R$ 80/hora",
-    rating: 4.5,
+    name: "Gol de Placa",
+    location: "Rua Augusta, 500, São Paulo", 
+    distance: "0.8 km",
+    price: "R$ 150/hora",
+    rating: 4.6,
+    status: "Indisponível",
     image: "https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop",
-    amenities: ["Vestiário", "Chuveiro"]
+    amenities: ["Estacionamento", "Vestiário", "Churrasqueira"],
+    extraInfo: "+1"
   }];
+
   const userStats = {
     partidas: 42,
     gols: 18,
@@ -36,7 +45,9 @@ const MainApp = () => {
     proximosJogos: 0,
     amigos: 0
   };
-  const renderHomeContent = () => <div className="space-y-6">
+
+  const renderHomeContent = () => (
+    <div className="space-y-6">
       {/* Welcome Header */}
       <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] rounded-2xl p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">Olá, João! ⚽</h2>
@@ -70,37 +81,60 @@ const MainApp = () => {
 
       {/* Recommended Courts */}
       <div>
-        <h3 className="text-xl font-semibold text-white mb-4">Quadras Recomendadas</h3>
+        <h3 className="text-xl font-semibold text-white mb-4">Recomendados para você</h3>
         <div className="space-y-4">
-          {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer">
+          {quadras.map(quadra => (
+            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden">
+              <div className="relative">
+                <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
+                <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span className="text-sm font-semibold">{quadra.rating}</span>
+                </div>
+              </div>
+              
               <CardContent className="p-4">
-                <div className="flex gap-4">
-                  <img src={quadra.image} alt={quadra.name} className="w-20 h-20 rounded-xl object-cover" />
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold text-white">{quadra.name}</h4>
-                      <span className="text-[#F35410] font-bold">{quadra.price}</span>
-                    </div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <MapPin className="w-4 h-4 text-white/60" />
-                      <span className="text-sm text-white/70">{quadra.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-white/70">{quadra.rating}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      {quadra.amenities.map(amenity => <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
-                          {amenity}
-                        </Badge>)}
-                    </div>
-                  </div>
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-semibold text-white text-lg">{quadra.name}</h4>
+                </div>
+                
+                <div className="flex items-center gap-2 mb-3">
+                  <MapPin className="w-4 h-4 text-white/60" />
+                  <span className="text-sm text-white/70">{quadra.location}</span>
+                  <span className="text-sm text-white/60">| {quadra.distance}</span>
+                </div>
+
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-[#F35410] font-bold text-lg">{quadra.price}</span>
+                  <Badge 
+                    variant="secondary" 
+                    className={`${quadra.status === 'Disponível' 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-red-600 text-white'
+                    }`}
+                  >
+                    {quadra.status}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {quadra.amenities.map(amenity => (
+                    <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
+                      {amenity}
+                    </Badge>
+                  ))}
+                  <Badge variant="secondary" className="bg-white/20 text-white text-xs">
+                    {quadra.extraInfo}
+                  </Badge>
                 </div>
               </CardContent>
-            </Card>)}
+            </Card>
+          ))}
         </div>
       </div>
-    </div>;
+    </div>
+  );
+
   const renderExploreContent = () => <div className="space-y-6">
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-white/60" />
@@ -131,6 +165,7 @@ const MainApp = () => {
           </Card>)}
       </div>
     </div>;
+
   const renderProfileContent = () => <div className="space-y-6">
       {/* Profile Header Card */}
       <Card className="bg-gradient-to-br from-[#F35410] to-[#BA2D0B] border-none text-white relative overflow-hidden">
@@ -266,6 +301,7 @@ const MainApp = () => {
         </CardContent>
       </Card>
     </div>;
+
   return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-[#062B4B]/90 backdrop-blur-lg border-b border-white/10 p-4">
@@ -319,4 +355,5 @@ const MainApp = () => {
       </div>
     </div>;
 };
+
 export default MainApp;
