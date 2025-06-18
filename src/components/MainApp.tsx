@@ -128,9 +128,7 @@ const MainApp = () => {
         {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
             <div className="relative">
               <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
-              <div className="absolute top-4 right-4 bg-black/50 rounded-full p-2">
-                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-              </div>
+              
             </div>
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-2">
