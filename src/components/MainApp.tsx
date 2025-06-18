@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,11 @@ import {
   Users,
   Trophy,
   Camera,
-  Settings
+  Settings,
+  ChevronRight,
+  UserPlus,
+  Bell,
+  LogOut
 } from "lucide-react";
 
 const MainApp = () => {
@@ -49,7 +52,11 @@ const MainApp = () => {
     gols: 18,
     assistencias: 12,
     nivel: "Intermediário",
-    ranking: "#247"
+    ranking: "#247",
+    agendamentos: 0,
+    xp: 480,
+    proximosJogos: 0,
+    amigos: 0
   };
 
   const renderHomeContent = () => (
@@ -172,27 +179,70 @@ const MainApp = () => {
 
   const renderProfileContent = () => (
     <div className="space-y-6">
-      {/* Profile Header */}
-      <Card className="bg-gradient-to-br from-[#F35410] to-[#BA2D0B] border-none text-white">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-4 mb-4">
-            <Avatar className="w-20 h-20 border-4 border-white/30">
-              <AvatarImage src="https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face" />
-              <AvatarFallback>JP</AvatarFallback>
-            </Avatar>
-            <div>
-              <h3 className="text-2xl font-bold">João Pedro</h3>
-              <p className="text-white/90">Atacante • {userStats.nivel}</p>
-              <div className="flex items-center gap-2 mt-1">
-                <Trophy className="w-4 h-4" />
-                <span className="text-sm">Ranking {userStats.ranking}</span>
+      {/* Profile Header Card */}
+      <Card className="bg-gradient-to-br from-[#F35410] to-[#BA2D0B] border-none text-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-10">
+          <div className="grid grid-cols-8 gap-4 p-4">
+            {Array.from({ length: 32 }).map((_, i) => (
+              <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>
+            ))}
+          </div>
+        </div>
+        <CardContent className="p-6 relative z-10">
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Avatar className="w-16 h-16 border-3 border-white/30">
+                  <AvatarImage src="https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face" />
+                  <AvatarFallback>JA</AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                  <span className="text-[#F35410] text-xs font-bold">⚽</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Janderson Almeida</h3>
+                <div className="flex items-center gap-1 text-white/90">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm">Fortaleza</span>
+                </div>
               </div>
             </div>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <Settings className="w-5 h-5" />
+            </Button>
           </div>
-          <Button variant="secondary" className="w-full bg-white/20 hover:bg-white/30 text-white border-none">
-            <Camera className="w-4 h-4 mr-2" />
-            Editar Perfil
-          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Player Card */}
+      <Card className="bg-white/10 border-white/20">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-[#F35410]" />
+              <span className="text-white font-semibold">Cartão de Jogador</span>
+            </div>
+            <span className="text-white/60 text-sm">ID #6e583d</span>
+          </div>
+          
+          <div className="text-center mb-6">
+            <h4 className="text-2xl font-bold text-white mb-2">Convide seus amigos</h4>
+            <p className="text-white/70 text-sm mb-4">Chame seus amigos para dividir momentos</p>
+            <Button className="w-full bg-white text-[#F35410] hover:bg-white/90 font-semibold">
+              <UserPlus className="w-4 h-4 mr-2" />
+              Convidar amigo
+            </Button>
+          </div>
+
+          <div className="text-center text-white/70 text-sm mb-4">
+            <p>Você ainda não possui times cadastrados.</p>
+            <p>Clique em "Criar Novo Time" para começar!</p>
+          </div>
+
+          <div className="text-center text-white/60 text-xs">
+            0/3 times cadastrados.
+          </div>
         </CardContent>
       </Card>
 
@@ -200,52 +250,68 @@ const MainApp = () => {
       <div className="grid grid-cols-2 gap-4">
         <Card className="bg-white/10 border-white/20">
           <CardContent className="p-4 text-center">
-            <Trophy className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
-            <p className="text-2xl font-bold text-white">{userStats.partidas}</p>
-            <p className="text-sm text-white/70">Partidas Jogadas</p>
+            <Calendar className="w-6 h-6 mx-auto mb-2 text-[#F35410]" />
+            <p className="text-2xl font-bold text-white">{userStats.agendamentos}</p>
+            <p className="text-sm text-white/70">Agendamentos</p>
           </CardContent>
         </Card>
         <Card className="bg-white/10 border-white/20">
           <CardContent className="p-4 text-center">
-            <Star className="w-8 h-8 mx-auto mb-2 text-green-400" />
-            <p className="text-2xl font-bold text-white">{userStats.gols}</p>
-            <p className="text-sm text-white/70">Gols Marcados</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-4 text-center">
-            <Users className="w-8 h-8 mx-auto mb-2 text-blue-400" />
-            <p className="text-2xl font-bold text-white">{userStats.assistencias}</p>
-            <p className="text-sm text-white/70">Assistências</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-4 text-center">
-            <Clock className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-            <p className="text-2xl font-bold text-white">3</p>
-            <p className="text-sm text-white/70">Próximas Partidas</p>
+            <Star className="w-6 h-6 mx-auto mb-2 text-[#F35410]" />
+            <p className="text-2xl font-bold text-white">{userStats.xp}</p>
+            <p className="text-sm text-white/70">XP</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Activity */}
+      {/* Profile Summary */}
       <Card className="bg-white/10 border-white/20">
         <CardHeader>
-          <CardTitle className="text-white">Atividade Recente</CardTitle>
+          <CardTitle className="text-white flex items-center gap-2">
+            <User className="w-5 h-5 text-[#F35410]" />
+            Resumo do perfil
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            <span className="text-white/90 text-sm">Gol marcado na Arena Sports Center</span>
+          <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Calendar className="w-5 h-5 text-white/60" />
+              <span className="text-white/90">Próximos jogos</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white/60">{userStats.proximosJogos}</span>
+              <ChevronRight className="w-4 h-4 text-white/60" />
+            </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <span className="text-white/90 text-sm">Partida agendada para domingo</span>
+          
+          <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Trophy className="w-5 h-5 text-white/60" />
+              <span className="text-white/90">Estatísticas de jogador</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-white/60" />
           </div>
-          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-            <span className="text-white/90 text-sm">Novo recorde pessoal de gols</span>
+          
+          <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Users className="w-5 h-5 text-white/60" />
+              <span className="text-white/90">Lista de amigos</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white/60">{userStats.amigos}</span>
+              <ChevronRight className="w-4 h-4 text-white/60" />
+            </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Logout Button */}
+      <Card className="bg-red-600/20 border-red-500/30">
+        <CardContent className="p-4">
+          <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold">
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
+          </Button>
         </CardContent>
       </Card>
     </div>
