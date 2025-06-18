@@ -1,12 +1,36 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { ArrowRight, MapPin, Users, DollarSign } from "lucide-react";
+import OnboardingScreen from "@/components/OnboardingScreen";
+import AuthScreen from "@/components/AuthScreen";
+import MainApp from "@/components/MainApp";
 
 const Index = () => {
+  const [currentScreen, setCurrentScreen] = useState<'onboarding' | 'auth' | 'app'>('onboarding');
+  const [onboardingStep, setOnboardingStep] = useState(1);
+
+  if (currentScreen === 'auth') {
+    return <AuthScreen onComplete={() => setCurrentScreen('app')} />;
+  }
+
+  if (currentScreen === 'app') {
+    return <MainApp />;
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] text-white overflow-hidden">
+      <OnboardingScreen 
+        step={onboardingStep}
+        onNext={() => {
+          if (onboardingStep < 2) {
+            setOnboardingStep(onboardingStep + 1);
+          } else {
+            setCurrentScreen('auth');
+          }
+        }}
+        onSkip={() => setCurrentScreen('auth')}
+      />
     </div>
   );
 };
