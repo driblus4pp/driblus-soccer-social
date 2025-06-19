@@ -15,6 +15,7 @@ import ClientDashboard from "./pages/client/ClientDashboard";
 import CourtDetailsPage from "./pages/client/CourtDetailsPage";
 import BookingPage from "./pages/client/BookingPage";
 import BookingConfirmationPage from "./pages/client/BookingConfirmationPage";
+import AthleteProfile from "./pages/client/AthleteProfile";
 
 // Manager Routes
 import ManagerLogin from "./pages/manager/ManagerLogin";

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MapPin, Star, Clock, Search, User, LogOut } from "lucide-react";
+import { MapPin, Star, Clock, Search, User, LogOut, Trophy } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const mockCourts = [
@@ -65,6 +65,15 @@ const ClientDashboard = () => {
             <h1 className="text-xl font-bold text-white">Driblus</h1>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/cliente/perfil-atleta')}
+              className="text-white hover:bg-white/20"
+            >
+              <Trophy className="w-4 h-4 mr-2" />
+              Meu Perfil de Atleta
+            </Button>
             <div className="flex items-center gap-2 text-white">
               <User className="w-4 h-4" />
               <span className="text-sm">{user?.name}</span>
