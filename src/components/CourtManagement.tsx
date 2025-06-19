@@ -13,11 +13,12 @@ import {
   DollarSign, 
   Wifi, 
   Car, 
-  Shower, 
+  ShowerHead, 
   Coffee,
   Plus,
   Trash2,
-  Edit
+  Edit,
+  Building
 } from "lucide-react";
 import { Court, SportType, WorkingHours } from '@/types';
 
@@ -40,7 +41,7 @@ const CourtManagement = () => {
   const availableAmenities = [
     { id: 'wifi', name: 'Wi-Fi', icon: Wifi },
     { id: 'parking', name: 'Estacionamento', icon: Car },
-    { id: 'shower', name: 'Vestiários', icon: Shower },
+    { id: 'shower', name: 'Vestiários', icon: ShowerHead },
     { id: 'cafeteria', name: 'Lanchonete', icon: Coffee }
   ];
 

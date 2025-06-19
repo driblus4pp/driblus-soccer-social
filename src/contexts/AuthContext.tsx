@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserRole, PlatformStats } from '@/types';
+import { User, UserRole, PlatformStats, SportType } from '@/types';
 
 interface AuthContextType {
   user: User | null;
@@ -73,7 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           isVerified: true,
           createdAt: new Date('2024-01-01'),
           lastLogin: new Date(),
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face'
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face',
+          googleCalendarConnected: false
         };
       } else if (email === 'gestor@test.com') {
         mockUser = {
@@ -86,6 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           createdAt: new Date('2024-02-01'),
           lastLogin: new Date(),
           avatar: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face',
+          googleCalendarConnected: false,
           stats: {
             totalBookings: 87,
             completedGames: 82,
@@ -105,9 +107,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           createdAt: new Date('2024-03-01'),
           lastLogin: new Date(),
           avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b436?w=80&h=80&fit=crop&crop=face',
+          googleCalendarConnected: false,
           preferences: {
             favoriteLocations: ['Fortaleza, CE'],
-            preferredSports: ['football', 'futsal'],
+            preferredSports: [SportType.FOOTBALL, SportType.FUTSAL],
             maxDistance: 10,
             notifications: {
               email: true,
@@ -155,6 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: userData.role,
         isVerified: false,
         createdAt: new Date(),
+        googleCalendarConnected: false,
         preferences: {
           favoriteLocations: [],
           preferredSports: [],
@@ -199,6 +203,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Simulate Google OAuth flow
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      if (user) {
+        const updatedUser = { ...user, googleCalendarConnected: true };
+        setUser(updatedUser);
+        localStorage.setItem('driblus_user', JSON.stringify(updatedUser));
+      }
       return true;
     } catch (error) {
       console.error('Google Calendar connection error:', error);

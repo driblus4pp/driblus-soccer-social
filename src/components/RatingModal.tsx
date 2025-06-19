@@ -54,7 +54,7 @@ const RatingModal = ({ isOpen, onClose, booking, onSubmit }: RatingModalProps) =
             />
             <h3 className="font-semibold text-lg">{booking.courtName}</h3>
             <p className="text-white/70 text-sm">
-              {booking.date} • {booking.time}
+              {booking.date} • {booking.startTime}
             </p>
           </div>
 

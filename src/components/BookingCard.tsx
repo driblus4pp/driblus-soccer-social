@@ -79,7 +79,7 @@ const BookingCard = ({ booking, onRate, onCancel, onViewDetails }: BookingCardPr
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    <span>{booking.time}</span>
+                    <span>{booking.startTime}</span>
                   </div>
                 </div>
               </div>
@@ -91,7 +91,7 @@ const BookingCard = ({ booking, onRate, onCancel, onViewDetails }: BookingCardPr
 
             <div className="flex items-center justify-between mb-3">
               <span className="text-[#F35410] font-bold text-lg">
-                R$ {booking.price},00
+                R$ {booking.totalPrice},00
               </span>
               <span className="text-white/60 text-sm">
                 {booking.duration}h de duração

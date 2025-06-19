@@ -10,7 +10,8 @@ const mockNotifications: Notification[] = [
     message: 'Sua reserva na No Alvo Society foi confirmada para 20/12 às 19:00',
     bookingId: 'booking_1',
     timestamp: new Date('2024-12-19T10:30:00'),
-    read: false
+    read: false,
+    userId: 'user_1'
   },
   {
     id: '2',
@@ -19,7 +20,8 @@ const mockNotifications: Notification[] = [
     message: 'Sua reserva na Arena Pro Sports foi cancelada pelo proprietário',
     bookingId: 'booking_2',
     timestamp: new Date('2024-12-18T15:45:00'),
-    read: false
+    read: false,
+    userId: 'user_1'
   },
   {
     id: '3',
@@ -28,7 +30,8 @@ const mockNotifications: Notification[] = [
     message: 'Sua partida na Gol de Placa é amanhã às 18:00',
     bookingId: 'booking_3',
     timestamp: new Date('2024-12-17T09:00:00'),
-    read: true
+    read: true,
+    userId: 'user_1'
   }
 ];
 

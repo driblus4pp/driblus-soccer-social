@@ -127,6 +127,7 @@ export interface User {
   isVerified: boolean;
   createdAt: Date;
   lastLogin?: Date;
+  googleCalendarConnected?: boolean;
   preferences?: UserPreferences;
   stats?: UserStats;
 }
