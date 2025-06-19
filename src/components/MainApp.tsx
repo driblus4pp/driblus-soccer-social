@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Home, Search, Calendar, User, MapPin, Star, Clock, Users, Trophy, Camera, Settings, ChevronRight, UserPlus, Bell, LogOut, Filter } from "lucide-react";
 import CourtDetails from './CourtDetails';
 import FilterModal, { FilterState } from './FilterModal';
+
 const MainApp = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
@@ -366,8 +367,8 @@ const MainApp = () => {
       <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/10 p-4 bg-[#0a2c49]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Driblus Logo" className="w-8 h-8 object-cover" />
-            <h1 className="text-xl font-bold text-white">Driblus</h1>
+            <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-8 h-8 object-contain" />
+            <img src="/lovable-uploads/6a0f382f-4f6a-4afd-a007-454b98a5807a.png" alt="Driblus Logo" className="h-8 object-contain" />
           </div>
           
         </div>
@@ -412,4 +413,5 @@ const MainApp = () => {
       </div>
     </div>;
 };
+
 export default MainApp;
