@@ -67,7 +67,7 @@ const AdvancedAuthScreen = ({
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-white/10 border-white/20">
-                <TabsTrigger value="login" className="text-white data-[state=active]:text-white bg-gray-500 hover:bg-gray-400">
+                <TabsTrigger value="login" className="bg-gray-500 hover:bg-gray-400 text-gray-950">
                   Entrar
                 </TabsTrigger>
                 <TabsTrigger value="register" className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
