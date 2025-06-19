@@ -374,7 +374,7 @@ const MainApp = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4 pb-24">
+      <div className="p-4 pb-24 bg-[#0a2c49]">
         {activeTab === 'home' && renderHomeContent()}
         {activeTab === 'explore' && renderExploreContent()}
         {activeTab === 'calendar' && <div className="text-center text-white py-12">
