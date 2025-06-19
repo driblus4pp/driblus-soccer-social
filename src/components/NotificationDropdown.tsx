@@ -83,33 +83,12 @@ const NotificationDropdown = ({ onNotificationClick }: NotificationDropdownProps
 
       {isOpen && (
         <div 
-          className={`absolute right-0 top-12 w-80 z-50 transform transition-all duration-300 ease-out ${
+          className={`absolute right-0 top-12 w-80 z-50 transform transition-all duration-300 ease-out origin-top-right ${
             isOpen 
-              ? 'opacity-100 scale-100 translate-y-0' 
+              ? 'opacity-100 scale-100 translate-y-0 animate-scale-in' 
               : 'opacity-0 scale-95 -translate-y-2'
           }`}
-          style={{
-            transformOrigin: 'top right',
-            animation: isOpen ? 'dropEffect 0.3s ease-out' : ''
-          }}
         >
-          <style jsx>{`
-            @keyframes dropEffect {
-              0% {
-                transform: scale(0.3) translateY(-20px);
-                opacity: 0;
-              }
-              50% {
-                transform: scale(1.05) translateY(0px);
-                opacity: 0.8;
-              }
-              100% {
-                transform: scale(1) translateY(0px);
-                opacity: 1;
-              }
-            }
-          `}</style>
-          
           <Card className="bg-[#062B4B]/95 backdrop-blur-lg border-white/20 shadow-2xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
