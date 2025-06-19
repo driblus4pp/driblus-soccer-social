@@ -1,19 +1,29 @@
 
 import { useState } from 'react';
 import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from '@/types';
 import OnboardingScreen from "@/components/OnboardingScreen";
 import AdvancedAuthScreen from "@/components/AdvancedAuthScreen";
 import MainApp from "@/components/MainApp";
 import OwnerDashboard from "@/components/OwnerDashboard";
+import AdminDashboard from "@/components/AdminDashboard";
 
 const Index = () => {
   const { user } = useAuth();
   const [currentScreen, setCurrentScreen] = useState<'onboarding' | 'auth' | 'app'>('onboarding');
   const [onboardingStep, setOnboardingStep] = useState(1);
 
-  // If user is logged in, show appropriate dashboard
+  // If user is logged in, show appropriate dashboard based on role
   if (user) {
-    return user.role === 'owner' ? <OwnerDashboard /> : <MainApp />;
+    switch (user.role) {
+      case UserRole.ADMIN:
+        return <AdminDashboard />;
+      case UserRole.COURT_MANAGER:
+        return <OwnerDashboard />;
+      case UserRole.USER:
+      default:
+        return <MainApp />;
+    }
   }
 
   if (currentScreen === 'auth') {

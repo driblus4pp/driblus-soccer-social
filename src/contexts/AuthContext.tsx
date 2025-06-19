@@ -1,15 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'user' | 'owner';
-  avatar?: string;
-  phone?: string;
-  googleCalendarConnected?: boolean;
-}
+import { User, UserRole, PlatformStats } from '@/types';
 
 interface AuthContextType {
   user: User | null;
@@ -18,6 +9,8 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   connectGoogleCalendar: () => Promise<boolean>;
+  updateUserProfile: (data: Partial<User>) => Promise<boolean>;
+  getPlatformStats: () => Promise<PlatformStats>;
 }
 
 interface RegisterData {
@@ -25,7 +18,7 @@ interface RegisterData {
   email: string;
   password: string;
   phone: string;
-  role: 'user' | 'owner';
+  role: UserRole;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setIsLoading(false);
 
-    // Register service worker
+    // Register service worker for PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
@@ -68,16 +61,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock user data
-      const mockUser: User = {
-        id: '1',
-        name: email === 'owner@test.com' ? 'João Silva' : 'Maria Santos',
-        email,
-        role: email === 'owner@test.com' ? 'owner' : 'user',
-        avatar: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face',
-        phone: '+55 85 99999-9999',
-        googleCalendarConnected: email === 'owner@test.com'
-      };
+      // Mock user data based on email for different roles
+      let mockUser: User;
+      
+      if (email === 'admin@driblus.com') {
+        mockUser = {
+          id: 'admin-1',
+          name: 'Administrador Driblus',
+          email,
+          role: UserRole.ADMIN,
+          isVerified: true,
+          createdAt: new Date('2024-01-01'),
+          lastLogin: new Date(),
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face'
+        };
+      } else if (email === 'gestor@test.com') {
+        mockUser = {
+          id: 'manager-1',
+          name: 'João Silva',
+          email,
+          phone: '+55 85 99999-9999',
+          role: UserRole.COURT_MANAGER,
+          isVerified: true,
+          createdAt: new Date('2024-02-01'),
+          lastLogin: new Date(),
+          avatar: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face',
+          stats: {
+            totalBookings: 87,
+            completedGames: 82,
+            cancelledGames: 5,
+            averageRating: 4.8,
+            totalSpent: 15420,
+          }
+        };
+      } else {
+        mockUser = {
+          id: 'user-1',
+          name: 'Maria Santos',
+          email,
+          phone: '+55 85 88888-8888',
+          role: UserRole.USER,
+          isVerified: true,
+          createdAt: new Date('2024-03-01'),
+          lastLogin: new Date(),
+          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b436?w=80&h=80&fit=crop&crop=face',
+          preferences: {
+            favoriteLocations: ['Fortaleza, CE'],
+            preferredSports: ['football', 'futsal'],
+            maxDistance: 10,
+            notifications: {
+              email: true,
+              push: true,
+              sms: false
+            },
+            privacy: {
+              showProfile: true,
+              allowReviews: true
+            }
+          },
+          stats: {
+            totalBookings: 15,
+            completedGames: 12,
+            cancelledGames: 3,
+            averageRating: 4.5,
+            totalSpent: 1800,
+            favoriteCourtId: 'court-1'
+          }
+        };
+      }
 
       setUser(mockUser);
       localStorage.setItem('driblus_user', JSON.stringify(mockUser));
@@ -100,9 +151,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: Date.now().toString(),
         name: userData.name,
         email: userData.email,
-        role: userData.role,
         phone: userData.phone,
-        googleCalendarConnected: false
+        role: userData.role,
+        isVerified: false,
+        createdAt: new Date(),
+        preferences: {
+          favoriteLocations: [],
+          preferredSports: [],
+          maxDistance: 5,
+          notifications: {
+            email: true,
+            push: true,
+            sms: false
+          },
+          privacy: {
+            showProfile: true,
+            allowReviews: true
+          }
+        },
+        stats: {
+          totalBookings: 0,
+          completedGames: 0,
+          cancelledGames: 0,
+          averageRating: 0,
+          totalSpent: 0
+        }
       };
 
       setUser(newUser);
@@ -126,12 +199,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Simulate Google OAuth flow
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      if (user) {
-        const updatedUser = { ...user, googleCalendarConnected: true };
-        setUser(updatedUser);
-        localStorage.setItem('driblus_user', JSON.stringify(updatedUser));
-      }
       return true;
     } catch (error) {
       console.error('Google Calendar connection error:', error);
@@ -141,6 +208,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserProfile = async (data: Partial<User>): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (user) {
+        const updatedUser = { ...user, ...data };
+        setUser(updatedUser);
+        localStorage.setItem('driblus_user', JSON.stringify(updatedUser));
+      }
+      return true;
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getPlatformStats = async (): Promise<PlatformStats> => {
+    // Mock platform statistics for admin dashboard
+    return {
+      totalUsers: 1247,
+      totalCourts: 89,
+      totalBookings: 3421,
+      monthlyRevenue: 245600,
+      activeUsers: 892,
+      pendingApprovals: 12,
+      averageRating: 4.6,
+      growthRate: 23.5
+    };
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -148,9 +248,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       register,
       logout,
       isLoading,
-      connectGoogleCalendar
+      connectGoogleCalendar,
+      updateUserProfile,
+      getPlatformStats
     }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export { UserRole };
+export type { User };

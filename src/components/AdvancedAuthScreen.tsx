@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,27 +6,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Lock, Phone, Building, UserCheck } from "lucide-react";
+import { User, Mail, Lock, Phone, Building, UserCheck, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from '@/types';
+
 interface AdvancedAuthScreenProps {
   onComplete: () => void;
 }
-const AdvancedAuthScreen = ({
-  onComplete
-}: AdvancedAuthScreenProps) => {
-  const {
-    login,
-    register,
-    isLoading
-  } = useAuth();
+
+const AdvancedAuthScreen = ({ onComplete }: AdvancedAuthScreenProps) => {
+  const { login, register, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('login');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     phone: '',
-    role: 'user' as 'user' | 'owner'
+    role: UserRole.USER
   });
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login(formData.email, formData.password);
@@ -33,6 +32,7 @@ const AdvancedAuthScreen = ({
       onComplete();
     }
   };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await register(formData);
@@ -40,20 +40,21 @@ const AdvancedAuthScreen = ({
       onComplete();
     }
   };
-  const handleInputChange = (field: string, value: string) => {
+
+  const handleInputChange = (field: string, value: string | UserRole) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
-  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center p-4">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            
             <img src="/lovable-uploads/6a0f382f-4f6a-4afd-a007-454b98a5807a.png" alt="Driblus Logo" className="h-12 object-contain" />
           </div>
-          
           <p className="text-white/70">Conecte-se ao seu esporte favorito</p>
         </div>
 
@@ -79,12 +80,64 @@ const AdvancedAuthScreen = ({
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                    <Input placeholder="Email" type="email" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+                    <Input 
+                      placeholder="Email" 
+                      type="email" 
+                      value={formData.email} 
+                      onChange={e => handleInputChange('email', e.target.value)} 
+                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" 
+                      required 
+                    />
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                    <Input placeholder="Senha" type="password" value={formData.password} onChange={e => handleInputChange('password', e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+                    <Input 
+                      placeholder="Senha" 
+                      type="password" 
+                      value={formData.password} 
+                      onChange={e => handleInputChange('password', e.target.value)} 
+                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" 
+                      required 
+                    />
                   </div>
+                  
+                  {/* Quick login buttons for demo */}
+                  <div className="space-y-2 pt-2 border-t border-white/20">
+                    <p className="text-white/60 text-xs text-center">Acesso rápido para demonstração:</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        className="border-white/20 text-white hover:bg-white/10 text-xs"
+                        onClick={() => setFormData(prev => ({ ...prev, email: 'user@test.com', password: '123' }))}
+                      >
+                        <UserCheck className="w-3 h-3 mr-1" />
+                        Usuário
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        className="border-white/20 text-white hover:bg-white/10 text-xs"
+                        onClick={() => setFormData(prev => ({ ...prev, email: 'gestor@test.com', password: '123' }))}
+                      >
+                        <Building className="w-3 h-3 mr-1" />
+                        Gestor de Quadra
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        className="border-white/20 text-white hover:bg-white/10 text-xs"
+                        onClick={() => setFormData(prev => ({ ...prev, email: 'admin@driblus.com', password: '123' }))}
+                      >
+                        <Shield className="w-3 h-3 mr-1" />
+                        Administrador
+                      </Button>
+                    </div>
+                  </div>
+
                   <Button type="submit" disabled={isLoading} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3 rounded-xl font-semibold">
                     {isLoading ? 'Entrando...' : 'Entrar'}
                   </Button>
@@ -95,36 +148,67 @@ const AdvancedAuthScreen = ({
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                    <Input placeholder="Nome completo" value={formData.name} onChange={e => handleInputChange('name', e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+                    <Input 
+                      placeholder="Nome completo" 
+                      value={formData.name} 
+                      onChange={e => handleInputChange('name', e.target.value)} 
+                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" 
+                      required 
+                    />
                   </div>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                    <Input placeholder="Email" type="email" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+                    <Input 
+                      placeholder="Email" 
+                      type="email" 
+                      value={formData.email} 
+                      onChange={e => handleInputChange('email', e.target.value)} 
+                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" 
+                      required 
+                    />
                   </div>
                   <div className="relative">
                     <Phone className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                    <Input placeholder="Telefone" type="tel" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+                    <Input 
+                      placeholder="Telefone" 
+                      type="tel" 
+                      value={formData.phone} 
+                      onChange={e => handleInputChange('phone', e.target.value)} 
+                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" 
+                      required 
+                    />
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                    <Input placeholder="Senha" type="password" value={formData.password} onChange={e => handleInputChange('password', e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+                    <Input 
+                      placeholder="Senha" 
+                      type="password" 
+                      value={formData.password} 
+                      onChange={e => handleInputChange('password', e.target.value)} 
+                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" 
+                      required 
+                    />
                   </div>
 
                   <div className="space-y-3">
                     <Label className="text-white font-medium">Tipo de conta:</Label>
-                    <RadioGroup value={formData.role} onValueChange={value => handleInputChange('role', value)} className="flex flex-col space-y-2">
+                    <RadioGroup 
+                      value={formData.role} 
+                      onValueChange={value => handleInputChange('role', value as UserRole)} 
+                      className="flex flex-col space-y-2"
+                    >
                       <div className="flex items-center space-x-2 p-3 bg-white/5 rounded-lg">
-                        <RadioGroupItem value="user" id="user" />
+                        <RadioGroupItem value={UserRole.USER} id="user" />
                         <Label htmlFor="user" className="text-white flex items-center gap-2">
                           <UserCheck className="w-4 h-4" />
                           Usuário - Buscar e agendar quadras
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2 p-3 bg-white/5 rounded-lg">
-                        <RadioGroupItem value="owner" id="owner" />
-                        <Label htmlFor="owner" className="text-white flex items-center gap-2">
+                        <RadioGroupItem value={UserRole.COURT_MANAGER} id="manager" />
+                        <Label htmlFor="manager" className="text-white flex items-center gap-2">
                           <Building className="w-4 h-4" />
-                          Dono de quadra - Disponibilizar espaços
+                          Gestor - Disponibilizar espaços esportivos
                         </Label>
                       </div>
                     </RadioGroup>
@@ -146,9 +230,11 @@ const AdvancedAuthScreen = ({
                   <span className="px-2 bg-transparent text-white/60">ou</span>
                 </div>
               </div>
-              <Button variant="outline" className="w-full mt-4 bg-white text-[#062B4B] border-white hover:bg-white/90" onClick={() => handleLogin({
-              preventDefault: () => {}
-            } as any)}>
+              <Button 
+                variant="outline" 
+                className="w-full mt-4 bg-white text-[#062B4B] border-white hover:bg-white/90"
+                onClick={() => handleLogin({ preventDefault: () => {} } as any)}
+              >
                 <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-4 h-4 mr-2" />
                 Continuar com Google
               </Button>
@@ -167,6 +253,8 @@ const AdvancedAuthScreen = ({
       <div className="fixed bottom-4 left-4 right-4 bg-[#F35410] text-white p-3 rounded-lg text-sm text-center opacity-90">
         💡 Instale o Driblus como app para uma melhor experiência!
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default AdvancedAuthScreen;

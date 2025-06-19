@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +18,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import CourtManagement from "./CourtManagement";
 
 const OwnerDashboard = () => {
   const { user, connectGoogleCalendar, isLoading } = useAuth();
@@ -106,7 +106,7 @@ const OwnerDashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Dashboard do Proprietário</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">Dashboard do Gestor</h1>
             <p className="text-white/70">Gerencie suas quadras e reservas</p>
           </div>
           <div className="flex gap-3">
@@ -143,15 +143,18 @@ const OwnerDashboard = () => {
         )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white/10 border-white/20">
+          <TabsList className="grid w-full grid-cols-5 bg-white/10 border-white/20">
             <TabsTrigger value="overview" className="text-white data-[state=active]:bg-[#F35410]">
               Visão Geral
             </TabsTrigger>
             <TabsTrigger value="courts" className="text-white data-[state=active]:bg-[#F35410]">
-              Minhas Quadras
+              Quadras
             </TabsTrigger>
             <TabsTrigger value="bookings" className="text-white data-[state=active]:bg-[#F35410]">
               Reservas
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="text-white data-[state=active]:bg-[#F35410]">
+              Calendário
             </TabsTrigger>
             <TabsTrigger value="analytics" className="text-white data-[state=active]:bg-[#F35410]">
               Relatórios
@@ -202,48 +205,6 @@ const OwnerDashboard = () => {
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="bg-white/10 border-white/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-purple-500/20 rounded-lg">
-                      <TrendingUp className="w-6 h-6 text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="text-white/70 text-sm">Taxa de Ocupação</p>
-                      <p className="text-2xl font-bold text-white">{stats.occupancyRate}%</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/10 border-white/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-yellow-500/20 rounded-lg">
-                      <Star className="w-6 h-6 text-yellow-400" />
-                    </div>
-                    <div>
-                      <p className="text-white/70 text-sm">Avaliação Média</p>
-                      <p className="text-2xl font-bold text-white">{stats.avgRating}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/10 border-white/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-orange-500/20 rounded-lg">
-                      <Clock className="w-6 h-6 text-orange-400" />
-                    </div>
-                    <div>
-                      <p className="text-white/70 text-sm">Pendentes</p>
-                      <p className="text-2xl font-bold text-white">{stats.pendingBookings}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
 
             {/* Recent Bookings */}
@@ -279,53 +240,7 @@ const OwnerDashboard = () => {
           </TabsContent>
 
           <TabsContent value="courts" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {courts.map(court => (
-                <Card key={court.id} className="bg-white/10 border-white/20 overflow-hidden">
-                  <div className="relative">
-                    <img src={court.image} alt={court.name} className="w-full h-48 object-cover" />
-                    <div className="absolute top-4 right-4">
-                      <Badge 
-                        variant="secondary" 
-                        className={`${
-                          court.status === 'active' 
-                            ? 'bg-green-600 text-white' 
-                            : 'bg-red-600 text-white'
-                        }`}
-                      >
-                        {court.status === 'active' ? 'Ativa' : 'Manutenção'}
-                      </Badge>
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-white font-bold text-lg">{court.name}</h3>
-                        <p className="text-white/70">{court.sport}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[#F35410] font-bold text-lg">R$ {court.hourlyRate}/h</p>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-white/70 text-sm">{court.rating}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-white/70 text-sm">Reservas hoje: {court.bookingsToday}</p>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
-                          Editar
-                        </Button>
-                        <Button size="sm" className="bg-[#F35410] hover:bg-[#BA2D0B] text-white">
-                          Ver Agenda
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <CourtManagement />
           </TabsContent>
 
           <TabsContent value="bookings" className="space-y-6">
@@ -370,6 +285,14 @@ const OwnerDashboard = () => {
                 ))}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="calendar" className="space-y-6">
+            <div className="text-center py-12">
+              <Calendar className="w-16 h-16 mx-auto mb-4 text-white/60" />
+              <h3 className="text-xl font-semibold text-white mb-2">Calendário Dinâmico</h3>
+              <p className="text-white/70">Gerencie disponibilidade e horários de funcionamento</p>
+            </div>
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
