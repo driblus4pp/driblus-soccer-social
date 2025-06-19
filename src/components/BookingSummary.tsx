@@ -55,7 +55,9 @@ const BookingSummary = ({ court, bookingData, onNext }: BookingSummaryProps) => 
               <Clock className="w-4 h-4" />
               <span>Data e horário</span>
             </div>
-            <span className="text-white font-semibold">20 de dezembro • 19:00 - 20:00</span>
+            <span className="text-white font-semibold">
+              {bookingData.formattedDateTime || "20 de dezembro • 19:00 - 20:00"}
+            </span>
           </div>
           
           <div className="flex items-center justify-between">

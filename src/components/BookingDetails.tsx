@@ -2,12 +2,15 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Users } from 'lucide-react';
+import { Users, Calendar, ExternalLink } from 'lucide-react';
+import BookingCalendar from './BookingCalendar';
+import { googleCalendarService } from '../services/googleCalendarService';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface BookingDetailsProps {
   court: any;
@@ -20,14 +23,50 @@ const BookingDetails = ({ court, bookingData, onNext, onUpdateData }: BookingDet
   const [formData, setFormData] = useState({
     numberOfPeople: bookingData.numberOfPeople.toString(),
     observations: bookingData.observations,
-    needsEquipment: bookingData.needsEquipment
+    needsEquipment: bookingData.needsEquipment,
+    selectedDate: bookingData.selectedDate,
+    selectedTime: bookingData.selectedTime
   });
 
+  const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
+
+  const handleDateTimeSelect = (date: Date, time: string) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedDate: date,
+      selectedTime: time
+    }));
+  };
+
+  const handleConnectGoogleCalendar = async () => {
+    setIsConnectingGoogle(true);
+    try {
+      const success = await googleCalendarService.authenticate();
+      if (success) {
+        console.log('Google Calendar conectado com sucesso!');
+      } else {
+        console.log('Falha ao conectar com Google Calendar');
+      }
+    } catch (error) {
+      console.error('Erro ao conectar:', error);
+    } finally {
+      setIsConnectingGoogle(false);
+    }
+  };
+
   const handleContinue = () => {
+    if (!formData.selectedDate || !formData.selectedTime) {
+      alert('Por favor, selecione uma data e horário');
+      return;
+    }
+
     onUpdateData({
       numberOfPeople: parseInt(formData.numberOfPeople),
       observations: formData.observations,
-      needsEquipment: formData.needsEquipment
+      needsEquipment: formData.needsEquipment,
+      selectedDate: formData.selectedDate,
+      selectedTime: formData.selectedTime,
+      formattedDateTime: format(formData.selectedDate, "dd 'de' MMMM", { locale: ptBR }) + ` • ${formData.selectedTime} - ${parseInt(formData.selectedTime.split(':')[0]) + 1}:00`
     });
     onNext();
   };
@@ -39,6 +78,53 @@ const BookingDetails = ({ court, bookingData, onNext, onUpdateData }: BookingDet
         <p className="text-white/70">Preencha os dados para sua reserva</p>
       </div>
 
+      {/* Google Calendar Integration */}
+      <Card className="bg-white/10 border-white/20">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Integração Google Calendar
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white text-sm">
+                {googleCalendarService.isAuthenticated() 
+                  ? "✅ Conectado ao Google Calendar" 
+                  : "Conecte ao Google Calendar para sincronizar horários"}
+              </p>
+            </div>
+            <Button
+              onClick={handleConnectGoogleCalendar}
+              disabled={isConnectingGoogle || googleCalendarService.isAuthenticated()}
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              {isConnectingGoogle ? (
+                "Conectando..."
+              ) : googleCalendarService.isAuthenticated() ? (
+                "Conectado"
+              ) : (
+                <>
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Conectar
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Calendar Component */}
+      <BookingCalendar
+        court={court}
+        onDateTimeSelect={handleDateTimeSelect}
+        selectedDate={formData.selectedDate}
+        selectedTime={formData.selectedTime}
+      />
+
+      {/* Booking Information */}
       <Card className="bg-white/10 border-white/20">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
@@ -88,12 +174,18 @@ const BookingDetails = ({ court, bookingData, onNext, onUpdateData }: BookingDet
         </CardContent>
       </Card>
 
+      {/* Court Summary */}
       <Card className="bg-white/10 border-white/20">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h4 className="font-semibold text-white">{court.name}</h4>
-              <p className="text-white/70 text-sm">20 de dezembro • 19:00 - 20:00</p>
+              <p className="text-white/70 text-sm">
+                {formData.selectedDate && formData.selectedTime 
+                  ? format(formData.selectedDate, "dd 'de' MMMM", { locale: ptBR }) + ` • ${formData.selectedTime} - ${parseInt(formData.selectedTime.split(':')[0]) + 1}:00`
+                  : "Selecione data e horário"
+                }
+              </p>
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-[#F35410]">{court.price}</p>
@@ -104,7 +196,8 @@ const BookingDetails = ({ court, bookingData, onNext, onUpdateData }: BookingDet
 
       <Button
         onClick={handleContinue}
-        className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white font-semibold py-3"
+        disabled={!formData.selectedDate || !formData.selectedTime}
+        className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white font-semibold py-3 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Continuar para Pagamento
       </Button>

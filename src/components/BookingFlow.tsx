@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -26,6 +25,9 @@ interface BookingData {
   time: string;
   duration: number;
   serviceFee: number;
+  selectedDate: undefined;
+  selectedTime: undefined;
+  formattedDateTime: undefined;
 }
 
 interface BookingFlowProps {
@@ -42,7 +44,10 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
     date: '2024-12-20',
     time: '19:00',
     duration: 1,
-    serviceFee: 15
+    serviceFee: 15,
+    selectedDate: undefined,
+    selectedTime: undefined,
+    formattedDateTime: undefined
   });
 
   const handleNext = () => {
