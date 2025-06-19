@@ -197,7 +197,7 @@ const MainApp = () => {
           <Search className="absolute left-3 top-3 h-4 w-4 text-white/60" />
           <Input placeholder="Buscar quadras, bairros..." className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" />
         </div>
-        <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 hover:bg-white/10 text-black">
+        <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 hover:bg-white/10 text-slate-50">
           <Filter className="w-4 h-4" />
         </Button>
       </div>
