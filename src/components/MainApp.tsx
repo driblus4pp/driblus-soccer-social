@@ -9,13 +9,18 @@ import { Home, Search, Calendar, User, MapPin, Star, Clock, Users, Trophy, Camer
 import { useAuth } from "@/contexts/AuthContext";
 import CourtDetails from './CourtDetails';
 import FilterModal, { FilterState } from './FilterModal';
-
 const MainApp = () => {
-  const { user, logout } = useAuth();
+  const {
+    user,
+    logout
+  } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     city: '',
     neighborhood: '',
@@ -26,17 +31,14 @@ const MainApp = () => {
   // Get user location
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          console.log('Error getting location:', error);
-        }
-      );
+      navigator.geolocation.getCurrentPosition(position => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      }, error => {
+        console.log('Error getting location:', error);
+      });
     }
   }, []);
 
@@ -134,7 +136,6 @@ const MainApp = () => {
     isPromoted: true,
     neighborhood: "Vila Madalena"
   }];
-
   const userStats = {
     partidas: 42,
     gols: 18,
@@ -146,20 +147,16 @@ const MainApp = () => {
     proximosJogos: 0,
     amigos: 0
   };
-
   const handleCourtClick = (courtId: number) => {
     setSelectedCourt(courtId);
   };
-
   const handleBackFromDetails = () => {
     setSelectedCourt(null);
   };
-
   const handleApplyFilters = (newFilters: FilterState) => {
     setFilters(newFilters);
     console.log('Applying filters:', newFilters);
   };
-
   const handleLogout = () => {
     logout();
   };
@@ -175,7 +172,6 @@ const MainApp = () => {
         </div>;
     }
   }
-
   const renderHomeContent = () => <div className="space-y-6">
       {/* Welcome Header */}
       <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] rounded-2xl p-6 text-white relative overflow-hidden">
@@ -186,12 +182,10 @@ const MainApp = () => {
             <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-6 h-6 object-contain" />
           </h2>
           <p className="text-white/90">Pronto para sua próxima partida?</p>
-          {userLocation && (
-            <div className="flex items-center gap-2 mt-2">
+          {userLocation && <div className="flex items-center gap-2 mt-2">
               <Navigation className="w-4 h-4" />
               <span className="text-white/80 text-sm">Localização ativada</span>
-            </div>
-          )}
+            </div>}
         </div>
       </div>
 
@@ -239,8 +233,7 @@ const MainApp = () => {
           <h3 className="text-xl font-semibold text-white">Quadras em Destaque</h3>
         </div>
         <div className="space-y-4">
-          {quadras.filter(q => q.isPromoted).map(quadra => (
-            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden relative" onClick={() => handleCourtClick(quadra.id)}>
+          {quadras.filter(q => q.isPromoted).map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden relative" onClick={() => handleCourtClick(quadra.id)}>
               <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                 DESTAQUE
               </div>
@@ -271,20 +264,15 @@ const MainApp = () => {
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
-                  {quadra.amenities.slice(0, 3).map(amenity => (
-                    <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
+                  {quadra.amenities.slice(0, 3).map(amenity => <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
                       {amenity}
-                    </Badge>
-                  ))}
-                  {quadra.amenities.length > 3 && (
-                    <Badge variant="secondary" className="bg-white/20 text-white text-xs">
+                    </Badge>)}
+                  {quadra.amenities.length > 3 && <Badge variant="secondary" className="bg-white/20 text-white text-xs">
                       +{quadra.amenities.length - 3}
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
       </div>
 
@@ -292,15 +280,12 @@ const MainApp = () => {
       <div>
         <h3 className="text-xl font-semibold text-white mb-4">Recomendados para você</h3>
         <div className="space-y-4">
-          {quadras.filter(q => !q.isPromoted).map(quadra => (
-            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden" onClick={() => handleCourtClick(quadra.id)}>
+          {quadras.filter(q => !q.isPromoted).map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden" onClick={() => handleCourtClick(quadra.id)}>
               <div className="relative">
                 <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
-                {quadra.isPromoted && (
-                  <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
+                {quadra.isPromoted && <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                     DESTAQUE
-                  </div>
-                )}
+                  </div>}
                 <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
                   <Star className="w-4 h-4 fill-current" />
                   <span className="text-sm font-semibold">{quadra.rating}</span>
@@ -334,12 +319,10 @@ const MainApp = () => {
                   </Badge>
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
       </div>
     </div>;
-
   const renderExploreContent = () => <div className="space-y-6">
       <div className="flex gap-3">
         <div className="relative flex-1">
@@ -349,33 +332,26 @@ const MainApp = () => {
         <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 hover:bg-white/10 text-slate-50">
           <Filter className="w-4 h-4" />
         </Button>
-        {userLocation && (
-          <Button variant="outline" size="icon" className="border-white/20 hover:bg-white/10 text-slate-50">
+        {userLocation && <Button variant="outline" size="icon" className="border-white/20 hover:bg-white/10 text-slate-50">
             <Navigation className="w-4 h-4" />
-          </Button>
-        )}
+          </Button>}
       </div>
 
       {/* Location Status */}
-      {userLocation && (
-        <div className="bg-green-500/20 border-green-500/30 rounded-lg p-3">
+      {userLocation && <div className="bg-green-500/20 border-green-500/30 rounded-lg p-3">
           <div className="flex items-center gap-2 text-green-400">
             <Navigation className="w-4 h-4" />
             <span className="text-sm">Mostrando quadras próximas à sua localização</span>
           </div>
-        </div>
-      )}
+        </div>}
       
       <div className="grid grid-cols-1 gap-4">
-        {quadras.map(quadra => (
-          <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
+        {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
             <div className="relative">
               <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
-              {quadra.isPromoted && (
-                <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
+              {quadra.isPromoted && <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                   DESTAQUE
-                </div>
-              )}
+                </div>}
               <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
                 <Star className="w-4 h-4 fill-current" />
                 <span className="text-sm font-semibold">{quadra.rating}</span>
@@ -392,31 +368,27 @@ const MainApp = () => {
                 <span className="text-sm text-white/60">| {quadra.distance}</span>
               </div>
               <div className="flex items-center gap-2 mb-3">
-                {quadra.modalities.slice(0, 2).map(modality => (
-                  <Badge key={modality} variant="secondary" className="bg-white/20 text-white text-xs">
+                {quadra.modalities.slice(0, 2).map(modality => <Badge key={modality} variant="secondary" className="bg-white/20 text-white text-xs">
                     {modality}
-                  </Badge>
-                ))}
+                  </Badge>)}
               </div>
               <Button className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white" onClick={() => handleCourtClick(quadra.id)}>
                 Ver Detalhes
               </Button>
             </CardContent>
-          </Card>
-        ))}
+          </Card>)}
       </div>
 
       <FilterModal isOpen={showFilters} onClose={() => setShowFilters(false)} onApplyFilters={handleApplyFilters} filters={filters} />
     </div>;
-
   const renderProfileContent = () => <div className="space-y-6">
       {/* Profile Header Card */}
       <Card className="bg-gradient-to-br from-[#F35410] to-[#BA2D0B] border-none text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10">
           <div className="grid grid-cols-8 gap-4 p-4">
-            {Array.from({ length: 32 }).map((_, i) => (
-              <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>
-            ))}
+            {Array.from({
+            length: 32
+          }).map((_, i) => <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>)}
           </div>
         </div>
         <CardContent className="p-6 relative z-10">
@@ -544,9 +516,7 @@ const MainApp = () => {
         </CardContent>
       </Card>
     </div>;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/10 p-4 bg-[#0a2c49]">
         <div className="flex items-center justify-between">
@@ -558,10 +528,7 @@ const MainApp = () => {
             <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
               <Bell className="w-5 h-5" />
             </Button>
-            <Avatar className="w-8 h-8">
-              <AvatarImage src={user?.avatar} />
-              <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
-            </Avatar>
+            
           </div>
         </div>
       </div>
@@ -570,42 +537,39 @@ const MainApp = () => {
       <div className="p-4 pb-24 bg-[#0a2c49]">
         {activeTab === 'home' && renderHomeContent()}
         {activeTab === 'explore' && renderExploreContent()}
-        {activeTab === 'calendar' && (
-          <div className="text-center text-white py-12">
+        {activeTab === 'calendar' && <div className="text-center text-white py-12">
             <Calendar className="w-16 h-16 mx-auto mb-4 text-white/60" />
             <h3 className="text-xl font-semibold mb-2">Sua Agenda</h3>
             <p className="text-white/70">Gerencie suas partidas agendadas</p>
-          </div>
-        )}
+          </div>}
         {activeTab === 'profile' && renderProfileContent()}
       </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#062B4B]/95 backdrop-blur-lg border-t border-white/10 p-4">
         <div className="flex justify-around">
-          {[
-            { id: 'home', icon: Home, label: 'Início' },
-            { id: 'explore', icon: Search, label: 'Explorar' },
-            { id: 'calendar', icon: Calendar, label: 'Agenda' },
-            { id: 'profile', icon: User, label: 'Perfil' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
-                activeTab === tab.id 
-                  ? 'text-[#F35410] bg-[#F35410]/20' 
-                  : 'text-white/60 hover:text-white'
-              }`}
-            >
+          {[{
+          id: 'home',
+          icon: Home,
+          label: 'Início'
+        }, {
+          id: 'explore',
+          icon: Search,
+          label: 'Explorar'
+        }, {
+          id: 'calendar',
+          icon: Calendar,
+          label: 'Agenda'
+        }, {
+          id: 'profile',
+          icon: User,
+          label: 'Perfil'
+        }].map(tab => <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${activeTab === tab.id ? 'text-[#F35410] bg-[#F35410]/20' : 'text-white/60 hover:text-white'}`}>
               <tab.icon className="w-5 h-5" />
               <span className="text-xs font-medium">{tab.label}</span>
-            </button>
-          ))}
+            </button>)}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MainApp;
