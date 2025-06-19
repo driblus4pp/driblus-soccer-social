@@ -454,13 +454,7 @@ const MainApp = () => {
             <p className="text-sm text-white/70">Agendamentos</p>
           </CardContent>
         </Card>
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-4 text-center">
-            <Star className="w-6 h-6 mx-auto mb-2 text-[#F35410]" />
-            <p className="text-2xl font-bold text-white">{userStats.xp}</p>
-            <p className="text-sm text-white/70">XP</p>
-          </CardContent>
-        </Card>
+        
       </div>
 
       {/* Profile Summary */}
