@@ -202,29 +202,7 @@ const MainApp = () => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="text-center bg-white/5 border-white/10">
-          <CardContent className="p-4">
-            <Trophy className="w-6 h-6 mx-auto mb-2 text-yellow-400" />
-            <p className="text-2xl font-bold text-white">{userStats.partidas}</p>
-            <p className="text-sm text-white/70">Partidas</p>
-          </CardContent>
-        </Card>
-        <Card className="text-center bg-white/5 border-white/10">
-          <CardContent className="p-4">
-            <Star className="w-6 h-6 mx-auto mb-2 text-green-400" />
-            <p className="text-2xl font-bold text-white">{userStats.gols}</p>
-            <p className="text-sm text-white/70">Gols</p>
-          </CardContent>
-        </Card>
-        <Card className="text-center bg-white/5 border-white/10">
-          <CardContent className="p-4">
-            <Users className="w-6 h-6 mx-auto mb-2 text-blue-400" />
-            <p className="text-2xl font-bold text-white">{userStats.assistencias}</p>
-            <p className="text-sm text-white/70">Assists</p>
-          </CardContent>
-        </Card>
-      </div>
+      
 
       {/* Promoted Courts */}
       <div>
