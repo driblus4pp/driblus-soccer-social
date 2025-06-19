@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Home, Search, Calendar, User, MapPin, Star, Clock, Users, Trophy, Camera, Settings, ChevronRight, UserPlus, Bell, LogOut, Filter } from "lucide-react";
 import CourtDetails from './CourtDetails';
 import FilterModal, { FilterState } from './FilterModal';
-
 const MainApp = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
@@ -198,7 +197,7 @@ const MainApp = () => {
           <Search className="absolute left-3 top-3 h-4 w-4 text-white/60" />
           <Input placeholder="Buscar quadras, bairros..." className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" />
         </div>
-        <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 hover:bg-white/10 text-white">
+        <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 hover:bg-white/10 text-black">
           <Filter className="w-4 h-4" />
         </Button>
       </div>
@@ -413,5 +412,4 @@ const MainApp = () => {
       </div>
     </div>;
 };
-
 export default MainApp;
