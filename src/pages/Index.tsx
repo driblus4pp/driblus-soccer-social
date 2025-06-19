@@ -1,21 +1,23 @@
 
 import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin, Users, DollarSign } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import OnboardingScreen from "@/components/OnboardingScreen";
-import AuthScreen from "@/components/AuthScreen";
+import AdvancedAuthScreen from "@/components/AdvancedAuthScreen";
 import MainApp from "@/components/MainApp";
+import OwnerDashboard from "@/components/OwnerDashboard";
 
 const Index = () => {
+  const { user } = useAuth();
   const [currentScreen, setCurrentScreen] = useState<'onboarding' | 'auth' | 'app'>('onboarding');
   const [onboardingStep, setOnboardingStep] = useState(1);
 
-  if (currentScreen === 'auth') {
-    return <AuthScreen onComplete={() => setCurrentScreen('app')} />;
+  // If user is logged in, show appropriate dashboard
+  if (user) {
+    return user.role === 'owner' ? <OwnerDashboard /> : <MainApp />;
   }
 
-  if (currentScreen === 'app') {
-    return <MainApp />;
+  if (currentScreen === 'auth') {
+    return <AdvancedAuthScreen onComplete={() => setCurrentScreen('app')} />;
   }
 
   return (

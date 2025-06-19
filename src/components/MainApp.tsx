@@ -1,28 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Search, Calendar, User, MapPin, Star, Clock, Users, Trophy, Camera, Settings, ChevronRight, UserPlus, Bell, LogOut, Filter } from "lucide-react";
+import { Home, Search, Calendar, User, MapPin, Star, Clock, Users, Trophy, Camera, Settings, ChevronRight, UserPlus, Bell, LogOut, Filter, Navigation, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import CourtDetails from './CourtDetails';
 import FilterModal, { FilterState } from './FilterModal';
+
 const MainApp = () => {
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     city: '',
     neighborhood: '',
     modality: '',
     operatingHours: ''
   });
+
+  // Get user location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.log('Error getting location:', error);
+        }
+      );
+    }
+  }, []);
+
+  // Enhanced court data with more realistic distances based on location
   const quadras = [{
     id: 1,
     name: "No Alvo Society",
     location: "Av. Paulista, 1000, São Paulo",
-    distance: "1.2 km",
+    distance: userLocation ? "1.2 km" : "Calculando...",
     price: "R$ 120/hora",
     rating: 4.8,
     status: "Disponível",
@@ -49,12 +72,14 @@ const MainApp = () => {
       rating: 4,
       comment: "Boa estrutura, mas poderia ter um bar no local.",
       date: "10/12/2024"
-    }]
+    }],
+    isPromoted: true,
+    neighborhood: "Bela Vista"
   }, {
     id: 2,
     name: "Gol de Placa",
     location: "Rua Augusta, 500, São Paulo",
-    distance: "0.8 km",
+    distance: userLocation ? "0.8 km" : "Calculando...",
     price: "R$ 150/hora",
     rating: 4.6,
     status: "Indisponível",
@@ -76,8 +101,40 @@ const MainApp = () => {
       rating: 4,
       comment: "Lugar bacana para jogar com os amigos. A churrasqueira é um diferencial!",
       date: "12/12/2024"
-    }]
+    }],
+    isPromoted: false,
+    neighborhood: "Centro"
+  }, {
+    id: 3,
+    name: "Arena Pro Sports",
+    location: "Rua dos Esportes, 200, São Paulo",
+    distance: userLocation ? "2.1 km" : "Calculando...",
+    price: "R$ 200/hora",
+    rating: 4.9,
+    status: "Disponível",
+    image: "https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop",
+    amenities: ["Estacionamento", "Vestiário", "Bar", "Loja"],
+    extraInfo: "+3",
+    description: "Complexo esportivo premium com quadras de alta qualidade e excelente infraestrutura para eventos corporativos.",
+    modalities: ["Futebol Society", "Futsal", "Vôlei", "Basquete"],
+    operatingHours: "05:00 - 24:00",
+    facilities: {
+      parking: true,
+      dressing_room: true,
+      showers: true,
+      bar: true,
+      lighting: true
+    },
+    reviews: [{
+      user: "Marina Costa",
+      rating: 5,
+      comment: "Instalações impecáveis! Vale cada centavo.",
+      date: "18/12/2024"
+    }],
+    isPromoted: true,
+    neighborhood: "Vila Madalena"
   }];
+
   const userStats = {
     partidas: 42,
     gols: 18,
@@ -89,16 +146,22 @@ const MainApp = () => {
     proximosJogos: 0,
     amigos: 0
   };
+
   const handleCourtClick = (courtId: number) => {
     setSelectedCourt(courtId);
   };
+
   const handleBackFromDetails = () => {
     setSelectedCourt(null);
   };
+
   const handleApplyFilters = (newFilters: FilterState) => {
     setFilters(newFilters);
-    // Here you would normally filter the courts based on the filters
     console.log('Applying filters:', newFilters);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   // If a court is selected, show its details
@@ -112,14 +175,36 @@ const MainApp = () => {
         </div>;
     }
   }
+
   const renderHomeContent = () => <div className="space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] rounded-2xl p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-          Olá, João! 
-          <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-6 h-6 object-contain" />
-        </h2>
-        <p className="text-white/90">Pronto para sua próxima partida?</p>
+      <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] rounded-2xl p-6 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
+        <div className="relative z-10">
+          <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+            Olá, {user?.name?.split(' ')[0] || 'Jogador'}! 
+            <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-6 h-6 object-contain" />
+          </h2>
+          <p className="text-white/90">Pronto para sua próxima partida?</p>
+          {userLocation && (
+            <div className="flex items-center gap-2 mt-2">
+              <Navigation className="w-4 h-4" />
+              <span className="text-white/80 text-sm">Localização ativada</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 gap-4">
+        <Button className="h-16 bg-white/10 border-white/20 text-white hover:bg-white/20 flex-col gap-2">
+          <Search className="w-5 h-5" />
+          <span className="text-sm">Buscar Próximas</span>
+        </Button>
+        <Button className="h-16 bg-white/10 border-white/20 text-white hover:bg-white/20 flex-col gap-2">
+          <Zap className="w-5 h-5" />
+          <span className="text-sm">Reserva Rápida</span>
+        </Button>
       </div>
 
       {/* Quick Stats */}
@@ -147,13 +232,75 @@ const MainApp = () => {
         </Card>
       </div>
 
+      {/* Promoted Courts */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <Zap className="w-5 h-5 text-[#F35410]" />
+          <h3 className="text-xl font-semibold text-white">Quadras em Destaque</h3>
+        </div>
+        <div className="space-y-4">
+          {quadras.filter(q => q.isPromoted).map(quadra => (
+            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden relative" onClick={() => handleCourtClick(quadra.id)}>
+              <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
+                DESTAQUE
+              </div>
+              <div className="relative">
+                <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
+                <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span className="text-sm font-semibold">{quadra.rating}</span>
+                </div>
+              </div>
+              
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-semibold text-white text-lg">{quadra.name}</h4>
+                </div>
+                
+                <div className="flex items-center gap-2 mb-3">
+                  <MapPin className="w-4 h-4 text-white/60" />
+                  <span className="text-sm text-white/70">{quadra.location}</span>
+                  <span className="text-sm text-white/60">| {quadra.distance}</span>
+                </div>
+
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-[#F35410] font-bold text-lg">{quadra.price}</span>
+                  <Badge variant="secondary" className={`${quadra.status === 'Disponível' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+                    {quadra.status}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {quadra.amenities.slice(0, 3).map(amenity => (
+                    <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
+                      {amenity}
+                    </Badge>
+                  ))}
+                  {quadra.amenities.length > 3 && (
+                    <Badge variant="secondary" className="bg-white/20 text-white text-xs">
+                      +{quadra.amenities.length - 3}
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
       {/* Recommended Courts */}
       <div>
         <h3 className="text-xl font-semibold text-white mb-4">Recomendados para você</h3>
         <div className="space-y-4">
-          {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden" onClick={() => handleCourtClick(quadra.id)}>
+          {quadras.filter(q => !q.isPromoted).map(quadra => (
+            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden" onClick={() => handleCourtClick(quadra.id)}>
               <div className="relative">
                 <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
+                {quadra.isPromoted && (
+                  <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
+                    DESTAQUE
+                  </div>
+                )}
                 <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
                   <Star className="w-4 h-4 fill-current" />
                   <span className="text-sm font-semibold">{quadra.rating}</span>
@@ -187,10 +334,12 @@ const MainApp = () => {
                   </Badge>
                 </div>
               </CardContent>
-            </Card>)}
+            </Card>
+          ))}
         </div>
       </div>
     </div>;
+
   const renderExploreContent = () => <div className="space-y-6">
       <div className="flex gap-3">
         <div className="relative flex-1">
@@ -200,13 +349,37 @@ const MainApp = () => {
         <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 hover:bg-white/10 text-slate-50">
           <Filter className="w-4 h-4" />
         </Button>
+        {userLocation && (
+          <Button variant="outline" size="icon" className="border-white/20 hover:bg-white/10 text-slate-50">
+            <Navigation className="w-4 h-4" />
+          </Button>
+        )}
       </div>
+
+      {/* Location Status */}
+      {userLocation && (
+        <div className="bg-green-500/20 border-green-500/30 rounded-lg p-3">
+          <div className="flex items-center gap-2 text-green-400">
+            <Navigation className="w-4 h-4" />
+            <span className="text-sm">Mostrando quadras próximas à sua localização</span>
+          </div>
+        </div>
+      )}
       
       <div className="grid grid-cols-1 gap-4">
-        {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
+        {quadras.map(quadra => (
+          <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
             <div className="relative">
               <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
-              
+              {quadra.isPromoted && (
+                <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
+                  DESTAQUE
+                </div>
+              )}
+              <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
+                <Star className="w-4 h-4 fill-current" />
+                <span className="text-sm font-semibold">{quadra.rating}</span>
+              </div>
             </div>
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-2">
@@ -216,24 +389,34 @@ const MainApp = () => {
               <div className="flex items-center gap-2 mb-3">
                 <MapPin className="w-4 h-4 text-white/60" />
                 <span className="text-sm text-white/70">{quadra.location}</span>
+                <span className="text-sm text-white/60">| {quadra.distance}</span>
+              </div>
+              <div className="flex items-center gap-2 mb-3">
+                {quadra.modalities.slice(0, 2).map(modality => (
+                  <Badge key={modality} variant="secondary" className="bg-white/20 text-white text-xs">
+                    {modality}
+                  </Badge>
+                ))}
               </div>
               <Button className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white" onClick={() => handleCourtClick(quadra.id)}>
                 Ver Detalhes
               </Button>
             </CardContent>
-          </Card>)}
+          </Card>
+        ))}
       </div>
 
       <FilterModal isOpen={showFilters} onClose={() => setShowFilters(false)} onApplyFilters={handleApplyFilters} filters={filters} />
     </div>;
+
   const renderProfileContent = () => <div className="space-y-6">
       {/* Profile Header Card */}
       <Card className="bg-gradient-to-br from-[#F35410] to-[#BA2D0B] border-none text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10">
           <div className="grid grid-cols-8 gap-4 p-4">
-            {Array.from({
-            length: 32
-          }).map((_, i) => <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>)}
+            {Array.from({ length: 32 }).map((_, i) => (
+              <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>
+            ))}
           </div>
         </div>
         <CardContent className="p-6 relative z-10">
@@ -241,13 +424,13 @@ const MainApp = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Avatar className="w-16 h-16 border-3 border-white/30">
-                  <AvatarImage src="https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face" />
-                  <AvatarFallback>JA</AvatarFallback>
+                  <AvatarImage src={user?.avatar || "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face"} />
+                  <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
-                
               </div>
               <div>
-                <h3 className="text-xl font-bold">Janderson Almeida</h3>
+                <h3 className="text-xl font-bold">{user?.name || 'Usuário'}</h3>
+                <p className="text-white/90 text-sm">{user?.email}</p>
                 <div className="flex items-center gap-1 text-white/90">
                   <MapPin className="w-4 h-4" />
                   <span className="text-sm">Fortaleza</span>
@@ -354,14 +537,16 @@ const MainApp = () => {
       {/* Logout Button */}
       <Card className="bg-red-600/20 border-red-500/30">
         <CardContent className="p-4">
-          <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold">
+          <Button onClick={handleLogout} className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold">
             <LogOut className="w-4 h-4 mr-2" />
             Sair
           </Button>
         </CardContent>
       </Card>
     </div>;
-  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/10 p-4 bg-[#0a2c49]">
         <div className="flex items-center justify-between">
@@ -369,7 +554,15 @@ const MainApp = () => {
             <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-8 h-8 object-contain" />
             <img src="/lovable-uploads/6a0f382f-4f6a-4afd-a007-454b98a5807a.png" alt="Driblus Logo" className="h-8 object-contain" />
           </div>
-          
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <Bell className="w-5 h-5" />
+            </Button>
+            <Avatar className="w-8 h-8">
+              <AvatarImage src={user?.avatar} />
+              <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+            </Avatar>
+          </div>
         </div>
       </div>
 
@@ -377,39 +570,42 @@ const MainApp = () => {
       <div className="p-4 pb-24 bg-[#0a2c49]">
         {activeTab === 'home' && renderHomeContent()}
         {activeTab === 'explore' && renderExploreContent()}
-        {activeTab === 'calendar' && <div className="text-center text-white py-12">
+        {activeTab === 'calendar' && (
+          <div className="text-center text-white py-12">
             <Calendar className="w-16 h-16 mx-auto mb-4 text-white/60" />
             <h3 className="text-xl font-semibold mb-2">Sua Agenda</h3>
             <p className="text-white/70">Gerencie suas partidas agendadas</p>
-          </div>}
+          </div>
+        )}
         {activeTab === 'profile' && renderProfileContent()}
       </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#062B4B]/95 backdrop-blur-lg border-t border-white/10 p-4">
         <div className="flex justify-around">
-          {[{
-          id: 'home',
-          icon: Home,
-          label: 'Início'
-        }, {
-          id: 'explore',
-          icon: Search,
-          label: 'Explorar'
-        }, {
-          id: 'calendar',
-          icon: Calendar,
-          label: 'Agenda'
-        }, {
-          id: 'profile',
-          icon: User,
-          label: 'Perfil'
-        }].map(tab => <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${activeTab === tab.id ? 'text-[#F35410] bg-[#F35410]/20' : 'text-white/60 hover:text-white'}`}>
+          {[
+            { id: 'home', icon: Home, label: 'Início' },
+            { id: 'explore', icon: Search, label: 'Explorar' },
+            { id: 'calendar', icon: Calendar, label: 'Agenda' },
+            { id: 'profile', icon: User, label: 'Perfil' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+                activeTab === tab.id 
+                  ? 'text-[#F35410] bg-[#F35410]/20' 
+                  : 'text-white/60 hover:text-white'
+              }`}
+            >
               <tab.icon className="w-5 h-5" />
               <span className="text-xs font-medium">{tab.label}</span>
-            </button>)}
+            </button>
+          ))}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default MainApp;

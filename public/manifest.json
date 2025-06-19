@@ -1,0 +1,40 @@
+
+{
+  "name": "Driblus - Agendamento Esportivo",
+  "short_name": "Driblus",
+  "description": "Plataforma de agendamento de quadras esportivas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#062B4B",
+  "theme_color": "#F35410",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Buscar Quadras",
+      "short_name": "Buscar",
+      "description": "Encontre quadras disponíveis",
+      "url": "/?action=search",
+      "icons": [
+        {
+          "src": "/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
