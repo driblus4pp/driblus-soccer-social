@@ -189,6 +189,7 @@ const BookingDetails = ({ court, bookingData, onNext, onUpdateData }: BookingDet
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-[#F35410]">{court.price}</p>
+              <p className="text-white/70 text-sm">Pagamento na quadra</p>
             </div>
           </div>
         </CardContent>
@@ -199,7 +200,7 @@ const BookingDetails = ({ court, bookingData, onNext, onUpdateData }: BookingDet
         disabled={!formData.selectedDate || !formData.selectedTime}
         className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white font-semibold py-3 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Continuar para Pagamento
+        Confirmar Agendamento
       </Button>
     </div>
   );

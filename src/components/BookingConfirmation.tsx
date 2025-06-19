@@ -1,21 +1,25 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Calendar, Users, MapPin, Clock, CreditCard, Info } from 'lucide-react';
+import { CheckCircle, Calendar, MapPin, Clock, Info } from 'lucide-react';
+
 interface BookingConfirmationProps {
   court: any;
   bookingData: any;
   onBack: () => void;
 }
+
 const BookingConfirmation = ({
   court,
   bookingData,
   onBack
 }: BookingConfirmationProps) => {
   const courtPrice = parseInt(court.price.replace('R$ ', '').replace('/hora', ''));
-  const totalPrice = courtPrice + bookingData.serviceFee;
   const reservationCode = `RES${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
-  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] p-4">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] p-4">
       <div className="max-w-md mx-auto space-y-6">
         {/* Success Header */}
         <div className="text-center py-8">
@@ -52,7 +56,7 @@ const BookingConfirmation = ({
             
             <div className="flex justify-between">
               <span className="text-white/90">Valor</span>
-              <span className="text-white font-semibold">R$ {totalPrice},00</span>
+              <span className="text-white font-semibold">R$ {courtPrice},00</span>
             </div>
           </CardContent>
         </Card>
@@ -75,10 +79,23 @@ const BookingConfirmation = ({
               <Clock className="w-4 h-4" />
               <span>20 de dezembro • 19:00 - 20:00</span>
             </div>
-            
-            <div className="flex items-center gap-2 text-white/90">
-              <CreditCard className="w-4 h-4" />
-              <span>Pagamento na quadra</span>
+          </CardContent>
+        </Card>
+
+        {/* Payment Information */}
+        <Card className="bg-blue-600/20 border-blue-500/30">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <h4 className="text-blue-200 font-semibold mb-2">Pagamento no Local</h4>
+                <p className="text-blue-200/90 text-sm mb-2">
+                  Você pagará diretamente na quadra no dia do seu agendamento.
+                </p>
+                <p className="text-blue-200/90 text-sm">
+                  <strong>Valor:</strong> R$ {courtPrice},00 - Dinheiro, PIX ou cartão
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -92,9 +109,8 @@ const BookingConfirmation = ({
                 <h4 className="text-yellow-200 font-semibold">Informações Importantes</h4>
                 <ul className="text-yellow-200/90 text-sm space-y-1">
                   <li>• Chegue 15 minutos antes do horário</li>
-                  
+                  <li>• Leve documento de identificação</li>
                   <li>• Confirmação enviada por email</li>
-                  
                 </ul>
               </div>
             </div>
@@ -112,6 +128,8 @@ const BookingConfirmation = ({
           </Button>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default BookingConfirmation;

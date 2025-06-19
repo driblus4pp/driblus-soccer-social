@@ -1,9 +1,9 @@
+
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import BookingDetails from './BookingDetails';
 import BookingSummary from './BookingSummary';
-import PaymentMethod from './PaymentMethod';
 import BookingConfirmation from './BookingConfirmation';
 
 interface Court {
@@ -24,7 +24,6 @@ interface BookingData {
   date: string;
   time: string;
   duration: number;
-  serviceFee: number;
   selectedDate: undefined;
   selectedTime: undefined;
   formattedDateTime: undefined;
@@ -44,7 +43,6 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
     date: '2024-12-20',
     time: '19:00',
     duration: 1,
-    serviceFee: 15,
     selectedDate: undefined,
     selectedTime: undefined,
     formattedDateTime: undefined
@@ -63,7 +61,7 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
   };
 
   const renderHeader = () => {
-    if (currentStep === 4) return null; // No header for confirmation screen
+    if (currentStep === 3) return null; // No header for confirmation screen
     
     return (
       <div className="flex items-center gap-4 mb-6">
@@ -77,7 +75,7 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            {[1, 2, 3].map((step) => (
+            {[1, 2].map((step) => (
               <div key={step} className="flex items-center">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
@@ -88,7 +86,7 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
                 >
                   {step}
                 </div>
-                {step < 3 && (
+                {step < 2 && (
                   <div
                     className={`w-8 h-1 mx-2 ${
                       step < currentStep ? 'bg-[#F35410]' : 'bg-white/20'
@@ -124,14 +122,6 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
           />
         );
       case 3:
-        return (
-          <PaymentMethod
-            court={court}
-            bookingData={bookingData}
-            onNext={handleNext}
-          />
-        );
-      case 4:
         return (
           <BookingConfirmation
             court={court}

@@ -12,7 +12,6 @@ interface BookingSummaryProps {
 
 const BookingSummary = ({ court, bookingData, onNext }: BookingSummaryProps) => {
   const courtPrice = parseInt(court.price.replace('R$ ', '').replace('/hora', ''));
-  const totalPrice = courtPrice + bookingData.serviceFee;
 
   return (
     <div className="space-y-6">
@@ -91,23 +90,16 @@ const BookingSummary = ({ court, bookingData, onNext }: BookingSummaryProps) => 
       {/* Price Breakdown */}
       <Card className="bg-white/10 border-white/20">
         <CardHeader>
-          <CardTitle className="text-white">Resumo do Pagamento</CardTitle>
+          <CardTitle className="text-white">Valor Total</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex justify-between text-white/90">
+          <div className="flex justify-between text-white font-bold text-xl">
             <span>Valor da quadra</span>
             <span>R$ {courtPrice},00</span>
           </div>
-          <div className="flex justify-between text-white/90">
-            <span>Taxa de serviço</span>
-            <span>R$ {bookingData.serviceFee},00</span>
-          </div>
-          <div className="border-t border-white/20 pt-3">
-            <div className="flex justify-between text-white font-bold text-lg">
-              <span>Total</span>
-              <span>R$ {totalPrice},00</span>
-            </div>
-          </div>
+          <p className="text-white/70 text-sm">
+            Pagamento realizado diretamente na quadra
+          </p>
         </CardContent>
       </Card>
 
@@ -128,7 +120,7 @@ const BookingSummary = ({ court, bookingData, onNext }: BookingSummaryProps) => 
         onClick={onNext}
         className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white font-semibold py-3"
       >
-        Ir para Pagamento
+        Confirmar Agendamento
       </Button>
     </div>
   );
