@@ -1,22 +1,21 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Calendar, Users, MapPin, Clock, CreditCard, Info } from 'lucide-react';
-
 interface BookingConfirmationProps {
   court: any;
   bookingData: any;
   onBack: () => void;
 }
-
-const BookingConfirmation = ({ court, bookingData, onBack }: BookingConfirmationProps) => {
+const BookingConfirmation = ({
+  court,
+  bookingData,
+  onBack
+}: BookingConfirmationProps) => {
   const courtPrice = parseInt(court.price.replace('R$ ', '').replace('/hora', ''));
   const totalPrice = courtPrice + bookingData.serviceFee;
   const reservationCode = `RES${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] p-4">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] p-4">
       <div className="max-w-md mx-auto space-y-6">
         {/* Success Header */}
         <div className="text-center py-8">
@@ -62,11 +61,7 @@ const BookingConfirmation = ({ court, bookingData, onBack }: BookingConfirmation
         <Card className="bg-white/10 border-white/20">
           <CardContent className="p-4">
             <div className="flex gap-4 mb-4">
-              <img 
-                src={court.image} 
-                alt={court.name} 
-                className="w-16 h-16 rounded-lg object-cover"
-              />
+              <img src={court.image} alt={court.name} className="w-16 h-16 rounded-lg object-cover" />
               <div className="flex-1">
                 <h4 className="font-semibold text-white">{court.name}</h4>
                 <div className="flex items-center gap-1 text-white/70 text-sm">
@@ -97,9 +92,9 @@ const BookingConfirmation = ({ court, bookingData, onBack }: BookingConfirmation
                 <h4 className="text-yellow-200 font-semibold">Informações Importantes</h4>
                 <ul className="text-yellow-200/90 text-sm space-y-1">
                   <li>• Chegue 15 minutos antes do horário</li>
-                  <li>• Código da reserva: {reservationCode}</li>
+                  
                   <li>• Confirmação enviada por email</li>
-                  <li>• Leve documento com foto</li>
+                  
                 </ul>
               </div>
             </div>
@@ -108,24 +103,15 @@ const BookingConfirmation = ({ court, bookingData, onBack }: BookingConfirmation
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <Button
-            onClick={onBack}
-            className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white font-semibold py-3"
-          >
+          <Button onClick={onBack} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white font-semibold py-3">
             Ver Meus Agendamentos
           </Button>
           
-          <Button
-            onClick={onBack}
-            variant="outline"
-            className="w-full border-white/20 text-white hover:bg-white/10"
-          >
+          <Button onClick={onBack} variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">
             Buscar Mais Quadras
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BookingConfirmation;
