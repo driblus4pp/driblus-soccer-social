@@ -1,9 +1,11 @@
 
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, MapPin, Clock, Star, Car, Users, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
+import BookingFlow from './BookingFlow';
 
 interface Court {
   id: number;
@@ -40,6 +42,8 @@ interface CourtDetailsProps {
 }
 
 const CourtDetails = ({ court, onBack }: CourtDetailsProps) => {
+  const [showBookingFlow, setShowBookingFlow] = useState(false);
+
   const facilityIcons = {
     parking: Car,
     dressing_room: Shirt,
@@ -55,6 +59,10 @@ const CourtDetails = ({ court, onBack }: CourtDetailsProps) => {
     bar: "Bar",
     lighting: "Iluminação"
   };
+
+  if (showBookingFlow) {
+    return <BookingFlow court={court} onBack={() => setShowBookingFlow(false)} />;
+  }
 
   return (
     <div className="space-y-6">
@@ -195,7 +203,10 @@ const CourtDetails = ({ court, onBack }: CourtDetailsProps) => {
               <p className="text-3xl font-bold text-white">{court.price}</p>
             </div>
           </div>
-          <Button className="w-full bg-white text-[#F35410] hover:bg-white/90 font-semibold text-lg py-3">
+          <Button 
+            onClick={() => setShowBookingFlow(true)}
+            className="w-full bg-white text-[#F35410] hover:bg-white/90 font-semibold text-lg py-3"
+          >
             Agendar Quadra
           </Button>
         </CardContent>
