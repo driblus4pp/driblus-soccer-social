@@ -437,13 +437,11 @@ const MainApp = () => {
           </div>
 
           <div className="text-center text-white/70 text-sm mb-4">
-            <p>Você ainda não possui times cadastrados.</p>
-            <p>Clique em "Criar Novo Time" para começar!</p>
+            
+            
           </div>
 
-          <div className="text-center text-white/60 text-xs">
-            0/3 times cadastrados.
-          </div>
+          
         </CardContent>
       </Card>
 
