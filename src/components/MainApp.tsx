@@ -519,7 +519,7 @@ const MainApp = () => {
       <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/10 p-4 bg-[#0a2c49]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-8 h-8 object-contain" />
+            
             <img src="/lovable-uploads/6a0f382f-4f6a-4afd-a007-454b98a5807a.png" alt="Driblus Logo" className="h-8 object-contain" />
           </div>
           <div className="flex items-center gap-3">
