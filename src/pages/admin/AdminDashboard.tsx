@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -7,27 +6,28 @@ import { Users, Building, Calendar, TrendingUp, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBookings } from "@/hooks/useBookings";
 import { useCourts } from "@/hooks/useCourts";
-
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const { bookings } = useBookings();
-  const { courts, getPendingCourts } = useCourts();
-
+  const {
+    user,
+    logout
+  } = useAuth();
+  const {
+    bookings
+  } = useBookings();
+  const {
+    courts,
+    getPendingCourts
+  } = useCourts();
   const pendingCourts = getPendingCourts();
   const activeCourts = courts.filter(court => court.status === 'active');
   const totalBookings = bookings.length;
-  const todayBookings = bookings.filter(booking => 
-    booking.date === new Date().toISOString().split('T')[0]
-  );
-
+  const todayBookings = bookings.filter(booking => booking.date === new Date().toISOString().split('T')[0]);
   const handleLogout = () => {
     logout();
     navigate('/');
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
         <div className="flex items-center justify-between">
@@ -37,12 +37,7 @@ const AdminDashboard = () => {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-white text-sm">{user?.name}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="text-white hover:bg-white/20"
-            >
+            <Button variant="ghost" size="icon" onClick={handleLogout} className="text-white hover:bg-white/20">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -97,28 +92,17 @@ const AdminDashboard = () => {
             <CardTitle className="text-white">Ações Rápidas</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button
-              onClick={() => navigate('/admin/quadras')}
-              className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white justify-start"
-            >
+            <Button onClick={() => navigate('/admin/quadras')} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white justify-start">
               <Building className="w-4 h-4 mr-2" />
               Gerenciar Quadras
             </Button>
             
-            <Button
-              onClick={() => navigate('/admin/gestores')}
-              variant="outline"
-              className="w-full border-white/20 text-white hover:bg-white/10 justify-start"
-            >
+            <Button onClick={() => navigate('/admin/gestores')} variant="outline" className="w-full border-white/20 hover:bg-white/10 justify-start text-gray-950">
               <Users className="w-4 h-4 mr-2" />
               Aprovar Gestores
             </Button>
             
-            <Button
-              onClick={() => navigate('/admin/agendamentos')}
-              variant="outline"
-              className="w-full border-white/20 text-white hover:bg-white/10 justify-start"
-            >
+            <Button onClick={() => navigate('/admin/agendamentos')} variant="outline" className="w-full border-white/20 hover:bg-white/10 justify-start text-gray-950">
               <Calendar className="w-4 h-4 mr-2" />
               Ver Agendamentos
             </Button>
@@ -126,8 +110,7 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Pending Approvals */}
-        {pendingCourts.length > 0 && (
-          <Card className="bg-white/10 border-white/20">
+        {pendingCourts.length > 0 && <Card className="bg-white/10 border-white/20">
             <CardHeader>
               <CardTitle className="text-white">Pendente de Aprovação</CardTitle>
             </CardHeader>
@@ -135,18 +118,12 @@ const AdminDashboard = () => {
               <p className="text-white/90 mb-3">
                 {pendingCourts.length} quadra(s) aguardando aprovação
               </p>
-              <Button
-                onClick={() => navigate('/admin/quadras')}
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
-              >
+              <Button onClick={() => navigate('/admin/quadras')} className="w-full bg-yellow-500 hover:bg-yellow-600 text-white">
                 Revisar Agora
               </Button>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AdminDashboard;
