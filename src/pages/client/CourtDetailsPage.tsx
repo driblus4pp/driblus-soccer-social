@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, MapPin, Star, Clock, Calendar, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, MapPin, Star, Clock, Calendar, Users, Car, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
 
 const mockCourtDetails = {
   '1': {
@@ -14,15 +16,36 @@ const mockCourtDetails = {
     price: 'R$ 120',
     rating: 4.8,
     totalReviews: 47,
-    description: 'Quadra society com grama sintética de alta qualidade, vestiários completos e estacionamento.',
-    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
+    description: 'Quadra society com grama sintética de alta qualidade, vestiários completos e estacionamento gratuito para todos os clientes.',
+    modalities: ['Futebol Society', 'Futsal', 'Futebol de Campo'],
     workingHours: {
       weekdays: '06:00 - 22:00',
       weekend: '07:00 - 20:00'
     },
+    amenities: [
+      { name: 'Estacionamento', icon: Car, available: true },
+      { name: 'Vestiário', icon: Shirt, available: true },
+      { name: 'Chuveiro', icon: Droplets, available: true },
+      { name: 'Bar', icon: Coffee, available: false },
+      { name: 'Iluminação', icon: Lightbulb, available: true },
+    ],
     images: [
       'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop',
       'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop'
+    ],
+    reviews: [
+      {
+        user: 'João Silva',
+        rating: 5,
+        comment: 'Excelente quadra! Muito bem cuidada e com ótima localização.',
+        date: '15 de junho, 2024'
+      },
+      {
+        user: 'Maria Santos',
+        rating: 4,
+        comment: 'Boa infraestrutura, mas poderia ter mais horários disponíveis.',
+        date: '10 de junho, 2024'
+      }
     ]
   }
 };
@@ -35,11 +58,13 @@ const CourtDetailsPage = () => {
   const court = mockCourtDetails[id as keyof typeof mockCourtDetails];
 
   if (!court) {
-    return <div>Quadra não encontrada</div>;
+    return <div className="min-h-screen bg-[#062B4B] flex items-center justify-center">
+      <div className="text-white">Quadra não encontrada</div>
+    </div>;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+    <div className="min-h-screen bg-[#062B4B]">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
         <div className="flex items-center gap-4">
@@ -57,102 +82,180 @@ const CourtDetailsPage = () => {
 
       <div className="p-4 space-y-6">
         {/* Image Gallery */}
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-0">
-            <div className="relative">
-              <img 
-                src={court.images[currentImageIndex]} 
-                alt={court.name} 
-                className="w-full h-48 object-cover rounded-t-lg"
-              />
-              {court.images.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                  {court.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 rounded-full ${
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="relative">
+          <img 
+            src={court.images[currentImageIndex]} 
+            alt={court.name} 
+            className="w-full h-64 object-cover rounded-2xl"
+          />
+          
+          {/* Rating badge sobreposto */}
+          <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-2 rounded-full flex items-center gap-1">
+            <Star className="w-4 h-4 fill-current" />
+            <span className="text-sm font-semibold">{court.rating}</span>
+          </div>
 
-        {/* Court Info */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center justify-between">
-              <span>{court.name}</span>
-              <span className="text-2xl font-bold text-[#F35410]">{court.price}/h</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-2 text-white/90">
+          {/* Navigation dots */}
+          {court.images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+              {court.images.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`w-2 h-2 rounded-full ${
+                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Court Name and Price */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">{court.name}</h2>
+            <div className="flex items-center gap-2 text-white/70 mt-1">
               <MapPin className="w-4 h-4" />
               <span className="text-sm">{court.location}</span>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-white">{court.rating}</span>
-                <span className="text-white/60 text-sm">({court.totalReviews} avaliações)</span>
-              </div>
-              <div className="flex items-center gap-1 text-white/60">
-                <Clock className="w-4 h-4" />
-                <span className="text-sm">{court.distance}</span>
-              </div>
-            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold text-[#F35410]">{court.price}</div>
+            <div className="text-white/60 text-sm">por hora</div>
+          </div>
+        </div>
 
-            <p className="text-white/90 text-sm">{court.description}</p>
-          </CardContent>
-        </Card>
+        {/* Tabs */}
+        <Tabs defaultValue="details" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-white/10 border-white/20">
+            <TabsTrigger 
+              value="details" 
+              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
+            >
+              Detalhes
+            </TabsTrigger>
+            <TabsTrigger 
+              value="reviews" 
+              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
+            >
+              Avaliações
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="details" className="space-y-6 mt-6">
+            {/* Description */}
+            <Card className="bg-white/10 border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Sobre a Quadra</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white/90">{court.description}</p>
+              </CardContent>
+            </Card>
 
-        {/* Working Hours */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              Horários de Funcionamento
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between text-white">
-              <span>Segunda a Sexta:</span>
-              <span>{court.workingHours.weekdays}</span>
-            </div>
-            <div className="flex justify-between text-white">
-              <span>Sábado e Domingo:</span>
-              <span>{court.workingHours.weekend}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Amenities */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white">Comodidades</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2">
-              {court.amenities.map((amenity, index) => (
-                <div key={index} className="flex items-center gap-2 text-white/90">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-sm">{amenity}</span>
+            {/* Working Hours */}
+            <Card className="bg-white/10 border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  Horários de Funcionamento
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between text-white">
+                  <span>Segunda a Sexta:</span>
+                  <span>{court.workingHours.weekdays}</span>
                 </div>
-              ))}
+                <div className="flex justify-between text-white">
+                  <span>Sábado e Domingo:</span>
+                  <span>{court.workingHours.weekend}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Modalities */}
+            <Card className="bg-white/10 border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Modalidades Disponíveis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {court.modalities.map((modality, index) => (
+                    <Badge 
+                      key={index} 
+                      className="bg-[#F35410] text-white hover:bg-[#BA2D0B]"
+                    >
+                      {modality}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Amenities */}
+            <Card className="bg-white/10 border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Comodidades</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  {court.amenities.map((amenity, index) => {
+                    const IconComponent = amenity.icon;
+                    return (
+                      <div 
+                        key={index} 
+                        className={`flex items-center gap-3 p-3 rounded-lg ${
+                          amenity.available 
+                            ? 'bg-green-600/20 text-green-400' 
+                            : 'bg-red-600/20 text-red-400'
+                        }`}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                        <span className="text-white">{amenity.name}</span>
+                        {amenity.available && (
+                          <span className="ml-auto text-green-400 text-sm">✓</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="reviews" className="space-y-4 mt-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-2">
+                <Star className="w-6 h-6 fill-[#F35410] text-[#F35410]" />
+                <span className="text-2xl font-bold text-white">{court.rating}</span>
+              </div>
+              <span className="text-white/60">({court.totalReviews} avaliações)</span>
             </div>
-          </CardContent>
-        </Card>
+            
+            {court.reviews.map((review, index) => (
+              <Card key={index} className="bg-white/10 border-white/20">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-white">{review.user}</span>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-[#F35410] fill-current" />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-white/80 mb-2">{review.comment}</p>
+                  <span className="text-white/60 text-sm">{review.date}</span>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+        </Tabs>
 
         {/* Book Button */}
         <Button
           onClick={() => navigate(`/cliente/quadra/${court.id}/agendar`)}
-          className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold"
+          className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl"
         >
           <Calendar className="w-5 h-5 mr-2" />
           Agendar Horário
