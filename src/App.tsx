@@ -50,6 +50,7 @@ const App = () => (
             <Route path="/cliente/quadra/:id" element={<CourtDetailsPage />} />
             <Route path="/cliente/quadra/:id/agendar" element={<BookingPage />} />
             <Route path="/cliente/confirmacao" element={<BookingConfirmationPage />} />
+            <Route path="/cliente/perfil-atleta" element={<AthleteProfile />} />
             
             {/* Manager Routes */}
             <Route path="/gestor/login" element={<ManagerLogin />} />

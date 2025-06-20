@@ -1,38 +1,16 @@
+
 import { useState } from 'react';
-import { useAuth } from "@/contexts/AuthContext";
-import { UserRole } from '@/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { User, Building, Shield, ArrowRight } from "lucide-react";
 import OnboardingScreen from "@/components/OnboardingScreen";
-import AdvancedAuthScreen from "@/components/AdvancedAuthScreen";
-import MainApp from "@/components/MainApp";
-import OwnerDashboard from "@/components/OwnerDashboard";
-import AdminDashboard from "@/components/AdminDashboard";
+
 const Index = () => {
-  const {
-    user
-  } = useAuth();
   const navigate = useNavigate();
-  const [currentScreen, setCurrentScreen] = useState<'home' | 'onboarding' | 'auth'>('home');
+  const [currentScreen, setCurrentScreen] = useState<'home' | 'onboarding'>('home');
   const [onboardingStep, setOnboardingStep] = useState(1);
 
-  // If user is logged in, show appropriate dashboard based on role
-  if (user) {
-    switch (user.role) {
-      case UserRole.ADMIN:
-        return <AdminDashboard />;
-      case UserRole.COURT_MANAGER:
-        return <OwnerDashboard />;
-      case UserRole.USER:
-      default:
-        return <MainApp />;
-    }
-  }
-  if (currentScreen === 'auth') {
-    return <AdvancedAuthScreen onComplete={() => setCurrentScreen('home')} />;
-  }
   if (currentScreen === 'onboarding') {
     return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] text-white overflow-hidden">
         <OnboardingScreen step={onboardingStep} onNext={() => {
@@ -44,6 +22,7 @@ const Index = () => {
       }} onSkip={() => setCurrentScreen('home')} />
       </div>;
   }
+
   return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       <div className="p-4 space-y-8">
         {/* Header */}
@@ -129,4 +108,5 @@ const Index = () => {
       </div>
     </div>;
 };
+
 export default Index;
