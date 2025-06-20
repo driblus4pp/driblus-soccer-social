@@ -1,29 +1,25 @@
-
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Calendar, Clock, User, Phone, Mail } from "lucide-react";
-
 const BookingConfirmationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { booking, formattedDate } = location.state || {};
-
+  const {
+    booking,
+    formattedDate
+  } = location.state || {};
   if (!booking) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
         <div className="text-white text-center">
           <p>Agendamento não encontrado</p>
           <Button onClick={() => navigate('/cliente/dashboard')} className="mt-4">
             Voltar ao Dashboard
           </Button>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       <div className="p-4 space-y-6">
         {/* Success Header */}
         <div className="text-center py-8">
@@ -115,24 +111,15 @@ const BookingConfirmationPage = () => {
 
         {/* Actions */}
         <div className="space-y-3">
-          <Button
-            onClick={() => navigate('/cliente/dashboard')}
-            className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3"
-          >
+          <Button onClick={() => navigate('/cliente/dashboard')} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3">
             Voltar ao Dashboard
           </Button>
           
-          <Button
-            variant="outline"
-            onClick={() => navigate('/cliente/dashboard')}
-            className="w-full border-white/20 text-white hover:bg-white/10"
-          >
+          <Button variant="outline" onClick={() => navigate('/cliente/dashboard')} className="w-full border-white/20 text-slate-950 bg-slate-50">
             Fazer Novo Agendamento
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BookingConfirmationPage;
