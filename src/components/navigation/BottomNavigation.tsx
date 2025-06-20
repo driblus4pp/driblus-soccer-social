@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Calendar, Bell, User, BarChart3, Settings, Building2, Users } from 'lucide-react';
@@ -47,7 +48,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ userType }) => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-[#0A2C49] border-t border-gray-200 px-2 py-2 z-50">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {items.map((item) => {
           const isActive = location.pathname === item.route;
