@@ -98,7 +98,7 @@ const CourtDetailsPage = () => {
         {/* Court Name and Price */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-white">{court.name}</h2>
+            <h2 className="font-bold text-white text-xl mx-[15px]">{court.name}</h2>
             <div className="flex items-center gap-2 text-white/70 mt-1">
               <MapPin className="w-4 h-4" />
               <span className="text-sm">{court.location}</span>
@@ -125,28 +125,28 @@ const CourtDetailsPage = () => {
             {/* Description */}
             <Card className="bg-white/10 border-white/20">
               <CardHeader>
-                <CardTitle className="text-white">Sobre a Quadra</CardTitle>
+                <CardTitle className="text-white text-lg">Sobre a Quadra</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-white/90">{court.description}</p>
+                <p className="text-white/90 text-sm">{court.description}</p>
               </CardContent>
             </Card>
 
             {/* Working Hours */}
             <Card className="bg-white/10 border-white/20">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-white flex items-center gap-2 text-lg">
                   <Clock className="w-5 h-5" />
                   Horários de Funcionamento
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between text-white">
-                  <span>Segunda a Sexta:</span>
+                  <span className="text-sm">Segunda a Sexta:</span>
                   <span>{court.workingHours.weekdays}</span>
                 </div>
                 <div className="flex justify-between text-white">
-                  <span>Sábado e Domingo:</span>
+                  <span className="text-sm">Sábado e Domingo:</span>
                   <span>{court.workingHours.weekend}</span>
                 </div>
               </CardContent>
@@ -167,7 +167,7 @@ const CourtDetailsPage = () => {
             {/* Amenities */}
             <Card className="bg-white/10 border-white/20">
               <CardHeader>
-                <CardTitle className="text-white">Comodidades</CardTitle>
+                <CardTitle className="text-white text-lg">Comodidades</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
