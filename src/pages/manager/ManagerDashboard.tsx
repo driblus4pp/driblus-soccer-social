@@ -83,7 +83,7 @@ const ManagerDashboard = () => {
               Ver Agendamentos
             </Button>
             
-            <Button onClick={() => navigate('/gestor/quadra/configurar')} variant="outline" className="w-full border-white/20 text-white hover:bg-white/10 justify-start">
+            <Button onClick={() => navigate('/gestor/quadra/configurar')} variant="outline" className="w-full border-white/20 hover:bg-white/10 justify-start text-gray-950">
               <Settings className="w-4 h-4 mr-2" />
               Configurar Horários
             </Button>
