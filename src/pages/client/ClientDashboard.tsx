@@ -5,90 +5,58 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MapPin, Star, Clock, Search, User, LogOut, Trophy, Zap, Navigation, Filter } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-
-const mockCourts = [
-  {
-    id: '1',
-    name: 'No Alvo Society',
-    location: 'Aldeota, Fortaleza - CE',
-    distance: '2.5 km',
-    price: 'R$ 120',
-    rating: 4.8,
-    status: 'active',
-    image: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop',
-    isPromoted: true
-  },
-  {
-    id: '2',
-    name: 'Gol de Placa',
-    location: 'Meireles, Fortaleza - CE',
-    distance: '1.8 km',
-    price: 'R$ 150',
-    rating: 4.9,
-    status: 'active',
-    image: 'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop',
-    isPromoted: true
-  },
-  {
-    id: '3',
-    name: 'Arena Pro Sports',
-    location: 'Cocó, Fortaleza - CE',
-    distance: '3.2 km',
-    price: 'R$ 200',
-    rating: 4.7,
-    status: 'active',
-    image: 'https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop',
-    isPromoted: false
-  }
-];
-
+const mockCourts = [{
+  id: '1',
+  name: 'No Alvo Society',
+  location: 'Aldeota, Fortaleza - CE',
+  distance: '2.5 km',
+  price: 'R$ 120',
+  rating: 4.8,
+  status: 'active',
+  image: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop',
+  isPromoted: true
+}, {
+  id: '2',
+  name: 'Gol de Placa',
+  location: 'Meireles, Fortaleza - CE',
+  distance: '1.8 km',
+  price: 'R$ 150',
+  rating: 4.9,
+  status: 'active',
+  image: 'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop',
+  isPromoted: true
+}, {
+  id: '3',
+  name: 'Arena Pro Sports',
+  location: 'Cocó, Fortaleza - CE',
+  distance: '3.2 km',
+  price: 'R$ 200',
+  rating: 4.7,
+  status: 'active',
+  image: 'https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop',
+  isPromoted: false
+}];
 const ClientDashboard = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const {
+    user,
+    logout
+  } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredCourts = mockCourts.filter(court =>
-    court.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    court.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  const filteredCourts = mockCourts.filter(court => court.name.toLowerCase().includes(searchTerm.toLowerCase()) || court.location.toLowerCase().includes(searchTerm.toLowerCase()));
   const handleLogout = () => {
     logout();
     navigate('/');
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
-      <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
+      <div className="backdrop-blur-md border-b border-white/20 p-4 bg-[#0a2c49]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/lovable-uploads/6a0f382f-4f6a-4afd-a007-454b98a5807a.png" alt="Driblus Logo" className="h-8 object-contain" />
-            <h1 className="text-xl font-bold text-white">Driblus</h1>
+            
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/cliente/perfil-atleta')}
-              className="text-white hover:bg-white/20"
-            >
-              <Trophy className="w-4 h-4 mr-2" />
-              Meu Perfil de Atleta
-            </Button>
-            <div className="flex items-center gap-2 text-white">
-              <User className="w-4 h-4" />
-              <span className="text-sm">{user?.name}</span>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="text-white hover:bg-white/20"
-            >
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
+          
         </div>
       </div>
 
@@ -127,12 +95,7 @@ const ClientDashboard = () => {
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                <Input
-                  placeholder="Buscar quadras por nome ou localização..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                />
+                <Input placeholder="Buscar quadras por nome ou localização..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" />
               </div>
               <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 bg-gray-50">
                 <Filter className="w-4 h-4" />
@@ -148,9 +111,7 @@ const ClientDashboard = () => {
             <h3 className="text-xl font-semibold text-white">Quadras em Destaque</h3>
           </div>
           <div className="space-y-4">
-            {filteredCourts.filter(court => court.isPromoted).map((court) => (
-              <Card key={court.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-colors cursor-pointer overflow-hidden relative"
-                    onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
+            {filteredCourts.filter(court => court.isPromoted).map(court => <Card key={court.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-colors cursor-pointer overflow-hidden relative" onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
                 <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                   DESTAQUE
                 </div>
@@ -180,8 +141,7 @@ const ClientDashboard = () => {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
 
@@ -189,16 +149,10 @@ const ClientDashboard = () => {
         <div>
           <h3 className="text-xl font-semibold text-white mb-4">Outras Quadras</h3>
           <div className="space-y-4">
-            {filteredCourts.filter(court => !court.isPromoted).map((court) => (
-              <Card key={court.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
+            {filteredCourts.filter(court => !court.isPromoted).map(court => <Card key={court.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-colors cursor-pointer" onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
                 <CardContent className="p-0">
                   <div className="flex gap-4">
-                    <img 
-                      src={court.image} 
-                      alt={court.name} 
-                      className="w-24 h-24 object-cover rounded-l-lg"
-                    />
+                    <img src={court.image} alt={court.name} className="w-24 h-24 object-cover rounded-l-lg" />
                     <div className="flex-1 p-4">
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-semibold text-white">{court.name}</h4>
@@ -224,13 +178,10 @@ const ClientDashboard = () => {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ClientDashboard;
