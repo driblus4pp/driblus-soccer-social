@@ -154,9 +154,7 @@ const CourtDetailsPage = () => {
 
             {/* Modalities */}
             <Card className="bg-white/10 border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Modalidades Disponíveis</CardTitle>
-              </CardHeader>
+              
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {court.modalities.map((modality, index) => <Badge key={index} className="bg-[#F35410] text-white hover:bg-[#BA2D0B]">
