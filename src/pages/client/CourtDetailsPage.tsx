@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { ArrowLeft, MapPin, Star, Clock, Calendar, Users, Car, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
-
 const mockCourtDetails = {
   '1': {
     id: '1',
@@ -58,7 +56,6 @@ const mockCourtDetails = {
     }]
   }
 };
-
 const CourtDetailsPage = () => {
   const {
     id
@@ -66,13 +63,11 @@ const CourtDetailsPage = () => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const court = mockCourtDetails[id as keyof typeof mockCourtDetails];
-  
   if (!court) {
     return <div className="min-h-screen bg-[#062B4B] flex items-center justify-center">
       <div className="text-white">Quadra não encontrada</div>
     </div>;
   }
-  
   return <div className="min-h-screen bg-[#062B4B]">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
@@ -89,14 +84,9 @@ const CourtDetailsPage = () => {
         <div className="relative">
           <Carousel className="w-full">
             <CarouselContent>
-              {court.images.map((image, index) => (
-                <CarouselItem key={index}>
+              {court.images.map((image, index) => <CarouselItem key={index}>
                   <div className="relative">
-                    <img 
-                      src={image} 
-                      alt={`${court.name} - Imagem ${index + 1}`} 
-                      className="w-full h-64 object-cover rounded-2xl" 
-                    />
+                    <img src={image} alt={`${court.name} - Imagem ${index + 1}`} className="w-full h-64 object-cover rounded-2xl" />
                     
                     {/* Rating badge sobreposto */}
                     <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-2 rounded-full flex items-center gap-1">
@@ -104,17 +94,14 @@ const CourtDetailsPage = () => {
                       <span className="text-sm font-semibold">{court.rating}</span>
                     </div>
                   </div>
-                </CarouselItem>
-              ))}
+                </CarouselItem>)}
             </CarouselContent>
             
             {/* Navigation arrows - only show if more than 1 image */}
-            {court.images.length > 1 && (
-              <>
+            {court.images.length > 1 && <>
                 <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white border-none hover:bg-black/70" />
                 <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white border-none hover:bg-black/70" />
-              </>
-            )}
+              </>}
           </Carousel>
         </div>
 
@@ -178,9 +165,9 @@ const CourtDetailsPage = () => {
             {/* Modalities */}
             <Card className="bg-white/10 border-white/20">
               
-              <CardContent className="flex justify-center">
+              <CardContent className="flex justify-center py-0">
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {court.modalities.map((modality, index) => <Badge key={index} className="bg-[#F35410] text-white hover:bg-[#BA2D0B] my-0">
+                  {court.modalities.map((modality, index) => <Badge key={index} className="bg-[#F35410] text-white hover:bg-[#BA2D0B] py-0 my-[13px] rounded-xl">
                       {modality}
                     </Badge>)}
                 </div>
