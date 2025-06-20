@@ -74,7 +74,7 @@ const ClientDashboard = () => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[#F35410] font-semibold text-lg">Driblus</span>
-            <span className="text-xl">🔥</span>
+            
           </div>
         </div>
 
