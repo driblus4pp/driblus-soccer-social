@@ -153,7 +153,7 @@ const CourtDetailsPage = () => {
             </Card>
 
             {/* Modalities */}
-            <Card className="bg-white/10 border-white/20 text-slate-300">
+            <Card className="bg-white/10 border-white/20">
               
               <CardContent>
                 <div className="flex flex-wrap gap-2">
