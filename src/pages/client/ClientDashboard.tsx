@@ -79,30 +79,12 @@ const ClientDashboard = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4">
-          <Button className="h-16 bg-white/10 border-white/20 text-white hover:bg-white/20 flex-col gap-2">
-            <Search className="w-5 h-5" />
-            <span className="text-sm">Buscar Próximas</span>
-          </Button>
-          <Button className="h-16 bg-white/10 border-white/20 text-white hover:bg-white/20 flex-col gap-2">
-            <Zap className="w-5 h-5" />
-            <span className="text-sm">Reserva Rápida</span>
-          </Button>
+          
+          
         </div>
 
         {/* Search */}
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-4">
-            <div className="flex gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                <Input placeholder="Buscar quadras por nome ou localização..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" />
-              </div>
-              <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 bg-gray-50">
-                <Filter className="w-4 h-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        
 
         {/* Promoted Courts */}
         <div>
