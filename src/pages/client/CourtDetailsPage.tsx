@@ -89,10 +89,7 @@ const CourtDetailsPage = () => {
                     <img src={image} alt={`${court.name} - Imagem ${index + 1}`} className="w-full h-64 object-cover rounded-2xl" />
                     
                     {/* Rating badge sobreposto */}
-                    <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-2 rounded-full flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm font-semibold">{court.rating}</span>
-                    </div>
+                    
                   </div>
                 </CarouselItem>)}
             </CarouselContent>
