@@ -58,6 +58,17 @@ const ClientDashboard = () => {
     user
   } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    
+    if (hour >= 5 && hour < 12) {
+      return 'Bom dia';
+    } else if (hour >= 12 && hour < 18) {
+      return 'Boa tarde';
+    } else {
+      return 'Boa noite';
+    }
+  };
   const filteredCourts = mockCourts.filter(court => court.name.toLowerCase().includes(searchTerm.toLowerCase()) || court.location.toLowerCase().includes(searchTerm.toLowerCase()));
   const recommendedCourts = filteredCourts.filter(court => court.isRecommended);
   const getStatusBadge = (status: string) => {
@@ -69,7 +80,7 @@ const ClientDashboard = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-xl font-medium text-white">
-              Boa noite, {user?.name?.split(' ')[0] || 'Janderson'}! 🔥
+              {getGreeting()}, {user?.name?.split(' ')[0] || 'Janderson'}!
             </h1>
           </div>
           <div className="flex items-center gap-2">
