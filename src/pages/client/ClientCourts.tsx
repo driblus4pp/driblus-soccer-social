@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Search, Filter, ArrowLeft } from "lucide-react";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
+import FilterModal, { FilterState } from "@/components/FilterModal";
 
 const mockCourts = [
   {
@@ -18,7 +19,11 @@ const mockCourts = [
     rating: 4.8,
     status: 'available',
     image: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop',
-    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro']
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro'],
+    city: 'fortaleza',
+    neighborhood: 'aldeota',
+    modality: 'futebol',
+    operatingHours: '24h'
   },
   {
     id: '2',
@@ -29,7 +34,11 @@ const mockCourts = [
     rating: 4.9,
     status: 'available',
     image: 'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop',
-    amenities: ['Vestiário', 'Bar', 'Iluminação']
+    amenities: ['Vestiário', 'Bar', 'Iluminação'],
+    city: 'fortaleza',
+    neighborhood: 'meireles',
+    modality: 'futebol',
+    operatingHours: 'noite'
   },
   {
     id: '3',
@@ -40,24 +49,49 @@ const mockCourts = [
     rating: 4.7,
     status: 'unavailable',
     image: 'https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop',
-    amenities: ['Vestiário', 'Estacionamento', 'Academia']
+    amenities: ['Vestiário', 'Estacionamento', 'Academia'],
+    city: 'fortaleza',
+    neighborhood: 'coco',
+    modality: 'basquete',
+    operatingHours: 'manha'
   }
 ];
 
 const ClientCourts = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({
+    city: '',
+    neighborhood: '',
+    modality: '',
+    operatingHours: ''
+  });
   
-  const filteredCourts = mockCourts.filter(court => 
-    court.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    court.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCourts = mockCourts.filter(court => {
+    const matchesSearch = court.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         court.location.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesFilters = 
+      (!filters.city || court.city === filters.city) &&
+      (!filters.neighborhood || court.neighborhood === filters.neighborhood) &&
+      (!filters.modality || court.modality === filters.modality) &&
+      (!filters.operatingHours || court.operatingHours === filters.operatingHours);
+    
+    return matchesSearch && matchesFilters;
+  });
 
   const getStatusBadge = (status: string) => {
     return status === 'available' 
       ? <Badge className="bg-green-500 text-white text-xs">Disponível</Badge>
       : <Badge className="bg-red-500 text-white text-xs">Indisponível</Badge>;
   };
+
+  const handleApplyFilters = (newFilters: FilterState) => {
+    setFilters(newFilters);
+  };
+
+  const hasActiveFilters = filters.city || filters.neighborhood || filters.modality || filters.operatingHours;
 
   return (
     <div className="min-h-screen bg-[#093758] pb-20">
@@ -75,24 +109,39 @@ const ClientCourts = () => {
           <h1 className="text-xl font-semibold text-white">Quadras</h1>
         </div>
 
-        {/* Barra de busca */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Buscar quadras, bairros..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/20 rounded-xl"
-          />
-        </div>
-
-        {/* Filtros */}
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-            <Filter className="w-4 h-4 mr-2" />
-            Filtros
+        {/* Barra de busca com filtro */}
+        <div className="flex gap-3 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Buscar quadras, bairros..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/20 rounded-xl"
+            />
+          </div>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => setIsFilterModalOpen(true)}
+            className={`rounded-full w-12 h-12 border-white/20 hover:bg-white/20 transition-all duration-200 ${
+              hasActiveFilters ? 'bg-[#F35410] border-[#F35410] text-white' : 'bg-white/10 text-white'
+            }`}
+          >
+            <Filter className="w-5 h-5" />
           </Button>
         </div>
+
+        {/* Indicador de filtros ativos */}
+        {hasActiveFilters && (
+          <div className="flex gap-2 mb-2">
+            <span className="text-white/70 text-sm">Filtros ativos:</span>
+            {filters.city && <Badge className="bg-white/20 text-white text-xs">{filters.city}</Badge>}
+            {filters.neighborhood && <Badge className="bg-white/20 text-white text-xs">{filters.neighborhood}</Badge>}
+            {filters.modality && <Badge className="bg-white/20 text-white text-xs">{filters.modality}</Badge>}
+            {filters.operatingHours && <Badge className="bg-white/20 text-white text-xs">{filters.operatingHours}</Badge>}
+          </div>
+        )}
       </div>
 
       <div className="px-4 space-y-4">
@@ -142,6 +191,13 @@ const ClientCourts = () => {
           </Card>
         ))}
       </div>
+
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        onApplyFilters={handleApplyFilters}
+        filters={filters}
+      />
 
       <BottomNavigation userType="client" />
     </div>
