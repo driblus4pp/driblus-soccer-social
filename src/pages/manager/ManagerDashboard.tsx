@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,24 +5,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, Users, Settings, LogOut, Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBookings } from "@/hooks/useBookings";
-
 const ManagerDashboard = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const { bookings } = useBookings();
+  const {
+    user,
+    logout
+  } = useAuth();
+  const {
+    bookings
+  } = useBookings();
 
   // Filter bookings for today
   const today = new Date().toISOString().split('T')[0];
   const todayBookings = bookings.filter(booking => booking.date === today);
   const totalBookings = bookings.length;
-
   const handleLogout = () => {
     logout();
     navigate('/');
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
         <div className="flex items-center justify-between">
@@ -32,25 +32,14 @@ const ManagerDashboard = () => {
             <h1 className="text-xl font-bold text-white">Driblus Manager</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/20 relative"
-            >
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 relative">
               <Bell className="w-4 h-4" />
-              {todayBookings.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#F35410] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {todayBookings.length > 0 && <span className="absolute -top-1 -right-1 bg-[#F35410] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {todayBookings.length}
-                </span>
-              )}
+                </span>}
             </Button>
             <span className="text-white text-sm">{user?.name}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="text-white hover:bg-white/20"
-            >
+            <Button variant="ghost" size="icon" onClick={handleLogout} className="text-white hover:bg-white/20">
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -89,19 +78,12 @@ const ManagerDashboard = () => {
             <CardTitle className="text-white">Ações Rápidas</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button
-              onClick={() => navigate('/gestor/agendamentos')}
-              className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white justify-start"
-            >
+            <Button onClick={() => navigate('/gestor/agendamentos')} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white justify-start">
               <Calendar className="w-4 h-4 mr-2" />
               Ver Agendamentos
             </Button>
             
-            <Button
-              onClick={() => navigate('/gestor/quadra/configurar')}
-              variant="outline"
-              className="w-full border-white/20 text-white hover:bg-white/10 justify-start"
-            >
+            <Button onClick={() => navigate('/gestor/quadra/configurar')} variant="outline" className="w-full border-white/20 text-white hover:bg-white/10 justify-start">
               <Settings className="w-4 h-4 mr-2" />
               Configurar Horários
             </Button>
@@ -109,14 +91,12 @@ const ManagerDashboard = () => {
         </Card>
 
         {/* Today's Bookings */}
-        {todayBookings.length > 0 && (
-          <Card className="bg-white/10 border-white/20">
+        {todayBookings.length > 0 && <Card className="bg-white/10 border-white/20">
             <CardHeader>
               <CardTitle className="text-white">Agendamentos de Hoje</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {todayBookings.map((booking) => (
-                <div key={booking.id} className="p-3 bg-white/5 rounded-lg">
+              {todayBookings.map(booking => <div key={booking.id} className="p-3 bg-white/5 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-white font-semibold">{booking.userName}</p>
@@ -127,11 +107,9 @@ const ManagerDashboard = () => {
                       <p className="text-white/70 text-sm">{booking.duration}h</p>
                     </div>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </CardContent>
-          </Card>
-        )}
+          </Card>}
 
         {/* N8N Webhook Configuration */}
         <Card className="bg-white/10 border-white/20">
@@ -142,21 +120,15 @@ const ManagerDashboard = () => {
             <p className="text-white/90 text-sm mb-3">
               Configure seu webhook do N8N para receber notificações automáticas via WhatsApp quando houver novos agendamentos.
             </p>
-            <Button
-              variant="outline"
-              className="w-full border-white/20 text-white hover:bg-white/10"
-              onClick={() => {
-                // TODO: Implement webhook configuration modal
-                alert('Funcionalidade em desenvolvimento - Configure seu webhook N8N');
-              }}
-            >
+            <Button variant="outline" onClick={() => {
+            // TODO: Implement webhook configuration modal
+            alert('Funcionalidade em desenvolvimento - Configure seu webhook N8N');
+          }} className="w-full border-white/20 hover:bg-white/10 text-zinc-950">
               Configurar Webhook N8N
             </Button>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ManagerDashboard;
