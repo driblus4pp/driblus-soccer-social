@@ -1,134 +1,150 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Clock, Users, Settings, LogOut, Bell } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useBookings } from "@/hooks/useBookings";
-const ManagerDashboard = () => {
-  const navigate = useNavigate();
-  const {
-    user,
-    logout
-  } = useAuth();
-  const {
-    bookings
-  } = useBookings();
 
-  // Filter bookings for today
-  const today = new Date().toISOString().split('T')[0];
-  const todayBookings = bookings.filter(booking => booking.date === today);
-  const totalBookings = bookings.length;
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar, DollarSign, Users, TrendingUp, Clock, MapPin } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import BottomNavigation from "@/components/navigation/BottomNavigation";
+
+const ManagerDashboard = () => {
+  const { user, logout } = useAuth();
+
+  const mockStats = {
+    todayBookings: 12,
+    monthlyRevenue: 8500,
+    totalCustomers: 145,
+    occupancyRate: 78
   };
-  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+
+  const mockBookings = [
+    { id: 1, time: '09:00', customer: 'João Silva', court: 'Quadra 1', status: 'confirmed' },
+    { id: 2, time: '10:30', customer: 'Maria Santos', court: 'Quadra 2', status: 'pending' },
+    { id: 3, time: '14:00', customer: 'Pedro Costa', court: 'Quadra 1', status: 'confirmed' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
+      <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] text-white p-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/lovable-uploads/6a0f382f-4f6a-4afd-a007-454b98a5807a.png" alt="Driblus Logo" className="h-8 object-contain" />
-            <h1 className="text-xl font-bold text-white">Driblus Manager</h1>
+          <div>
+            <h1 className="text-2xl font-bold">
+              Olá, {user?.name?.split(' ')[0] || 'Gestor'}! 👋
+            </h1>
+            <p className="text-white/90 mt-1">Bem-vindo ao painel de gestão</p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 relative">
-              <Bell className="w-4 h-4" />
-              {todayBookings.length > 0 && <span className="absolute -top-1 -right-1 bg-[#F35410] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {todayBookings.length}
-                </span>}
-            </Button>
-            <span className="text-white text-sm">{user?.name}</span>
-            <Button variant="ghost" size="icon" onClick={handleLogout} className="text-white hover:bg-white/20">
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
+          <Button 
+            variant="ghost" 
+            onClick={logout}
+            className="text-white hover:bg-white/20"
+          >
+            Sair
+          </Button>
         </div>
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Welcome Section */}
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Bem-vindo, {user?.name}!</h2>
-          <p className="text-white/70">Gerencie sua quadra e agendamentos</p>
-        </div>
-
-        {/* Stats Cards */}
+        {/* Cards de estatísticas */}
         <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-white/10 border-white/20">
-            <CardContent className="p-4 text-center">
-              <Calendar className="w-8 h-8 text-[#F35410] mx-auto mb-2" />
-              <p className="text-2xl font-bold text-white">{todayBookings.length}</p>
-              <p className="text-white/70 text-sm">Agendamentos Hoje</p>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Hoje</p>
+                  <p className="text-xl font-bold">{mockStats.todayBookings}</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-white/10 border-white/20">
-            <CardContent className="p-4 text-center">
-              <Users className="w-8 h-8 text-[#F35410] mx-auto mb-2" />
-              <p className="text-2xl font-bold text-white">{totalBookings}</p>
-              <p className="text-white/70 text-sm">Total de Agendamentos</p>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Receita</p>
+                  <p className="text-xl font-bold">R$ {mockStats.monthlyRevenue}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Users className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Clientes</p>
+                  <p className="text-xl font-bold">{mockStats.totalCustomers}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Ocupação</p>
+                  <p className="text-xl font-bold">{mockStats.occupancyRate}%</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Quick Actions */}
-        <Card className="bg-white/10 border-white/20">
+        {/* Agendamentos de hoje */}
+        <Card>
           <CardHeader>
-            <CardTitle className="text-white">Ações Rápidas</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button onClick={() => navigate('/gestor/agendamentos')} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white justify-start">
-              <Calendar className="w-4 h-4 mr-2" />
-              Ver Agendamentos
-            </Button>
-            
-            <Button onClick={() => navigate('/gestor/quadra/configurar')} variant="outline" className="w-full border-white/20 hover:bg-white/10 justify-start text-gray-950">
-              <Settings className="w-4 h-4 mr-2" />
-              Configurar Horários
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Today's Bookings */}
-        {todayBookings.length > 0 && <Card className="bg-white/10 border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Agendamentos de Hoje</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {todayBookings.map(booking => <div key={booking.id} className="p-3 bg-white/5 rounded-lg">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="text-white font-semibold">{booking.userName}</p>
-                      <p className="text-white/70 text-sm">{booking.userPhone}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[#F35410] font-semibold">{booking.startTime}</p>
-                      <p className="text-white/70 text-sm">{booking.duration}h</p>
-                    </div>
-                  </div>
-                </div>)}
-            </CardContent>
-          </Card>}
-
-        {/* N8N Webhook Configuration */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white">Configurações de Notificação</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              Agendamentos de Hoje
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-white/90 text-sm mb-3">
-              Configure seu webhook do N8N para receber notificações automáticas via WhatsApp quando houver novos agendamentos.
-            </p>
-            <Button variant="outline" onClick={() => {
-            // TODO: Implement webhook configuration modal
-            alert('Funcionalidade em desenvolvimento - Configure seu webhook N8N');
-          }} className="w-full border-white/20 hover:bg-white/10 text-zinc-950">
-              Configurar Webhook N8N
-            </Button>
+            <div className="space-y-3">
+              {mockBookings.map(booking => (
+                <div key={booking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-[#F35410] rounded-lg flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">{booking.time}</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold">{booking.customer}</p>
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <MapPin className="w-3 h-3" />
+                        <span>{booking.court}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    booking.status === 'confirmed' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {booking.status === 'confirmed' ? 'Confirmado' : 'Pendente'}
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
-    </div>;
+
+      {/* Navegação inferior */}
+      <BottomNavigation userType="manager" />
+    </div>
+  );
 };
+
 export default ManagerDashboard;
