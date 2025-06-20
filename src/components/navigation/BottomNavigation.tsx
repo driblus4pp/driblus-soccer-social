@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Calendar, Bell, User, BarChart3, Settings, Building2, Users } from 'lucide-react';
@@ -20,7 +19,7 @@ const navigationConfig = {
     { id: 'courts', label: 'Quadras', icon: Building2, route: '/cliente/quadras' },
     { id: 'bookings', label: 'Agenda', icon: Calendar, route: '/cliente/agendamentos' },
     { id: 'notifications', label: 'Avisos', icon: Bell, route: '/cliente/notificacoes' },
-    { id: 'profile', label: 'Perfil', icon: User, route: '/cliente/perfil-atleta' },
+    { id: 'profile', label: 'Perfil', icon: User, route: '/cliente/perfil' },
   ],
   manager: [
     { id: 'dashboard', label: 'Dashboard', icon: Home, route: '/gestor/dashboard' },
