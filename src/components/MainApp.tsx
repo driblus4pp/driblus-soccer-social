@@ -15,22 +15,34 @@ import NotificationDropdown from './NotificationDropdown';
 import BookingCard from './BookingCard';
 import RatingModal from './RatingModal';
 import { useToast } from "@/hooks/use-toast";
-
 const MainApp = () => {
-  const { user, logout } = useAuth();
-  const { bookings, getBookingsByStatus, addRating, cancelBooking } = useBookings();
-  const { toast } = useToast();
+  const {
+    user,
+    logout
+  } = useAuth();
+  const {
+    bookings,
+    getBookingsByStatus,
+    addRating,
+    cancelBooking
+  } = useBookings();
+  const {
+    toast
+  } = useToast();
   const [activeTab, setActiveTab] = useState('home');
   const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; } | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     city: '',
     neighborhood: '',
     modality: '',
     operatingHours: ''
   });
-  
+
   // Rating Modal State
   const [ratingModal, setRatingModal] = useState({
     isOpen: false,
@@ -55,103 +67,99 @@ const MainApp = () => {
   }, []);
 
   // Enhanced court data with more realistic distances based on location
-  const quadras = [
-    {
-      id: 1,
-      name: "No Alvo Society",
-      location: "Av. Paulista, 1000, São Paulo",
-      distance: userLocation ? "1.2 km" : "Calculando...",
-      price: "R$ 120/hora",
-      rating: 4.8,
-      status: "Disponível",
-      image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop",
-      amenities: ["Estacionamento", "Vestiário", "Chuveiros"],
-      extraInfo: "+2",
-      description: "Uma quadra moderna e bem equipada, ideal para partidas de futebol society. Localizada em área nobre da cidade com fácil acesso e excelente infraestrutura.",
-      modalities: ["Futebol Society", "Futsal"],
-      operatingHours: "06:00 - 23:00",
-      facilities: {
-        parking: true,
-        dressing_room: true,
-        showers: true,
-        bar: false,
-        lighting: true
-      },
-      reviews: [{
-        user: "Carlos Silva",
-        rating: 5,
-        comment: "Excelente quadra! Muito bem cuidada e com ótima localização.",
-        date: "15/12/2024"
-      }, {
-        user: "Ana Santos",
-        rating: 4,
-        comment: "Boa estrutura, mas poderia ter um bar no local.",
-        date: "10/12/2024"
-      }],
-      isPromoted: true,
-      neighborhood: "Bela Vista"
+  const quadras = [{
+    id: 1,
+    name: "No Alvo Society",
+    location: "Av. Paulista, 1000, São Paulo",
+    distance: userLocation ? "1.2 km" : "Calculando...",
+    price: "R$ 120/hora",
+    rating: 4.8,
+    status: "Disponível",
+    image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop",
+    amenities: ["Estacionamento", "Vestiário", "Chuveiros"],
+    extraInfo: "+2",
+    description: "Uma quadra moderna e bem equipada, ideal para partidas de futebol society. Localizada em área nobre da cidade com fácil acesso e excelente infraestrutura.",
+    modalities: ["Futebol Society", "Futsal"],
+    operatingHours: "06:00 - 23:00",
+    facilities: {
+      parking: true,
+      dressing_room: true,
+      showers: true,
+      bar: false,
+      lighting: true
     },
-    {
-      id: 2,
-      name: "Gol de Placa",
-      location: "Rua Augusta, 500, São Paulo",
-      distance: userLocation ? "0.8 km" : "Calculando...",
-      price: "R$ 150/hora",
-      rating: 4.6,
-      status: "Indisponível",
-      image: "https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop",
-      amenities: ["Estacionamento", "Vestiário", "Churrasqueira"],
-      extraInfo: "+1",
-      description: "Quadra tradicional com churrasqueira para confraternizações. Perfeita para eventos e competições entre amigos.",
-      modalities: ["Futebol Society", "Vôlei"],
-      operatingHours: "07:00 - 22:00",
-      facilities: {
-        parking: true,
-        dressing_room: true,
-        showers: false,
-        bar: true,
-        lighting: true
-      },
-      reviews: [{
-        user: "Pedro Oliveira",
-        rating: 4,
-        comment: "Lugar bacana para jogar com os amigos. A churrasqueira é um diferencial!",
-        date: "12/12/2024"
-      }],
-      isPromoted: false,
-      neighborhood: "Centro"
+    reviews: [{
+      user: "Carlos Silva",
+      rating: 5,
+      comment: "Excelente quadra! Muito bem cuidada e com ótima localização.",
+      date: "15/12/2024"
+    }, {
+      user: "Ana Santos",
+      rating: 4,
+      comment: "Boa estrutura, mas poderia ter um bar no local.",
+      date: "10/12/2024"
+    }],
+    isPromoted: true,
+    neighborhood: "Bela Vista"
+  }, {
+    id: 2,
+    name: "Gol de Placa",
+    location: "Rua Augusta, 500, São Paulo",
+    distance: userLocation ? "0.8 km" : "Calculando...",
+    price: "R$ 150/hora",
+    rating: 4.6,
+    status: "Indisponível",
+    image: "https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop",
+    amenities: ["Estacionamento", "Vestiário", "Churrasqueira"],
+    extraInfo: "+1",
+    description: "Quadra tradicional com churrasqueira para confraternizações. Perfeita para eventos e competições entre amigos.",
+    modalities: ["Futebol Society", "Vôlei"],
+    operatingHours: "07:00 - 22:00",
+    facilities: {
+      parking: true,
+      dressing_room: true,
+      showers: false,
+      bar: true,
+      lighting: true
     },
-    {
-      id: 3,
-      name: "Arena Pro Sports",
-      location: "Rua dos Esportes, 200, São Paulo",
-      distance: userLocation ? "2.1 km" : "Calculando...",
-      price: "R$ 200/hora",
-      rating: 4.9,
-      status: "Disponível",
-      image: "https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop",
-      amenities: ["Estacionamento", "Vestiário", "Bar", "Loja"],
-      extraInfo: "+3",
-      description: "Complexo esportivo premium com quadras de alta qualidade e excelente infraestrutura para eventos corporativos.",
-      modalities: ["Futebol Society", "Futsal", "Vôlei", "Basquete"],
-      operatingHours: "05:00 - 24:00",
-      facilities: {
-        parking: true,
-        dressing_room: true,
-        showers: true,
-        bar: true,
-        lighting: true
-      },
-      reviews: [{
-        user: "Marina Costa",
-        rating: 5,
-        comment: "Instalações impecáveis! Vale cada centavo.",
-        date: "18/12/2024"
-      }],
-      isPromoted: true,
-      neighborhood: "Vila Madalena"
-    }
-  ];
+    reviews: [{
+      user: "Pedro Oliveira",
+      rating: 4,
+      comment: "Lugar bacana para jogar com os amigos. A churrasqueira é um diferencial!",
+      date: "12/12/2024"
+    }],
+    isPromoted: false,
+    neighborhood: "Centro"
+  }, {
+    id: 3,
+    name: "Arena Pro Sports",
+    location: "Rua dos Esportes, 200, São Paulo",
+    distance: userLocation ? "2.1 km" : "Calculando...",
+    price: "R$ 200/hora",
+    rating: 4.9,
+    status: "Disponível",
+    image: "https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop",
+    amenities: ["Estacionamento", "Vestiário", "Bar", "Loja"],
+    extraInfo: "+3",
+    description: "Complexo esportivo premium com quadras de alta qualidade e excelente infraestrutura para eventos corporativos.",
+    modalities: ["Futebol Society", "Futsal", "Vôlei", "Basquete"],
+    operatingHours: "05:00 - 24:00",
+    facilities: {
+      parking: true,
+      dressing_room: true,
+      showers: true,
+      bar: true,
+      lighting: true
+    },
+    reviews: [{
+      user: "Marina Costa",
+      rating: 5,
+      comment: "Instalações impecáveis! Vale cada centavo.",
+      date: "18/12/2024"
+    }],
+    isPromoted: true,
+    neighborhood: "Vila Madalena"
+  }];
   const userStats = {
     partidas: 42,
     gols: 18,
@@ -186,21 +194,24 @@ const MainApp = () => {
   const handleRateBooking = (bookingId: string) => {
     const booking = bookings.find(b => b.id === bookingId);
     if (booking) {
-      setRatingModal({ isOpen: true, booking });
+      setRatingModal({
+        isOpen: true,
+        booking
+      });
     }
   };
   const handleSubmitRating = (bookingId: string, stars: number, comment: string) => {
     addRating(bookingId, stars, comment);
     toast({
       title: "Avaliação enviada!",
-      description: "Obrigado pelo seu feedback.",
+      description: "Obrigado pelo seu feedback."
     });
   };
   const handleCancelBooking = (bookingId: string) => {
     cancelBooking(bookingId);
     toast({
       title: "Agendamento cancelado",
-      description: "Seu agendamento foi cancelado com sucesso.",
+      description: "Seu agendamento foi cancelado com sucesso."
     });
   };
 
@@ -208,17 +219,14 @@ const MainApp = () => {
   if (selectedCourt) {
     const court = quadras.find(q => q.id === selectedCourt);
     if (court) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+      return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
           <div className="p-4">
             <CourtDetails court={court} onBack={handleBackFromDetails} />
           </div>
-        </div>
-      );
+        </div>;
     }
   }
-  const renderHomeContent = () => (
-    <div className="space-y-6">
+  const renderHomeContent = () => <div className="space-y-6">
       {/* Welcome Header */}
       <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] rounded-2xl p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
@@ -228,12 +236,10 @@ const MainApp = () => {
             <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-6 h-6 object-contain" />
           </h2>
           <p className="text-white/90">Pronto para sua próxima partida?</p>
-          {userLocation && (
-            <div className="flex items-center gap-2 mt-2">
+          {userLocation && <div className="flex items-center gap-2 mt-2">
               <Navigation className="w-4 h-4" />
               <span className="text-white/80 text-sm">Localização ativada</span>
-            </div>
-          )}
+            </div>}
         </div>
       </div>
 
@@ -256,8 +262,7 @@ const MainApp = () => {
           <h3 className="text-xl font-semibold text-white">Quadras em Destaque</h3>
         </div>
         <div className="space-y-4">
-          {quadras.filter(q => q.isPromoted).map(quadra => (
-            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden relative" onClick={() => handleCourtClick(quadra.id)}>
+          {quadras.filter(q => q.isPromoted).map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden relative" onClick={() => handleCourtClick(quadra.id)}>
               <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                 DESTAQUE
               </div>
@@ -288,20 +293,15 @@ const MainApp = () => {
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
-                  {quadra.amenities.slice(0, 3).map(amenity => (
-                    <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
+                  {quadra.amenities.slice(0, 3).map(amenity => <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
                       {amenity}
-                    </Badge>
-                  ))}
-                  {quadra.amenities.length > 3 && (
-                    <Badge variant="secondary" className="bg-white/20 text-white text-xs">
+                    </Badge>)}
+                  {quadra.amenities.length > 3 && <Badge variant="secondary" className="bg-white/20 text-white text-xs">
                       +{quadra.amenities.length - 3}
-                    </Badge>
-                  )}
+                    </Badge>}
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
       </div>
 
@@ -309,15 +309,12 @@ const MainApp = () => {
       <div>
         <h3 className="text-xl font-semibold text-white mb-4">Recomendados para você</h3>
         <div className="space-y-4">
-          {quadras.filter(q => !q.isPromoted).map(quadra => (
-            <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden" onClick={() => handleCourtClick(quadra.id)}>
+          {quadras.filter(q => !q.isPromoted).map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer overflow-hidden" onClick={() => handleCourtClick(quadra.id)}>
               <div className="relative">
                 <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
-                {quadra.isPromoted && (
-                  <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
+                {quadra.isPromoted && <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                     DESTAQUE
-                  </div>
-                )}
+                  </div>}
                 <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
                   <Star className="w-4 h-4 fill-current" />
                   <span className="text-sm font-semibold">{quadra.rating}</span>
@@ -343,58 +340,46 @@ const MainApp = () => {
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
-                  {quadra.amenities.map(amenity => (
-                    <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
+                  {quadra.amenities.map(amenity => <Badge key={amenity} variant="secondary" className="bg-white/20 text-white text-xs">
                       {amenity}
-                    </Badge>
-                  ))}
+                    </Badge>)}
                   <Badge variant="secondary" className="bg-white/20 text-white text-xs">
                     {quadra.extraInfo}
                   </Badge>
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
       </div>
-    </div>
-  );
-  const renderExploreContent = () => (
-    <div className="space-y-6">
+    </div>;
+  const renderExploreContent = () => <div className="space-y-6">
       <div className="flex gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-white/60" />
           <Input placeholder="Buscar quadras, bairros..." className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" />
         </div>
-        <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 hover:bg-white/10 text-slate-50">
+        <Button variant="outline" size="icon" onClick={() => setShowFilters(true)} className="border-white/20 text-zinc-950 bg-gray-50">
           <Filter className="w-4 h-4" />
         </Button>
-        {userLocation && (
-          <Button variant="outline" size="icon" className="border-white/20 hover:bg-white/10 text-slate-50">
+        {userLocation && <Button variant="outline" size="icon" className="border-white/20 hover:bg-white/10 text-slate-50">
             <Navigation className="w-4 h-4" />
-          </Button>
-        )}
+          </Button>}
       </div>
 
-      {userLocation && (
-        <div className="bg-green-500/20 border-green-500/30 rounded-lg p-3">
+      {userLocation && <div className="bg-green-500/20 border-green-500/30 rounded-lg p-3">
           <div className="flex items-center gap-2 text-green-400">
             <Navigation className="w-4 h-4" />
             <span className="text-sm">Mostrando quadras próximas à sua localização</span>
           </div>
-        </div>
-      )}
+        </div>}
       
       <div className="grid grid-cols-1 gap-4">
-        {quadras.map(quadra => (
-          <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
+        {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
             <div className="relative">
               <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
-              {quadra.isPromoted && (
-                <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
+              {quadra.isPromoted && <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                   DESTAQUE
-                </div>
-              )}
+                </div>}
               <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
                 <Star className="w-4 h-4 fill-current" />
                 <span className="text-sm font-semibold">{quadra.rating}</span>
@@ -411,33 +396,26 @@ const MainApp = () => {
                 <span className="text-sm text-white/60">| {quadra.distance}</span>
               </div>
               <div className="flex items-center gap-2 mb-3">
-                {quadra.modalities.slice(0, 2).map(modality => (
-                  <Badge key={modality} variant="secondary" className="bg-white/20 text-white text-xs">
+                {quadra.modalities.slice(0, 2).map(modality => <Badge key={modality} variant="secondary" className="bg-white/20 text-white text-xs">
                     {modality}
-                  </Badge>
-                ))}
+                  </Badge>)}
               </div>
               <Button className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white" onClick={() => handleCourtClick(quadra.id)}>
                 Ver Detalhes
               </Button>
             </CardContent>
-          </Card>
-        ))}
+          </Card>)}
       </div>
 
       <FilterModal isOpen={showFilters} onClose={() => setShowFilters(false)} onApplyFilters={handleApplyFilters} filters={filters} />
-    </div>
-  );
+    </div>;
   const renderAgendaContent = () => {
     const getFilteredBookings = () => {
       if (agendaFilter === 'all') return bookings;
       return getBookingsByStatus(agendaFilter as BookingStatus);
     };
-
     const filteredBookings = getFilteredBookings();
-
-    return (
-      <div className="space-y-6">
+    return <div className="space-y-6">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white mb-2">Minha Agenda</h2>
           <p className="text-white/70">Gerencie seus agendamentos</p>
@@ -445,27 +423,29 @@ const MainApp = () => {
 
         {/* Filter Tabs */}
         <div className="flex gap-2 overflow-x-auto pb-2">
-          {[
-            { key: 'all', label: 'Todos', count: bookings.length },
-            { key: BookingStatus.PENDING, label: 'Pendentes', count: getBookingsByStatus(BookingStatus.PENDING).length },
-            { key: BookingStatus.CONFIRMED, label: 'Confirmados', count: getBookingsByStatus(BookingStatus.CONFIRMED).length },
-            { key: BookingStatus.COMPLETED, label: 'Concluídos', count: getBookingsByStatus(BookingStatus.COMPLETED).length },
-            { key: BookingStatus.CANCELLED, label: 'Cancelados', count: getBookingsByStatus(BookingStatus.CANCELLED).length },
-          ].map(filter => (
-            <Button
-              key={filter.key}
-              variant={agendaFilter === filter.key ? "default" : "outline"}
-              size="sm"
-              onClick={() => setAgendaFilter(filter.key as any)}
-              className={`whitespace-nowrap ${
-                agendaFilter === filter.key
-                  ? 'bg-[#F35410] text-white'
-                  : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
-              }`}
-            >
+          {[{
+          key: 'all',
+          label: 'Todos',
+          count: bookings.length
+        }, {
+          key: BookingStatus.PENDING,
+          label: 'Pendentes',
+          count: getBookingsByStatus(BookingStatus.PENDING).length
+        }, {
+          key: BookingStatus.CONFIRMED,
+          label: 'Confirmados',
+          count: getBookingsByStatus(BookingStatus.CONFIRMED).length
+        }, {
+          key: BookingStatus.COMPLETED,
+          label: 'Concluídos',
+          count: getBookingsByStatus(BookingStatus.COMPLETED).length
+        }, {
+          key: BookingStatus.CANCELLED,
+          label: 'Cancelados',
+          count: getBookingsByStatus(BookingStatus.CANCELLED).length
+        }].map(filter => <Button key={filter.key} variant={agendaFilter === filter.key ? "default" : "outline"} size="sm" onClick={() => setAgendaFilter(filter.key as any)} className={`whitespace-nowrap ${agendaFilter === filter.key ? 'bg-[#F35410] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
               {filter.label} ({filter.count})
-            </Button>
-          ))}
+            </Button>)}
         </div>
 
         {/* Stats Cards */}
@@ -488,51 +468,31 @@ const MainApp = () => {
 
         {/* Bookings List */}
         <div className="space-y-4">
-          {filteredBookings.length === 0 ? (
-            <Card className="bg-white/10 border-white/20">
+          {filteredBookings.length === 0 ? <Card className="bg-white/10 border-white/20">
               <CardContent className="p-8 text-center">
                 <Calendar className="w-12 h-12 mx-auto mb-4 text-white/40" />
                 <h3 className="text-lg font-semibold text-white mb-2">
                   Nenhum agendamento encontrado
                 </h3>
                 <p className="text-white/60 mb-4">
-                  {agendaFilter === 'all' 
-                    ? 'Você ainda não fez nenhum agendamento.'
-                    : `Você não tem agendamentos ${agendaFilter === BookingStatus.PENDING ? 'pendentes' : agendaFilter === BookingStatus.CONFIRMED ? 'confirmados' : agendaFilter === BookingStatus.COMPLETED ? 'concluídos' : 'cancelados'}.`
-                  }
+                  {agendaFilter === 'all' ? 'Você ainda não fez nenhum agendamento.' : `Você não tem agendamentos ${agendaFilter === BookingStatus.PENDING ? 'pendentes' : agendaFilter === BookingStatus.CONFIRMED ? 'confirmados' : agendaFilter === BookingStatus.COMPLETED ? 'concluídos' : 'cancelados'}.`}
                 </p>
-                <Button 
-                  onClick={() => setActiveTab('explore')}
-                  className="bg-[#F35410] hover:bg-[#BA2D0B] text-white"
-                >
+                <Button onClick={() => setActiveTab('explore')} className="bg-[#F35410] hover:bg-[#BA2D0B] text-white">
                   Explorar Quadras
                 </Button>
               </CardContent>
-            </Card>
-          ) : (
-            filteredBookings.map(booking => (
-              <BookingCard
-                key={booking.id}
-                booking={booking}
-                onRate={handleRateBooking}
-                onCancel={handleCancelBooking}
-                onViewDetails={(id) => console.log('View details for booking:', id)}
-              />
-            ))
-          )}
+            </Card> : filteredBookings.map(booking => <BookingCard key={booking.id} booking={booking} onRate={handleRateBooking} onCancel={handleCancelBooking} onViewDetails={id => console.log('View details for booking:', id)} />)}
         </div>
-      </div>
-    );
+      </div>;
   };
-  const renderProfileContent = () => (
-    <div className="space-y-6">
+  const renderProfileContent = () => <div className="space-y-6">
       {/* Profile Header Card */}
       <Card className="bg-gradient-to-br from-[#F35410] to-[#BA2D0B] border-none text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10">
           <div className="grid grid-cols-8 gap-4 p-4">
-            {Array.from({ length: 32 }).map((_, i) => (
-              <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>
-            ))}
+            {Array.from({
+            length: 32
+          }).map((_, i) => <div key={i} className="w-8 h-8 rounded-full border border-white/20"></div>)}
           </div>
         </div>
         <CardContent className="p-6 relative z-10">
@@ -650,10 +610,8 @@ const MainApp = () => {
           </Button>
         </CardContent>
       </Card>
-    </div>
-  );
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+    </div>;
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/10 p-4 bg-[#0a2c49]">
         <div className="flex items-center justify-between">
@@ -677,37 +635,34 @@ const MainApp = () => {
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#062B4B]/95 backdrop-blur-lg border-t border-white/10 p-4">
         <div className="flex justify-around">
-          {[
-            { id: 'home', icon: Home, label: 'Início' },
-            { id: 'explore', icon: Search, label: 'Explorar' },
-            { id: 'calendar', icon: Calendar, label: 'Agenda' },
-            { id: 'profile', icon: User, label: 'Perfil' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
-                activeTab === tab.id 
-                  ? 'text-[#F35410] bg-[#F35410]/20' 
-                  : 'text-white/60 hover:text-white'
-              }`}
-            >
+          {[{
+          id: 'home',
+          icon: Home,
+          label: 'Início'
+        }, {
+          id: 'explore',
+          icon: Search,
+          label: 'Explorar'
+        }, {
+          id: 'calendar',
+          icon: Calendar,
+          label: 'Agenda'
+        }, {
+          id: 'profile',
+          icon: User,
+          label: 'Perfil'
+        }].map(tab => <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${activeTab === tab.id ? 'text-[#F35410] bg-[#F35410]/20' : 'text-white/60 hover:text-white'}`}>
               <tab.icon className="w-5 h-5" />
               <span className="text-xs font-medium">{tab.label}</span>
-            </button>
-          ))}
+            </button>)}
         </div>
       </div>
 
       {/* Rating Modal */}
-      <RatingModal
-        isOpen={ratingModal.isOpen}
-        onClose={() => setRatingModal({ isOpen: false, booking: null })}
-        booking={ratingModal.booking}
-        onSubmit={handleSubmitRating}
-      />
-    </div>
-  );
+      <RatingModal isOpen={ratingModal.isOpen} onClose={() => setRatingModal({
+      isOpen: false,
+      booking: null
+    })} booking={ratingModal.booking} onSubmit={handleSubmitRating} />
+    </div>;
 };
-
 export default MainApp;
