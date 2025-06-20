@@ -45,7 +45,7 @@ const ClientProfile = () => {
                   Jogador Ativo
                 </Badge>
               </div>
-              <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 bg-gray-500 hover:bg-gray-400 rounded-full">
+              <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 rounded-full bg-zinc-100">
                 <Edit className="w-4 h-4" />
               </Button>
             </div>
