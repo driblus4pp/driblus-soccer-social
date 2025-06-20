@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, User, Mail, Phone, MapPin, Camera, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { SportType } from "@/types";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const ClientEditProfile = () => {
@@ -21,18 +22,21 @@ const ClientEditProfile = () => {
     location: user?.preferences?.favoriteLocations?.[0] || ''
   });
 
-  const [selectedSports, setSelectedSports] = useState<string[]>(
+  const [selectedSports, setSelectedSports] = useState<SportType[]>(
     user?.preferences?.preferredSports || []
   );
 
-  const availableSports = [
-    'Futebol',
-    'Futsal',
-    'Society',
-    'Beach Soccer',
-    'Futebol 7',
-    'Pelada'
-  ];
+  // Mapping of SportType enum to Portuguese display names
+  const sportDisplayNames: Record<SportType, string> = {
+    [SportType.FOOTBALL]: 'Futebol',
+    [SportType.FUTSAL]: 'Futsal',
+    [SportType.VOLLEYBALL]: 'Vôlei',
+    [SportType.BASKETBALL]: 'Basquete',
+    [SportType.TENNIS]: 'Tênis',
+    [SportType.PADEL]: 'Padel'
+  };
+
+  const availableSports = Object.values(SportType);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,7 +44,7 @@ const ClientEditProfile = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const toggleSport = (sport: string) => {
+  const toggleSport = (sport: SportType) => {
     setSelectedSports(prev => 
       prev.includes(sport) 
         ? prev.filter(s => s !== sport)
@@ -191,7 +195,7 @@ const ClientEditProfile = () => {
                         : 'bg-white/20 hover:bg-white/30 text-white'
                     }`}
                   >
-                    {sport}
+                    {sportDisplayNames[sport]}
                     {isSelected && <X className="w-3 h-3 ml-1" />}
                   </Badge>
                 );
