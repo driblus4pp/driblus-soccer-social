@@ -105,7 +105,7 @@ const ClientDashboard = () => {
                   </div>
                 </div>
                 
-                <CardContent className="p-4">
+                <CardContent className=" bg-gray-800">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-semibold text-white text-lg">{court.name}</h4>
                   </div>
