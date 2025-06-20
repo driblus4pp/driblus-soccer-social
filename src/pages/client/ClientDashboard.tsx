@@ -68,23 +68,20 @@ const ClientDashboard = () => {
       <div className="px-4 py-6 shadow-sm bg-[#062b4b]">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-50">
-              Olá, {user?.name?.split(' ')[0] || 'Maria'}! 👋
+            <h1 className="text-xl font-medium text-white">
+              Boa noite, {user?.name?.split(' ')[0] || 'Janderson'}!
             </h1>
-            <div className="flex items-center gap-2 mt-1">
-              <Navigation className="w-4 h-4 text-[#F35410]" />
-              <span className="text-gray-600 text-sm">Fortaleza, CE</span>
-            </div>
           </div>
-          <Button variant="ghost" size="icon">
-            <Filter className="w-5 h-5 text-gray-600" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <span className="text-[#F35410] font-semibold text-lg">Driblus</span>
+            <span className="text-xl">🔥</span>
+          </div>
         </div>
 
         {/* Barra de busca */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input placeholder="Buscar quadras..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-gray-50 border-0 focus:bg-white" />
+          <Input placeholder="Buscar quadras, bairros..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/20 rounded-xl" />
         </div>
       </div>
 
