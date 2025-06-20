@@ -41,9 +41,7 @@ const ClientProfile = () => {
                   {user?.name || 'Janderson Silva'}
                 </h2>
                 <p className="text-white/70">{user?.email || 'janderson@email.com'}</p>
-                <Badge className="bg-[#F35410] text-white mt-2">
-                  Jogador Ativo
-                </Badge>
+                
               </div>
               <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 rounded-full bg-zinc-100">
                 <Edit className="w-4 h-4" />
