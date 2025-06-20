@@ -51,34 +51,7 @@ const ClientProfile = () => {
         </Card>
 
         {/* Estatísticas do Jogador */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Trophy className="w-5 h-5" />
-              Estatísticas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-[#F35410]">{playerStats.totalGames}</p>
-                <p className="text-sm text-white/70">Jogos</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-[#F35410]">{playerStats.wins}</p>
-                <p className="text-sm text-white/70">Vitórias</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-[#F35410]">{playerStats.goals}</p>
-                <p className="text-sm text-white/70">Gols</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-[#F35410]">{playerStats.assists}</p>
-                <p className="text-sm text-white/70">Assistências</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        
 
         {/* Atividade Recente */}
         <Card className="bg-white/10 border-white/20">
