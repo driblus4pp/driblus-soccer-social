@@ -123,7 +123,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ userType }) => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 px-2 py-2 z-50 bg-[#0a2c49]">
+    <div className="fixed bottom-0 left-0 right-0 px-2 py-2 z-50 bg-[#0a2c49]">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {items.map((item) => {
           const isActive = location.pathname === item.route;
@@ -135,7 +135,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ userType }) => {
               onClick={() => handleNavigation(item.route)}
               className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
                 isActive
-                  ? 'text-[#F35410] bg-orange-50'
+                  ? 'text-[#F35410]'
                   : 'text-gray-500 hover:text-[#F35410]'
               }`}
             >
