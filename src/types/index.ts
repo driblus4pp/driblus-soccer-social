@@ -1,7 +1,6 @@
-
 export interface Notification {
   id: string;
-  type: 'booking_confirmed' | 'booking_cancelled' | 'booking_reminder' | 'system_alert' | 'promotion';
+  type: 'booking_confirmed' | 'booking_cancelled' | 'booking_reminder' | 'system_alert' | 'promotion' | 'booking_pending' | 'booking_approved' | 'booking_rejected';
   title: string;
   message: string;
   bookingId?: string;
@@ -80,6 +79,7 @@ export interface Booking {
   createdAt: Date;
   rating?: Rating;
   cancellationReason?: string;
+  managerId?: string;
 }
 
 export interface Rating {
@@ -97,7 +97,8 @@ export interface Rating {
 export enum BookingStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
-  CANCELLED = 'cancelled',
+  CANCELLED_BY_USER = 'cancelled_by_user',
+  CANCELLED_BY_MANAGER = 'cancelled_by_manager',
   COMPLETED = 'completed',
   NO_SHOW = 'no_show'
 }

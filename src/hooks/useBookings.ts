@@ -22,7 +22,8 @@ const mockBookings: Booking[] = [
     paymentStatus: 'pending',
     numberOfPlayers: 10,
     needsEquipment: false,
-    createdAt: new Date('2024-12-18T10:30:00')
+    createdAt: new Date('2024-12-18T10:30:00'),
+    managerId: 'manager-1'
   },
   {
     id: 'booking_2',
@@ -39,11 +40,13 @@ const mockBookings: Booking[] = [
     duration: 1,
     totalPrice: 200,
     serviceFee: 0,
-    status: BookingStatus.CANCELLED,
+    status: BookingStatus.CANCELLED_BY_MANAGER,
     paymentStatus: 'pending',
     numberOfPlayers: 8,
     needsEquipment: false,
-    createdAt: new Date('2024-12-17T14:20:00')
+    createdAt: new Date('2024-12-17T14:20:00'),
+    managerId: 'manager-2',
+    cancellationReason: 'Manutenção da quadra'
   },
   {
     id: 'booking_3',
@@ -65,6 +68,7 @@ const mockBookings: Booking[] = [
     numberOfPlayers: 12,
     needsEquipment: false,
     createdAt: new Date('2024-12-13T09:15:00'),
+    managerId: 'manager-1',
     rating: {
       id: 'rating_1',
       bookingId: 'booking_3',
@@ -95,7 +99,30 @@ const mockBookings: Booking[] = [
     paymentStatus: 'pending',
     numberOfPlayers: 10,
     needsEquipment: false,
-    createdAt: new Date('2024-12-19T16:45:00')
+    createdAt: new Date('2024-12-19T16:45:00'),
+    managerId: 'manager-1'
+  },
+  {
+    id: 'booking_5',
+    courtId: '1',
+    courtName: 'No Alvo Society',
+    courtImage: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop',
+    userId: 'user_2',
+    userName: 'João Silva',
+    userEmail: 'joao@email.com',
+    userPhone: '+55 85 99999-9999',
+    date: '2024-12-26',
+    startTime: '19:00',
+    endTime: '20:00',
+    duration: 1,
+    totalPrice: 120,
+    serviceFee: 0,
+    status: BookingStatus.PENDING,
+    paymentStatus: 'pending',
+    numberOfPlayers: 8,
+    needsEquipment: false,
+    createdAt: new Date('2024-12-20T09:30:00'),
+    managerId: 'manager-1'
   }
 ];
 
@@ -105,6 +132,80 @@ export const useBookings = () => {
   const getBookingsByStatus = (status?: BookingStatus) => {
     if (!status) return bookings;
     return bookings.filter(booking => booking.status === status);
+  };
+
+  const getBookingsByManager = (managerId: string) => {
+    return bookings.filter(booking => booking.managerId === managerId);
+  };
+
+  const getPendingBookingsByManager = (managerId: string) => {
+    return bookings.filter(booking => 
+      booking.managerId === managerId && 
+      booking.status === BookingStatus.PENDING
+    );
+  };
+
+  const approveBooking = (bookingId: string) => {
+    setBookings(prev =>
+      prev.map(booking =>
+        booking.id === bookingId
+          ? { ...booking, status: BookingStatus.CONFIRMED }
+          : booking
+      )
+    );
+    
+    // Simular notificação para o cliente
+    console.log(`Agendamento ${bookingId} aprovado - Notificação enviada ao cliente`);
+  };
+
+  const rejectBooking = (bookingId: string, reason?: string) => {
+    setBookings(prev =>
+      prev.map(booking =>
+        booking.id === bookingId
+          ? { 
+              ...booking, 
+              status: BookingStatus.CANCELLED_BY_MANAGER,
+              cancellationReason: reason 
+            }
+          : booking
+      )
+    );
+    
+    // Simular notificação para o cliente
+    console.log(`Agendamento ${bookingId} rejeitado - Notificação enviada ao cliente`);
+  };
+
+  const createBooking = (bookingData: Partial<Booking>) => {
+    const newBooking: Booking = {
+      id: `booking_${Date.now()}`,
+      status: BookingStatus.PENDING,
+      paymentStatus: 'pending',
+      createdAt: new Date(),
+      ...bookingData
+    } as Booking;
+
+    setBookings(prev => [...prev, newBooking]);
+    
+    // Simular notificação para o gestor
+    console.log(`Novo agendamento criado - Notificação enviada ao gestor`);
+    
+    return newBooking;
+  };
+
+  const isTimeSlotAvailable = (courtId: string, date: string, startTime: string, endTime: string) => {
+    const confirmedBookings = bookings.filter(booking => 
+      booking.courtId === courtId && 
+      booking.date === date && 
+      booking.status === BookingStatus.CONFIRMED
+    );
+
+    return !confirmedBookings.some(booking => {
+      const bookingStart = booking.startTime;
+      const bookingEnd = booking.endTime;
+      
+      // Verificar sobreposição de horários
+      return (startTime < bookingEnd && endTime > bookingStart);
+    });
   };
 
   const addRating = (bookingId: string, stars: number, comment: string) => {
@@ -129,11 +230,15 @@ export const useBookings = () => {
     );
   };
 
-  const cancelBooking = (bookingId: string) => {
+  const cancelBooking = (bookingId: string, reason?: string) => {
     setBookings(prev =>
       prev.map(booking =>
         booking.id === bookingId
-          ? { ...booking, status: BookingStatus.CANCELLED }
+          ? { 
+              ...booking, 
+              status: BookingStatus.CANCELLED_BY_USER,
+              cancellationReason: reason 
+            }
           : booking
       )
     );
@@ -142,6 +247,12 @@ export const useBookings = () => {
   return {
     bookings,
     getBookingsByStatus,
+    getBookingsByManager,
+    getPendingBookingsByManager,
+    approveBooking,
+    rejectBooking,
+    createBooking,
+    isTimeSlotAvailable,
     addRating,
     cancelBooking
   };

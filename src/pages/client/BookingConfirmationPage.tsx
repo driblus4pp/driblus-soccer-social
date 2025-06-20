@@ -1,14 +1,18 @@
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Calendar, Clock, User, Phone, Mail } from "lucide-react";
+import { CheckCircle, Calendar, Clock, User, Phone, Mail, AlertCircle } from "lucide-react";
+
 const BookingConfirmationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const {
     booking,
-    formattedDate
+    formattedDate,
+    isPending
   } = location.state || {};
+
   if (!booking) {
     return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
         <div className="text-white text-center">
@@ -19,14 +23,43 @@ const BookingConfirmationPage = () => {
         </div>
       </div>;
   }
+
   return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       <div className="p-4 space-y-6">
         {/* Success Header */}
         <div className="text-center py-8">
-          <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-white mb-2">Agendamento Confirmado!</h1>
-          <p className="text-white/70">Seu horário foi reservado com sucesso</p>
+          {isPending ? (
+            <>
+              <AlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-white mb-2">Solicitação Enviada!</h1>
+              <p className="text-white/70">Aguardando aprovação do gestor da quadra</p>
+            </>
+          ) : (
+            <>
+              <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-white mb-2">Agendamento Confirmado!</h1>
+              <p className="text-white/70">Seu horário foi reservado com sucesso</p>
+            </>
+          )}
         </div>
+
+        {/* Status Alert */}
+        {isPending && (
+          <Card className="bg-yellow-500/20 border-yellow-500/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-yellow-400" />
+                <div>
+                  <p className="text-white font-medium">Aguardando Aprovação</p>
+                  <p className="text-white/70 text-sm">
+                    O gestor da quadra foi notificado e analisará sua solicitação. 
+                    Você receberá uma notificação quando houver uma resposta.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Booking Details */}
         <Card className="bg-white/10 border-white/20">
@@ -83,7 +116,9 @@ const BookingConfirmationPage = () => {
           <CardContent>
             <div className="text-center p-4 bg-[#F35410]/20 rounded-lg">
               <p className="text-white font-semibold text-lg">R$ 120,00</p>
-              <p className="text-white/90 text-sm">Pagamento será realizado no local</p>
+              <p className="text-white/90 text-sm">
+                {isPending ? 'Pagamento será cobrado após aprovação' : 'Pagamento será realizado no local'}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -94,18 +129,37 @@ const BookingConfirmationPage = () => {
             <CardTitle className="text-white">Observações Importantes</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p className="text-white/90 text-sm">
-              • Chegue com 10 minutos de antecedência
-            </p>
-            <p className="text-white/90 text-sm">
-              • O pagamento deve ser feito diretamente na quadra
-            </p>
-            <p className="text-white/90 text-sm">
-              • Para cancelar, entre em contato com até 24h de antecedência
-            </p>
-            <p className="text-white/90 text-sm">
-              • O gestor da quadra receberá seus dados automaticamente
-            </p>
+            {isPending ? (
+              <>
+                <p className="text-white/90 text-sm">
+                  • O gestor tem até 24h para aprovar ou rejeitar a solicitação
+                </p>
+                <p className="text-white/90 text-sm">
+                  • Você será notificado por email sobre a decisão
+                </p>
+                <p className="text-white/90 text-sm">
+                  • O horário ficará reservado temporariamente
+                </p>
+                <p className="text-white/90 text-sm">
+                  • Você pode acompanhar o status no seu painel
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-white/90 text-sm">
+                  • Chegue com 10 minutos de antecedência
+                </p>
+                <p className="text-white/90 text-sm">
+                  • O pagamento deve ser feito diretamente na quadra
+                </p>
+                <p className="text-white/90 text-sm">
+                  • Para cancelar, entre em contato com até 24h de antecedência
+                </p>
+                <p className="text-white/90 text-sm">
+                  • O gestor da quadra receberá seus dados automaticamente
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -122,4 +176,5 @@ const BookingConfirmationPage = () => {
       </div>
     </div>;
 };
+
 export default BookingConfirmationPage;

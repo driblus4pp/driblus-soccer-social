@@ -9,6 +9,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { ArrowLeft, Calendar as CalendarIcon, Clock } from "lucide-react";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useBookings } from "@/hooks/useBookings";
+import { useCourts } from "@/hooks/useCourts";
 
 const timeSlots = [
   '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
@@ -18,6 +20,8 @@ const timeSlots = [
 const BookingPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { createBooking, isTimeSlotAvailable } = useBookings();
+  const { getCourtById } = useCourts();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
   const [clientData, setClientData] = useState({
@@ -26,30 +30,75 @@ const BookingPage = () => {
     email: ''
   });
 
+  const court = getCourtById(id || '');
+
+  const getEndTime = (startTime: string) => {
+    const [hour] = startTime.split(':');
+    return `${parseInt(hour) + 1}:00`;
+  };
+
+  const getAvailableTimeSlots = () => {
+    if (!selectedDate || !court) return timeSlots;
+    
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    
+    return timeSlots.filter(time => {
+      const endTime = getEndTime(time);
+      return isTimeSlotAvailable(court.id, dateStr, time, endTime);
+    });
+  };
+
   const handleBooking = async () => {
-    if (!selectedDate || !selectedTime || !clientData.name || !clientData.phone || !clientData.email) {
+    if (!selectedDate || !selectedTime || !clientData.name || !clientData.phone || !clientData.email || !court) {
       alert('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
-    // Simulate booking creation
+    const endTime = getEndTime(selectedTime);
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+
+    // Verificar disponibilidade uma última vez
+    if (!isTimeSlotAvailable(court.id, dateStr, selectedTime, endTime)) {
+      alert('Este horário não está mais disponível. Por favor, escolha outro horário.');
+      return;
+    }
+
     const bookingData = {
-      courtId: id,
-      date: format(selectedDate, 'yyyy-MM-dd'),
-      time: selectedTime,
-      clientData
+      courtId: court.id,
+      courtName: court.name,
+      courtImage: court.images[0] || '',
+      userId: 'user_1', // Em um sistema real, viria do contexto de autenticação
+      userName: clientData.name,
+      userEmail: clientData.email,
+      userPhone: clientData.phone,
+      date: dateStr,
+      startTime: selectedTime,
+      endTime,
+      duration: 1,
+      totalPrice: court.hourlyRate,
+      serviceFee: 0,
+      numberOfPlayers: 10,
+      needsEquipment: false,
+      managerId: court.ownerId
     };
 
-    console.log('Booking data:', bookingData);
+    const newBooking = createBooking(bookingData);
     
     // Redirect to confirmation
     navigate('/cliente/confirmacao', { 
       state: { 
-        booking: bookingData,
-        formattedDate: format(selectedDate, "dd 'de' MMMM", { locale: ptBR })
+        booking: {
+          ...bookingData,
+          time: selectedTime,
+          clientData
+        },
+        formattedDate: format(selectedDate, "dd 'de' MMMM", { locale: ptBR }),
+        isPending: true
       } 
     });
   };
+
+  const availableSlots = getAvailableTimeSlots();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
@@ -103,26 +152,32 @@ const BookingPage = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Clock className="w-5 h-5" />
-                Selecione o Horário
+                Horários Disponíveis
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-2">
-                {timeSlots.map((time) => (
-                  <Button
-                    key={time}
-                    variant={selectedTime === time ? "default" : "outline"}
-                    className={`${
-                      selectedTime === time 
-                        ? "bg-[#F35410] hover:bg-[#BA2D0B] text-white border-[#F35410]" 
-                        : "border-white/20 text-white hover:bg-white/20 hover:text-slate-900 bg-transparent"
-                    }`}
-                    onClick={() => setSelectedTime(time)}
-                  >
-                    {time}
-                  </Button>
-                ))}
-              </div>
+              {availableSlots.length === 0 ? (
+                <p className="text-white/70 text-center py-4">
+                  Nenhum horário disponível para esta data. Tente outra data.
+                </p>
+              ) : (
+                <div className="grid grid-cols-3 gap-2">
+                  {availableSlots.map((time) => (
+                    <Button
+                      key={time}
+                      variant={selectedTime === time ? "default" : "outline"}
+                      className={`${
+                        selectedTime === time 
+                          ? "bg-[#F35410] hover:bg-[#BA2D0B] text-white border-[#F35410]" 
+                          : "border-white/20 text-white hover:bg-white/20 hover:text-slate-900 bg-transparent"
+                      }`}
+                      onClick={() => setSelectedTime(time)}
+                    >
+                      {time}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
@@ -182,15 +237,16 @@ const BookingPage = () => {
             <CardContent className="space-y-4">
               <div className="space-y-2 text-white">
                 <p><strong>Data:</strong> {format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
-                <p><strong>Horário:</strong> {selectedTime} - {parseInt(selectedTime.split(':')[0]) + 1}:00</p>
-                <p><strong>Valor:</strong> R$ 120,00 (pagamento no local)</p>
+                <p><strong>Horário:</strong> {selectedTime} - {getEndTime(selectedTime)}</p>
+                <p><strong>Valor:</strong> R$ {court?.hourlyRate || 120},00</p>
+                <p className="text-yellow-400 text-sm"><strong>Status:</strong> Aguardando aprovação do gestor</p>
               </div>
               
               <Button
                 onClick={handleBooking}
                 className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold"
               >
-                Confirmar Agendamento
+                Solicitar Agendamento
               </Button>
             </CardContent>
           </Card>
