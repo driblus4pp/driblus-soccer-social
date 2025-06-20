@@ -85,6 +85,14 @@ const BookingPage = () => {
               disabled={(date) => date < new Date() || date.getDay() === 0}
               className="bg-white/10 border-white/20 text-white"
               locale={ptBR}
+              classNames={{
+                day_selected: "bg-[#F35410] text-white hover:bg-[#F35410] hover:text-white focus:bg-[#F35410] focus:text-white",
+                day_today: "bg-white/20 text-white hover:bg-white/30 hover:text-slate-900",
+                day: "text-white hover:bg-white/20 hover:text-slate-900",
+                head_cell: "text-white/70",
+                caption_label: "text-white",
+                nav_button: "text-white hover:bg-white/20 hover:text-slate-900 border-white/20"
+              }}
             />
           </CardContent>
         </Card>
@@ -106,8 +114,8 @@ const BookingPage = () => {
                     variant={selectedTime === time ? "default" : "outline"}
                     className={`${
                       selectedTime === time 
-                        ? "bg-[#F35410] hover:bg-[#BA2D0B] text-white" 
-                        : "border-white/20 text-white hover:bg-white/10"
+                        ? "bg-[#F35410] hover:bg-[#BA2D0B] text-white border-[#F35410]" 
+                        : "border-white/20 text-white hover:bg-white/20 hover:text-slate-900 bg-transparent"
                     }`}
                     onClick={() => setSelectedTime(time)}
                   >

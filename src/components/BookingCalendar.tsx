@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, Clock, Users } from 'lucide-react';
 import { format, isSameDay, addDays, isAfter, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+
 interface TimeSlot {
   time: string;
   available: boolean;
@@ -79,7 +80,8 @@ const BookingCalendar = ({
     // Disable past dates
     return isBefore(date, new Date());
   };
-  return <div className="space-y-6">
+  return (
+    <div className="space-y-6">
       <Card className="bg-white/10 border-white/20">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
@@ -88,41 +90,68 @@ const BookingCalendar = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Calendar mode="single" selected={date} onSelect={handleDateSelect} disabled={isDateDisabled} locale={ptBR} classNames={{
-          day_selected: "bg-[#F35410] text-white hover:bg-[#F35410] hover:text-white focus:bg-[#F35410] focus:text-white",
-          day_today: "bg-white/20 text-white",
-          day: "text-white hover:bg-white/20",
-          head_cell: "text-white/70",
-          caption_label: "text-white",
-          nav_button: "text-white hover:bg-white/20"
-        }} className="rounded-md border border-white/20 bg-white/5 text-white [&_.rdp-day_selected]:bg-[#F35410] [&_.rdp-day_selected]:text-white [&_.rdp-day_today]:bg-white/20 px-0" />
+          <Calendar 
+            mode="single" 
+            selected={date} 
+            onSelect={handleDateSelect} 
+            disabled={isDateDisabled} 
+            locale={ptBR} 
+            classNames={{
+              day_selected: "bg-[#F35410] text-white hover:bg-[#F35410] hover:text-white focus:bg-[#F35410] focus:text-white",
+              day_today: "bg-white/20 text-white hover:bg-white/30 hover:text-slate-900",
+              day: "text-white hover:bg-white/20 hover:text-slate-900",
+              head_cell: "text-white/70",
+              caption_label: "text-white",
+              nav_button: "text-white hover:bg-white/20 hover:text-slate-900 border-white/20"
+            }} 
+            className="rounded-md border border-white/20 bg-white/5 text-white px-0" 
+          />
         </CardContent>
       </Card>
 
-      {date && <Card className="bg-white/10 border-white/20">
+      {date && (
+        <Card className="bg-white/10 border-white/20">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              Horários Disponíveis - {format(date, "dd 'de' MMMM", {
-            locale: ptBR
-          })}
+              Horários Disponíveis - {format(date, "dd 'de' MMMM", { locale: ptBR })}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? <div className="flex items-center justify-center py-8">
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-              </div> : <div className="grid grid-cols-2 gap-3">
-                {availableSlots.map(slot => <Button key={slot.time} variant={selectedTime === slot.time ? "default" : "outline"} disabled={!slot.available} onClick={() => handleTimeSelect(slot.time)} className={`p-4 h-auto flex-col ${selectedTime === slot.time ? "bg-[#F35410] text-white border-[#F35410]" : slot.available ? "bg-white/10 border-white/20 text-white hover:bg-white/20" : "bg-white/5 border-white/10 text-white/40 cursor-not-allowed"}`}>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {availableSlots.map((slot) => (
+                  <Button
+                    key={slot.time}
+                    variant={selectedTime === slot.time ? "default" : "outline"}
+                    disabled={!slot.available}
+                    onClick={() => handleTimeSelect(slot.time)}
+                    className={`p-4 h-auto flex-col ${
+                      selectedTime === slot.time
+                        ? "bg-[#F35410] text-white border-[#F35410] hover:bg-[#BA2D0B]"
+                        : slot.available
+                        ? "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-slate-900"
+                        : "bg-white/5 border-white/10 text-white/40 cursor-not-allowed"
+                    }`}
+                  >
                     <span className="font-semibold text-lg">{slot.time}</span>
                     <span className="text-sm">
                       {slot.available ? `R$ ${slot.price}` : "Indisponível"}
                     </span>
-                  </Button>)}
-              </div>}
+                  </Button>
+                ))}
+              </div>
+            )}
           </CardContent>
-        </Card>}
+        </Card>
+      )}
 
-      {date && selectedTime && <Card className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] border-none">
+      {date && selectedTime && (
+        <Card className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] border-none">
           <CardContent className="p-4">
             <div className="flex items-center justify-between text-white">
               <div>
@@ -138,7 +167,10 @@ const BookingCalendar = ({
               </div>
             </div>
           </CardContent>
-        </Card>}
-    </div>;
+        </Card>
+      )}
+    </div>
+  );
 };
+
 export default BookingCalendar;
