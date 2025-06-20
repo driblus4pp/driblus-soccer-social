@@ -117,7 +117,7 @@ const Index = () => {
 
         {/* Features Preview */}
         <div className="mt-8">
-          <Button onClick={() => setCurrentScreen('onboarding')} variant="outline" className="w-full border-white/20 bg-red-700 hover:bg-red-600 text-slate-50 text-lg font-bold">
+          <Button onClick={() => setCurrentScreen('onboarding')} variant="outline" className="w-full border-white/20 bg-red-700 hover:bg-red-600 text-slate-50 text-lg font-bold rounded-xl">
             Ver Como Funciona
           </Button>
         </div>
