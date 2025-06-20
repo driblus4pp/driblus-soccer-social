@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, MapPin } from "lucide-react";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
+
 const mockBookings = [{
   id: '1',
   courtName: 'No Alvo Society',
@@ -33,9 +34,20 @@ const mockBookings = [{
   price: 'R$ 200',
   location: 'Cocó, Fortaleza'
 }];
+
 const ClientSchedule = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('upcoming');
+
+  // Check for tab parameter in URL
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl && ['upcoming', 'pending', 'completed'].includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       confirmed: {
@@ -54,34 +66,44 @@ const ClientSchedule = () => {
     const config = statusConfig[status as keyof typeof statusConfig];
     return <Badge className={`${config.color} text-white text-xs`}>{config.text}</Badge>;
   };
+
   const filterBookings = (status: string) => {
     if (status === 'upcoming') return mockBookings.filter(b => b.status === 'confirmed' || b.status === 'pending');
     if (status === 'completed') return mockBookings.filter(b => b.status === 'completed');
     return mockBookings.filter(b => b.status === 'pending');
   };
+
   const filteredBookings = filterBookings(activeTab);
-  return <div className="min-h-screen bg-[#093758] pb-20">
+
+  return (
+    <div className="min-h-screen bg-[#093758] pb-20">
       {/* Header */}
       <div className="px-4 py-6 bg-[#093758]">
         <div className="flex items-center gap-4 mb-6">
-          
           <h1 className="text-xl font-semibold text-white">Minha Agenda</h1>
         </div>
 
         {/* Tabs */}
         <div className="flex gap-1 bg-white/10 rounded-lg p-1">
-          {[{
-          id: 'upcoming',
-          label: 'Próximas'
-        }, {
-          id: 'pending',
-          label: 'Pendentes'
-        }, {
-          id: 'completed',
-          label: 'Histórico'
-        }].map(tab => <Button key={tab.id} variant={activeTab === tab.id ? "default" : "ghost"} size="sm" onClick={() => setActiveTab(tab.id)} className={`flex-1 ${activeTab === tab.id ? 'bg-[#F35410] text-white hover:bg-[#BA2D0B]' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
+          {[
+            { id: 'upcoming', label: 'Próximas' },
+            { id: 'pending', label: 'Pendentes' },
+            { id: 'completed', label: 'Histórico' }
+          ].map(tab => (
+            <Button
+              key={tab.id}
+              variant={activeTab === tab.id ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 ${
+                activeTab === tab.id 
+                  ? 'bg-[#F35410] text-white hover:bg-[#BA2D0B]' 
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`}
+            >
               {tab.label}
-            </Button>)}
+            </Button>
+          ))}
         </div>
       </div>
 
@@ -129,6 +151,8 @@ const ClientSchedule = () => {
       </div>
 
       <BottomNavigation userType="client" />
-    </div>;
+    </div>
+  );
 };
+
 export default ClientSchedule;

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,8 @@ import ClientCourts from "./pages/client/ClientCourts";
 import ClientSchedule from "./pages/client/ClientSchedule";
 import ClientNotifications from "./pages/client/ClientNotifications";
 import ClientProfile from "./pages/client/ClientProfile";
+import ClientAppSettings from "./pages/client/ClientAppSettings";
+import ClientEditProfile from "./pages/client/ClientEditProfile";
 import CourtDetailsPage from "./pages/client/CourtDetailsPage";
 import BookingPage from "./pages/client/BookingPage";
 import BookingConfirmationPage from "./pages/client/BookingConfirmationPage";
@@ -57,6 +58,8 @@ const App = () => (
             <Route path="/cliente/agendamentos" element={<ClientSchedule />} />
             <Route path="/cliente/notificacoes" element={<ClientNotifications />} />
             <Route path="/cliente/perfil" element={<ClientProfile />} />
+            <Route path="/cliente/configuracoes" element={<ClientAppSettings />} />
+            <Route path="/cliente/perfil/editar" element={<ClientEditProfile />} />
             <Route path="/cliente/quadra/:id" element={<CourtDetailsPage />} />
             <Route path="/cliente/quadra/:id/agendar" element={<BookingPage />} />
             <Route path="/cliente/confirmacao" element={<BookingConfirmationPage />} />

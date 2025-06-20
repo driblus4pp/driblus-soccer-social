@@ -1,21 +1,40 @@
+
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, Calendar, MapPin, Edit, LogOut, ArrowLeft, Settings } from "lucide-react";
+import { User, Calendar, MapPin, Edit, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
+
 const ClientProfile = () => {
   const navigate = useNavigate();
-  const {
-    user,
-    logout
-  } = useAuth();
-  return <div className="min-h-screen bg-[#093758] pb-20">
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    if (window.confirm('Tem certeza que deseja sair da sua conta?')) {
+      logout();
+      navigate('/');
+    }
+  };
+
+  const handleHistoryClick = () => {
+    navigate('/cliente/agendamentos?tab=completed');
+  };
+
+  const handleEditProfile = () => {
+    navigate('/cliente/perfil/editar');
+  };
+
+  const handleAppSettings = () => {
+    navigate('/cliente/configuracoes');
+  };
+
+  return (
+    <div className="min-h-screen bg-[#093758] pb-20">
       {/* Header */}
       <div className="px-4 py-6 bg-[#093758]">
         <div className="flex items-center gap-4 mb-6">
-          
           <h1 className="text-xl font-semibold text-white">Meu Perfil</h1>
         </div>
       </div>
@@ -37,7 +56,12 @@ const ClientProfile = () => {
                   Jogador Ativo
                 </Badge>
               </div>
-              <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 bg-gray-500 hover:bg-gray-400 rounded-full">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={handleEditProfile}
+                className="border-white/20 text-zinc-950 bg-gray-500 hover:bg-gray-400 rounded-full"
+              >
                 <Edit className="w-4 h-4" />
               </Button>
             </div>
@@ -83,19 +107,35 @@ const ClientProfile = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 space-y-3">
-            <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">
+            <Button 
+              variant="ghost" 
+              onClick={handleEditProfile}
+              className="w-full justify-start text-white hover:bg-white/10"
+            >
               <User className="w-4 h-4 mr-3" />
               Editar Perfil
             </Button>
-            <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">
+            <Button 
+              variant="ghost" 
+              onClick={handleHistoryClick}
+              className="w-full justify-start text-white hover:bg-white/10"
+            >
               <Calendar className="w-4 h-4 mr-3" />
               Histórico de Reservas
             </Button>
-            <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">
+            <Button 
+              variant="ghost" 
+              onClick={handleAppSettings}
+              className="w-full justify-start text-white hover:bg-white/10"
+            >
               <Settings className="w-4 h-4 mr-3" />
               Configurações do App
             </Button>
-            <Button variant="ghost" onClick={logout} className="w-full justify-start text-red-400 hover:bg-red-500/10">
+            <Button 
+              variant="ghost" 
+              onClick={handleLogout} 
+              className="w-full justify-start text-red-400 hover:bg-red-500/10"
+            >
               <LogOut className="w-4 h-4 mr-3" />
               Sair da Conta
             </Button>
@@ -104,6 +144,8 @@ const ClientProfile = () => {
       </div>
 
       <BottomNavigation userType="client" />
-    </div>;
+    </div>
+  );
 };
+
 export default ClientProfile;
