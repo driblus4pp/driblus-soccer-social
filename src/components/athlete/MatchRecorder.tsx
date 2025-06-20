@@ -144,10 +144,10 @@ const MatchRecorder = ({
   };
   return <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+        <Button variant="ghost" size="icon" onClick={onBack} className="text-slate-50">
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <h1 className="text-2xl font-bold">Registrar Partida 🏆</h1>
+        <h1 className="text-2xl font-bold text-slate-50">Registrar Partida 🏆</h1>
       </div>
 
       <Card>
