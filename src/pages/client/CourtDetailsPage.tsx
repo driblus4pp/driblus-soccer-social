@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, MapPin, Star, Clock, Calendar, Users, Car, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
-
 const mockCourtDetails = {
   '1': {
     id: '1',
@@ -22,58 +20,58 @@ const mockCourtDetails = {
       weekdays: '06:00 - 22:00',
       weekend: '07:00 - 20:00'
     },
-    amenities: [
-      { name: 'Estacionamento', icon: Car, available: true },
-      { name: 'Vestiário', icon: Shirt, available: true },
-      { name: 'Chuveiro', icon: Droplets, available: true },
-      { name: 'Bar', icon: Coffee, available: false },
-      { name: 'Iluminação', icon: Lightbulb, available: true },
-    ],
-    images: [
-      'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop'
-    ],
-    reviews: [
-      {
-        user: 'João Silva',
-        rating: 5,
-        comment: 'Excelente quadra! Muito bem cuidada e com ótima localização.',
-        date: '15 de junho, 2024'
-      },
-      {
-        user: 'Maria Santos',
-        rating: 4,
-        comment: 'Boa infraestrutura, mas poderia ter mais horários disponíveis.',
-        date: '10 de junho, 2024'
-      }
-    ]
+    amenities: [{
+      name: 'Estacionamento',
+      icon: Car,
+      available: true
+    }, {
+      name: 'Vestiário',
+      icon: Shirt,
+      available: true
+    }, {
+      name: 'Chuveiro',
+      icon: Droplets,
+      available: true
+    }, {
+      name: 'Bar',
+      icon: Coffee,
+      available: false
+    }, {
+      name: 'Iluminação',
+      icon: Lightbulb,
+      available: true
+    }],
+    images: ['https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop'],
+    reviews: [{
+      user: 'João Silva',
+      rating: 5,
+      comment: 'Excelente quadra! Muito bem cuidada e com ótima localização.',
+      date: '15 de junho, 2024'
+    }, {
+      user: 'Maria Santos',
+      rating: 4,
+      comment: 'Boa infraestrutura, mas poderia ter mais horários disponíveis.',
+      date: '10 de junho, 2024'
+    }]
   }
 };
-
 const CourtDetailsPage = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
   const court = mockCourtDetails[id as keyof typeof mockCourtDetails];
-
   if (!court) {
     return <div className="min-h-screen bg-[#062B4B] flex items-center justify-center">
       <div className="text-white">Quadra não encontrada</div>
     </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-[#062B4B]">
+  return <div className="min-h-screen bg-[#062B4B]">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/cliente/dashboard')}
-            className="text-white hover:bg-white/20"
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate('/cliente/dashboard')} className="text-white hover:bg-white/20">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-white">Detalhes da Quadra</h1>
@@ -83,11 +81,7 @@ const CourtDetailsPage = () => {
       <div className="p-4 space-y-6">
         {/* Image Gallery */}
         <div className="relative">
-          <img 
-            src={court.images[currentImageIndex]} 
-            alt={court.name} 
-            className="w-full h-64 object-cover rounded-2xl"
-          />
+          <img src={court.images[currentImageIndex]} alt={court.name} className="w-full h-64 object-cover rounded-2xl" />
           
           {/* Rating badge sobreposto */}
           <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-2 rounded-full flex items-center gap-1">
@@ -96,19 +90,9 @@ const CourtDetailsPage = () => {
           </div>
 
           {/* Navigation dots */}
-          {court.images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-              {court.images.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-2 h-2 rounded-full ${
-                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+          {court.images.length > 1 && <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+              {court.images.map((_, index) => <button key={index} onClick={() => setCurrentImageIndex(index)} className={`w-2 h-2 rounded-full ${index === currentImageIndex ? 'bg-white' : 'bg-white/50'}`} />)}
+            </div>}
         </div>
 
         {/* Court Name and Price */}
@@ -129,16 +113,10 @@ const CourtDetailsPage = () => {
         {/* Tabs */}
         <Tabs defaultValue="details" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-white/10 border-white/20">
-            <TabsTrigger 
-              value="details" 
-              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
-            >
+            <TabsTrigger value="details" className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Detalhes
             </TabsTrigger>
-            <TabsTrigger 
-              value="reviews" 
-              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
-            >
+            <TabsTrigger value="reviews" className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Avaliações
             </TabsTrigger>
           </TabsList>
@@ -181,14 +159,9 @@ const CourtDetailsPage = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {court.modalities.map((modality, index) => (
-                    <Badge 
-                      key={index} 
-                      className="bg-[#F35410] text-white hover:bg-[#BA2D0B]"
-                    >
+                  {court.modalities.map((modality, index) => <Badge key={index} className="bg-[#F35410] text-white hover:bg-[#BA2D0B]">
                       {modality}
-                    </Badge>
-                  ))}
+                    </Badge>)}
                 </div>
               </CardContent>
             </Card>
@@ -201,24 +174,13 @@ const CourtDetailsPage = () => {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   {court.amenities.map((amenity, index) => {
-                    const IconComponent = amenity.icon;
-                    return (
-                      <div 
-                        key={index} 
-                        className={`flex items-center gap-3 p-3 rounded-lg ${
-                          amenity.available 
-                            ? 'bg-green-600/20 text-green-400' 
-                            : 'bg-red-600/20 text-red-400'
-                        }`}
-                      >
+                  const IconComponent = amenity.icon;
+                  return <div key={index} className={`flex items-center gap-3 p-3 rounded-lg ${amenity.available ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
                         <IconComponent className="w-5 h-5" />
-                        <span className="text-white">{amenity.name}</span>
-                        {amenity.available && (
-                          <span className="ml-auto text-green-400 text-sm">✓</span>
-                        )}
-                      </div>
-                    );
-                  })}
+                        <span className="text-white text-sm">{amenity.name}</span>
+                        {amenity.available && <span className="ml-auto text-green-400 text-sm">✓</span>}
+                      </div>;
+                })}
                 </div>
               </CardContent>
             </Card>
@@ -233,36 +195,29 @@ const CourtDetailsPage = () => {
               <span className="text-white/60">({court.totalReviews} avaliações)</span>
             </div>
             
-            {court.reviews.map((review, index) => (
-              <Card key={index} className="bg-white/10 border-white/20">
+            {court.reviews.map((review, index) => <Card key={index} className="bg-white/10 border-white/20">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-white">{review.user}</span>
                     <div className="flex items-center gap-1">
-                      {Array.from({ length: review.rating }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-[#F35410] fill-current" />
-                      ))}
+                      {Array.from({
+                    length: review.rating
+                  }).map((_, i) => <Star key={i} className="w-4 h-4 text-[#F35410] fill-current" />)}
                     </div>
                   </div>
                   <p className="text-white/80 mb-2">{review.comment}</p>
                   <span className="text-white/60 text-sm">{review.date}</span>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </TabsContent>
         </Tabs>
 
         {/* Book Button */}
-        <Button
-          onClick={() => navigate(`/cliente/quadra/${court.id}/agendar`)}
-          className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl"
-        >
+        <Button onClick={() => navigate(`/cliente/quadra/${court.id}/agendar`)} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl">
           <Calendar className="w-5 h-5 mr-2" />
           Agendar Horário
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default CourtDetailsPage;
