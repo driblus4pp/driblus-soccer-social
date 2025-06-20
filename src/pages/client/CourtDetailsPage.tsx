@@ -157,7 +157,7 @@ const CourtDetailsPage = () => {
               
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {court.modalities.map((modality, index) => <Badge key={index} className="bg-[#F35410] text-white hover:bg-[#BA2D0B]">
+                  {court.modalities.map((modality, index) => <Badge key={index} className="bg-[#F35410] text-white hover:bg-[#BA2D0B] my-0">
                       {modality}
                     </Badge>)}
                 </div>
