@@ -377,9 +377,7 @@ const MainApp = () => {
         {quadras.map(quadra => <Card key={quadra.id} className="bg-white/10 border-white/20 overflow-hidden">
             <div className="relative">
               <img src={quadra.image} alt={quadra.name} className="w-full h-48 object-cover" />
-              {quadra.isPromoted && <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
-                  DESTAQUE
-                </div>}
+              {quadra.isPromoted}
               <div className="absolute top-4 right-4 bg-[#F35410] text-white px-3 py-1 rounded-full flex items-center gap-1">
                 <Star className="w-4 h-4 fill-current" />
                 <span className="text-sm font-semibold">{quadra.rating}</span>
