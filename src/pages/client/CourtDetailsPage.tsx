@@ -174,9 +174,9 @@ const CourtDetailsPage = () => {
                   {court.amenities.map((amenity, index) => {
                   const IconComponent = amenity.icon;
                   return <div key={index} className={`flex items-center gap-3 p-3 rounded-lg ${amenity.available ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
-                        <IconComponent className="w-5 h-5" />
+                        
                         <span className="text-white text-sm">{amenity.name}</span>
-                        {amenity.available && <span className="ml-auto text-green-400 text-sm">✓</span>}
+                        {amenity.available}
                       </div>;
                 })}
                 </div>
