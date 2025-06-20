@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,21 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { User, Calendar, MapPin, Edit, LogOut, ArrowLeft, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
-
 const ClientProfile = () => {
   const navigate = useNavigate();
   const {
     user,
     logout
   } = useAuth();
-
   return <div className="min-h-screen bg-[#093758] pb-20">
       {/* Header */}
       <div className="px-4 py-6 bg-[#093758]">
         <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/cliente/dashboard')} className="text-white hover:bg-white/20">
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
+          
           <h1 className="text-xl font-semibold text-white">Meu Perfil</h1>
         </div>
       </div>
@@ -111,5 +106,4 @@ const ClientProfile = () => {
       <BottomNavigation userType="client" />
     </div>;
 };
-
 export default ClientProfile;
