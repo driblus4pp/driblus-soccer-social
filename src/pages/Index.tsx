@@ -1,16 +1,13 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { User, Building, Shield, ArrowRight } from "lucide-react";
 import OnboardingScreen from "@/components/OnboardingScreen";
-
 const Index = () => {
   const navigate = useNavigate();
   const [currentScreen, setCurrentScreen] = useState<'home' | 'onboarding'>('home');
   const [onboardingStep, setOnboardingStep] = useState(1);
-
   if (currentScreen === 'onboarding') {
     return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] text-white overflow-hidden">
         <OnboardingScreen step={onboardingStep} onNext={() => {
@@ -22,7 +19,6 @@ const Index = () => {
       }} onSkip={() => setCurrentScreen('home')} />
       </div>;
   }
-
   return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       <div className="p-4 space-y-8">
         {/* Header */}
@@ -48,7 +44,7 @@ const Index = () => {
                 </div>
                 <div className="flex-1">
                   <span>Sou Cliente</span>
-                  <ArrowRight className="w-5 h-5 ml-auto" />
+                  
                 </div>
               </CardTitle>
               <CardDescription className="text-white/70">
@@ -66,7 +62,7 @@ const Index = () => {
                 </div>
                 <div className="flex-1">
                   <span>Sou Gestor de Quadra</span>
-                  <ArrowRight className="w-5 h-5 ml-auto" />
+                  
                 </div>
               </CardTitle>
               <CardDescription className="text-white/70">
@@ -84,7 +80,7 @@ const Index = () => {
                 </div>
                 <div className="flex-1">
                   <span>Sou Administrador</span>
-                  <ArrowRight className="w-5 h-5 ml-auto" />
+                  
                 </div>
               </CardTitle>
               <CardDescription className="text-white/70">
@@ -108,5 +104,4 @@ const Index = () => {
       </div>
     </div>;
 };
-
 export default Index;
