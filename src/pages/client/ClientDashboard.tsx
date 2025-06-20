@@ -63,25 +63,33 @@ const ClientDashboard = () => {
   const getStatusBadge = (status: string) => {
     return status === 'available' ? <Badge className="bg-green-500 text-white text-xs">Disponível</Badge> : <Badge className="bg-red-500 text-white text-xs">Indisponível</Badge>;
   };
-  return <div className="min-h-screen bg-[#062B4B] pb-20">
+  return <div className="min-h-screen bg-[#093758] pb-20">
       {/* Header com localização */}
-      <div className="px-4 py-6 shadow-sm bg-[#062b4b]">
+      <div className="px-4 py-6 shadow-sm bg-[#093758]">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-xl font-medium text-white">
-              Boa noite, {user?.name?.split(' ')[0] || 'Janderson'}!
+              Boa noite, {user?.name?.split(' ')[0] || 'Janderson'}! 🔥
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[#F35410] font-semibold text-lg">Driblus</span>
-            
+            <img 
+              src="/lovable-uploads/0e6fb8a5-a6de-4b38-955c-58e7bcef94bb.png" 
+              alt="Driblus" 
+              className="h-8"
+            />
           </div>
         </div>
 
         {/* Barra de busca */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input placeholder="Buscar quadras, bairros..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/20 rounded-xl" />
+          <Input
+            placeholder="Buscar quadras, bairros..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/20 rounded-xl"
+          />
         </div>
       </div>
 
