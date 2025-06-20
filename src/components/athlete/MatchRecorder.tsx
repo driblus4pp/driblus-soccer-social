@@ -154,7 +154,7 @@ const MatchRecorder = ({
         <CardHeader className="bg-zinc-50/[0.98]">
           <CardTitle>Detalhes da Partida</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="bg-zinc-50">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label>Modalidade Esportiva</Label>
