@@ -15,6 +15,7 @@ import NotificationDropdown from './NotificationDropdown';
 import BookingCard from './BookingCard';
 import RatingModal from './RatingModal';
 import { useToast } from "@/hooks/use-toast";
+
 const MainApp = () => {
   const {
     user,
@@ -438,9 +439,9 @@ const MainApp = () => {
           label: 'Concluídos',
           count: getBookingsByStatus(BookingStatus.COMPLETED).length
         }, {
-          key: BookingStatus.CANCELLED,
+          key: 'cancelled',
           label: 'Cancelados',
-          count: getBookingsByStatus(BookingStatus.CANCELLED).length
+          count: getBookingsByStatus(BookingStatus.CANCELLED_BY_USER).length + getBookingsByStatus(BookingStatus.CANCELLED_BY_MANAGER).length
         }].map(filter => <Button key={filter.key} variant={agendaFilter === filter.key ? "default" : "outline"} size="sm" onClick={() => setAgendaFilter(filter.key as any)} className={`whitespace-nowrap ${agendaFilter === filter.key ? 'bg-[#F35410] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
               {filter.label} ({filter.count})
             </Button>)}
@@ -663,4 +664,5 @@ const MainApp = () => {
     })} booking={ratingModal.booking} onSubmit={handleSubmitRating} />
     </div>;
 };
+
 export default MainApp;
