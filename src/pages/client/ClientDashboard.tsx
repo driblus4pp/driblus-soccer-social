@@ -92,7 +92,7 @@ const ClientDashboard = () => {
             <Zap className="w-5 h-5 text-[#F35410]" />
             <h3 className="text-xl font-semibold text-white">Quadras em Destaque</h3>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 bg-transparent">
             {filteredCourts.filter(court => court.isPromoted).map(court => <Card key={court.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-colors cursor-pointer overflow-hidden relative" onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
                 <div className="absolute top-4 left-4 bg-[#F35410] text-white px-2 py-1 rounded-full text-xs font-bold">
                   DESTAQUE
@@ -131,7 +131,7 @@ const ClientDashboard = () => {
         <div>
           <h3 className="text-xl font-semibold text-white mb-4">Outras Quadras</h3>
           <div className="space-y-4">
-            {filteredCourts.filter(court => !court.isPromoted).map(court => <Card key={court.id} className="bg-white/10 border-white/20 hover:bg-white/15 transition-colors cursor-pointer" onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
+            {filteredCourts.filter(court => !court.isPromoted).map(court => <Card key={court.id} onClick={() => navigate(`/cliente/quadra/${court.id}`)} className="border-white/20 transition-colors cursor-pointer bg-[#08000a]">
                 <CardContent className="p-0">
                   <div className="flex gap-4">
                     <img src={court.image} alt={court.name} className="w-24 h-24 object-cover rounded-l-lg" />
