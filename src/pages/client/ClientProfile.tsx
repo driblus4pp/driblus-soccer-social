@@ -41,9 +41,11 @@ const ClientProfile = () => {
                   {user?.name || 'Janderson Silva'}
                 </h2>
                 <p className="text-white/70">{user?.email || 'janderson@email.com'}</p>
-                
+                <Badge className="bg-[#F35410] text-white mt-2">
+                  Jogador Ativo
+                </Badge>
               </div>
-              <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 rounded-full bg-zinc-100">
+              <Button variant="outline" size="icon" className="border-white/20 text-zinc-950 bg-gray-500 hover:bg-gray-400 rounded-full">
                 <Edit className="w-4 h-4" />
               </Button>
             </div>
@@ -51,7 +53,34 @@ const ClientProfile = () => {
         </Card>
 
         {/* Estatísticas do Jogador */}
-        
+        <Card className="bg-white/10 border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Trophy className="w-5 h-5" />
+              Estatísticas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-[#F35410]">{playerStats.totalGames}</p>
+                <p className="text-sm text-white/70">Jogos</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-[#F35410]">{playerStats.wins}</p>
+                <p className="text-sm text-white/70">Vitórias</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-[#F35410]">{playerStats.goals}</p>
+                <p className="text-sm text-white/70">Gols</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-[#F35410]">{playerStats.assists}</p>
+                <p className="text-sm text-white/70">Assistências</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Atividade Recente */}
         <Card className="bg-white/10 border-white/20">
