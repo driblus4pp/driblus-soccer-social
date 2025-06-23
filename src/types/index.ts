@@ -32,6 +32,7 @@ export interface Court {
   totalReviews: number;
   workingHours: WorkingHours;
   isVerified: boolean;
+  unavailabilityReason?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -110,12 +111,12 @@ export enum UserRole {
 }
 
 export enum SportType {
-  FOOTBALL = 'football',
-  FUTSAL = 'futsal',
-  VOLLEYBALL = 'volleyball',
-  BASKETBALL = 'basketball',
-  TENNIS = 'tennis',
-  PADEL = 'padel'
+  FOOTBALL = 'FOOTBALL',
+  FUTSAL = 'FUTSAL',
+  VOLLEYBALL = 'VOLLEYBALL',
+  BASKETBALL = 'BASKETBALL',
+  TENNIS = 'TENNIS',
+  PADEL = 'PADEL'
 }
 
 export interface User {
