@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Court, WorkingHours } from '@/types';
+import { Court, WorkingHours, SportType } from '@/types';
 
 const mockCourts: Court[] = [
   {
@@ -21,7 +20,7 @@ const mockCourts: Court[] = [
       'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop',
       'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop'
     ],
-    sports: ['FOOTBALL', 'FUTSAL'] as any,
+    sports: [SportType.FOOTBALL, SportType.FUTSAL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
     hourlyRate: 120,
     status: 'active',
@@ -58,7 +57,7 @@ const mockCourts: Court[] = [
       'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop',
       'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop'
     ],
-    sports: ['FOOTBALL', 'FUTSAL'] as any,
+    sports: [SportType.FOOTBALL, SportType.FUTSAL],
     amenities: ['Vestiário', 'Bar', 'Iluminação', 'Estacionamento'],
     hourlyRate: 150,
     status: 'active',
@@ -94,7 +93,7 @@ const mockCourts: Court[] = [
     images: [
       'https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=600&h=400&fit=crop'
     ],
-    sports: ['BASKETBALL', 'VOLLEYBALL'] as any,
+    sports: [SportType.BASKETBALL, SportType.VOLLEYBALL],
     amenities: ['Vestiário', 'Academia', 'Estacionamento', 'Chuveiro'],
     hourlyRate: 200,
     status: 'inactive',
@@ -132,7 +131,7 @@ const mockCourts: Court[] = [
       'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop',
       'https://images.unsplash.com/photo-1556909191-f6e405073de9?w=600&h=400&fit=crop'
     ],
-    sports: ['TENNIS', 'VOLLEYBALL', 'BASKETBALL'] as any,
+    sports: [SportType.TENNIS, SportType.VOLLEYBALL, SportType.BASKETBALL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Bar', 'Loja de Equipamentos'],
     hourlyRate: 180,
     status: 'pending_approval',

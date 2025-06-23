@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { ArrowLeft, MapPin, Star, Clock, Calendar, AlertTriangle, Car, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
 import { useCourts } from "@/hooks/useCourts";
+import { SportType } from "@/types";
 
 const CourtDetailsPage = () => {
   const { id } = useParams();
@@ -183,10 +184,10 @@ const CourtDetailsPage = () => {
                       key={index}
                       className="bg-[#F35410] text-white hover:bg-[#BA2D0B] py-0 my-[13px] rounded-xl"
                     >
-                      {sport === 'FOOTBALL' ? 'Futebol' : 
-                       sport === 'BASKETBALL' ? 'Basquete' : 
-                       sport === 'VOLLEYBALL' ? 'Vôlei' : 
-                       sport === 'TENNIS' ? 'Tênis' : sport}
+                      {sport === SportType.FOOTBALL ? 'Futebol' : 
+                       sport === SportType.BASKETBALL ? 'Basquete' : 
+                       sport === SportType.VOLLEYBALL ? 'Vôlei' : 
+                       sport === SportType.TENNIS ? 'Tênis' : sport}
                     </Badge>
                   ))}
                 </div>

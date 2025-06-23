@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { MapPin, Star, Search, Filter, AlertCircle } from "lucide-react";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import FilterModal, { FilterState } from "@/components/FilterModal";
 import { useCourts } from "@/hooks/useCourts";
+import { SportType } from "@/types";
 
 const ClientCourts = () => {
   const navigate = useNavigate();
@@ -34,8 +34,8 @@ const ClientCourts = () => {
     amenities: court.amenities,
     city: court.location.city.toLowerCase(),
     neighborhood: court.location.address.toLowerCase(),
-    modality: court.sports.includes('FOOTBALL' as any) ? 'futebol' : 
-              court.sports.includes('BASKETBALL' as any) ? 'basquete' : 'volleyball',
+    modality: court.sports.includes(SportType.FOOTBALL) ? 'futebol' : 
+              court.sports.includes(SportType.BASKETBALL) ? 'basquete' : 'volleyball',
     operatingHours: '24h', // Simplificado
     unavailabilityReason: court.unavailabilityReason
   }));
