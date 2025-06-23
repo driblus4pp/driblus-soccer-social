@@ -92,7 +92,7 @@ const Index = () => {
 
         {/* Features Preview */}
         <div className="mt-8">
-          <Button onClick={() => setCurrentScreen('onboarding')} variant="outline" className="w-full border-white/20 bg-red-700 hover:bg-red-600 text-slate-50 text-lg font-bold rounded-xl">
+          <Button onClick={() => setCurrentScreen('onboarding')} variant="outline" className="w-full border-white/20 text-lg font-bold rounded-xl bg-zinc-50/[0.98] text-blue-950">
             Ver Como Funciona
           </Button>
         </div>
