@@ -99,7 +99,7 @@ const Index = () => {
 
         {/* Footer */}
         <div className="text-center mt-8 text-white/60 text-sm">
-          <p>© 2024 Driblus - Todos os direitos reservados</p>
+          
         </div>
       </div>
     </div>;
