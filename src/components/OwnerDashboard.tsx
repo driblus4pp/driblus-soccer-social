@@ -15,21 +15,30 @@ import {
   Star,
   TrendingUp,
   CalendarCheck,
-  AlertCircle
+  AlertCircle,
+  Edit
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import CourtManagement from "./CourtManagement";
+import ManagerCourtSettings from "./ManagerCourtSettings";
+import { useCourts } from "@/hooks/useCourts";
 
 const OwnerDashboard = () => {
   const { user, connectGoogleCalendar, isLoading } = useAuth();
+  const { getCourtsByManager } = useCourts();
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedCourtForSettings, setSelectedCourtForSettings] = useState<string | null>(null);
+
+  // Simulando o ID do gestor logado
+  const managerId = 'manager-1';
+  const managerCourts = getCourtsByManager(managerId);
 
   const handleConnectCalendar = async () => {
     await connectGoogleCalendar();
   };
 
   const stats = {
-    totalCourts: 3,
+    totalCourts: managerCourts.length,
     monthlyRevenue: 15420,
     totalBookings: 87,
     occupancyRate: 76,
@@ -67,38 +76,19 @@ const OwnerDashboard = () => {
     }
   ];
 
-  const courts = [
-    {
-      id: 1,
-      name: "Quadra 1 - Society",
-      sport: "Futebol Society",
-      hourlyRate: 120,
-      status: "active",
-      bookingsToday: 6,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop"
-    },
-    {
-      id: 2,
-      name: "Quadra 2 - Futsal",
-      sport: "Futsal",
-      hourlyRate: 100,
-      status: "active",
-      bookingsToday: 4,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop"
-    },
-    {
-      id: 3,
-      name: "Quadra 3 - Vôlei",
-      sport: "Vôlei",
-      hourlyRate: 80,
-      status: "maintenance",
-      bookingsToday: 0,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop"
-    }
-  ];
+  // Se uma quadra foi selecionada para configuração
+  if (selectedCourtForSettings) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] p-4">
+        <div className="max-w-7xl mx-auto">
+          <ManagerCourtSettings 
+            courtId={selectedCourtForSettings} 
+            onBack={() => setSelectedCourtForSettings(null)} 
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] p-4">
@@ -206,6 +196,65 @@ const OwnerDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+
+            {/* My Courts Overview */}
+            <Card className="bg-white/10 border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Minhas Quadras</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {managerCourts.map(court => (
+                  <div key={court.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <img 
+                        src={court.images[0]} 
+                        alt={court.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <div>
+                        <h4 className="text-white font-medium">{court.name}</h4>
+                        <div className="flex items-center gap-2 text-white/70 text-sm">
+                          <MapPin className="w-3 h-3" />
+                          <span>{court.location.city}</span>
+                        </div>
+                        <div className="flex items-center gap-4 mt-1">
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span className="text-white/70 text-sm">{court.rating}</span>
+                          </div>
+                          <Badge 
+                            variant="secondary" 
+                            className={`text-xs ${
+                              court.status === 'active' 
+                                ? 'bg-green-600 text-white' 
+                                : court.status === 'inactive'
+                                ? 'bg-red-600 text-white'
+                                : 'bg-yellow-600 text-white'
+                            }`}
+                          >
+                            {court.status === 'active' ? 'Ativa' : 
+                             court.status === 'inactive' ? 'Inativa' : 'Pendente'}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-white font-bold">R$ {court.hourlyRate}</p>
+                        <p className="text-white/60 text-xs">por hora</p>
+                      </div>
+                      <Button 
+                        size="sm"
+                        onClick={() => setSelectedCourtForSettings(court.id)}
+                        className="bg-[#F35410] hover:bg-[#BA2D0B] text-white"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
 
             {/* Recent Bookings */}
             <Card className="bg-white/10 border-white/20">

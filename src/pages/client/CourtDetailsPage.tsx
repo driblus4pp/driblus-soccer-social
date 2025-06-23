@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -5,74 +6,47 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { ArrowLeft, MapPin, Star, Clock, Calendar, Users, Car, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
-const mockCourtDetails = {
-  '1': {
-    id: '1',
-    name: 'No Alvo Society',
-    location: 'Rua Major Facundo, 123 - Aldeota, Fortaleza - CE',
-    distance: '2.5 km',
-    price: 'R$ 120',
-    rating: 4.8,
-    totalReviews: 47,
-    description: 'Quadra society com grama sintética de alta qualidade, vestiários completos e estacionamento gratuito para todos os clientes.',
-    modalities: ['Futebol Society', 'Futsal', 'Futebol de Campo'],
-    workingHours: {
-      weekdays: '06:00 - 22:00',
-      weekend: '07:00 - 20:00'
-    },
-    amenities: [{
-      name: 'Estacionamento',
-      icon: Car,
-      available: true
-    }, {
-      name: 'Vestiário',
-      icon: Shirt,
-      available: true
-    }, {
-      name: 'Chuveiro',
-      icon: Droplets,
-      available: true
-    }, {
-      name: 'Bar',
-      icon: Coffee,
-      available: false
-    }, {
-      name: 'Iluminação',
-      icon: Lightbulb,
-      available: true
-    }],
-    images: ['https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop'],
-    reviews: [{
-      user: 'João Silva',
-      rating: 5,
-      comment: 'Excelente quadra! Muito bem cuidada e com ótima localização.',
-      date: '15 de junho, 2024'
-    }, {
-      user: 'Maria Santos',
-      rating: 4,
-      comment: 'Boa infraestrutura, mas poderia ter mais horários disponíveis.',
-      date: '10 de junho, 2024'
-    }]
-  }
-};
+import { ArrowLeft, MapPin, Star, Clock, Calendar, AlertTriangle, Car, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
+import { useCourts } from "@/hooks/useCourts";
+
 const CourtDetailsPage = () => {
-  const {
-    id
-  } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const court = mockCourtDetails[id as keyof typeof mockCourtDetails];
+  const { getCourtById, getActiveCourts } = useCourts();
+  
+  const court = getCourtById(id || '');
+  const alternativeCourts = getActiveCourts().filter(c => c.id !== id).slice(0, 2);
+
+  const facilityIcons = {
+    'Estacionamento': Car,
+    'Vestiário': Shirt,
+    'Chuveiro': Droplets,
+    'Bar': Coffee,
+    'Iluminação': Lightbulb
+  };
+
   if (!court) {
-    return <div className="min-h-screen bg-[#062B4B] flex items-center justify-center">
-      <div className="text-white">Quadra não encontrada</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-[#062B4B] flex items-center justify-center">
+        <div className="text-white">Quadra não encontrada</div>
+      </div>
+    );
   }
-  return <div className="min-h-screen bg-[#062B4B]">
+
+  const isAvailable = court.status === 'active';
+  const workingHoursText = `${court.workingHours.monday.openTime} - ${court.workingHours.monday.closeTime}`;
+
+  return (
+    <div className="min-h-screen bg-[#062B4B]">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/cliente/dashboard')} className="text-white hover:bg-white/20">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/cliente/dashboard')}
+            className="text-white hover:bg-white/20"
+          >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-white">Detalhes da Quadra</h1>
@@ -84,23 +58,45 @@ const CourtDetailsPage = () => {
         <div className="relative">
           <Carousel className="w-full">
             <CarouselContent>
-              {court.images.map((image, index) => <CarouselItem key={index}>
+              {court.images.map((image, index) => (
+                <CarouselItem key={index}>
                   <div className="relative">
-                    <img src={image} alt={`${court.name} - Imagem ${index + 1}`} className="w-full h-64 object-cover rounded-2xl" />
-                    
-                    {/* Rating badge sobreposto */}
-                    
+                    <img
+                      src={image}
+                      alt={`${court.name} - Imagem ${index + 1}`}
+                      className="w-full h-64 object-cover rounded-2xl"
+                    />
                   </div>
-                </CarouselItem>)}
+                </CarouselItem>
+              ))}
             </CarouselContent>
-            
+
             {/* Navigation arrows - only show if more than 1 image */}
-            {court.images.length > 1 && <>
+            {court.images.length > 1 && (
+              <>
                 <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white border-none hover:bg-black/70" />
                 <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white border-none hover:bg-black/70" />
-              </>}
+              </>
+            )}
           </Carousel>
         </div>
+
+        {/* Availability Status Alert */}
+        {!isAvailable && (
+          <Card className="bg-red-500/20 border-red-500/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+                <div>
+                  <p className="text-white font-medium">Quadra Indisponível</p>
+                  {court.unavailabilityReason && (
+                    <p className="text-white/70 text-sm">{court.unavailabilityReason}</p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Court Name and Price */}
         <div className="flex items-center justify-between">
@@ -108,26 +104,41 @@ const CourtDetailsPage = () => {
             <h2 className="font-bold text-white text-xl mx-[15px]">{court.name}</h2>
             <div className="flex items-center gap-2 text-white/70 mt-1">
               <MapPin className="w-4 h-4" />
-              <span className="text-sm">{court.location}</span>
+              <span className="text-sm">{court.location.address}, {court.location.city}</span>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold text-[#F35410]">{court.price}</div>
+            <div className="text-3xl font-bold text-[#F35410]">R$ {court.hourlyRate}</div>
             <div className="text-white/60 text-sm">por hora</div>
           </div>
+        </div>
+
+        {/* Rating */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Star className="w-6 h-6 fill-[#F35410] text-[#F35410]" />
+            <span className="text-2xl font-bold text-white">{court.rating}</span>
+          </div>
+          <span className="text-white/60">({court.totalReviews} avaliações)</span>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="details" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-white/10 border-white/20">
-            <TabsTrigger value="details" className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+            <TabsTrigger
+              value="details"
+              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
+            >
               Detalhes
             </TabsTrigger>
-            <TabsTrigger value="reviews" className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+            <TabsTrigger
+              value="reviews"
+              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
+            >
               Avaliações
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="details" className="space-y-6 mt-6">
             {/* Description */}
             <Card className="bg-white/10 border-white/20">
@@ -150,23 +161,34 @@ const CourtDetailsPage = () => {
               <CardContent className="space-y-2">
                 <div className="flex justify-between text-white">
                   <span className="text-sm">Segunda a Sexta:</span>
-                  <span>{court.workingHours.weekdays}</span>
+                  <span>{workingHoursText}</span>
                 </div>
                 <div className="flex justify-between text-white">
-                  <span className="text-sm">Sábado e Domingo:</span>
-                  <span>{court.workingHours.weekend}</span>
+                  <span className="text-sm">Sábado:</span>
+                  <span>{court.workingHours.saturday.openTime} - {court.workingHours.saturday.closeTime}</span>
+                </div>
+                <div className="flex justify-between text-white">
+                  <span className="text-sm">Domingo:</span>
+                  <span>{court.workingHours.sunday.isOpen ? `${court.workingHours.sunday.openTime} - ${court.workingHours.sunday.closeTime}` : 'Fechado'}</span>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Modalities */}
+            {/* Sports */}
             <Card className="bg-white/10 border-white/20">
-              
               <CardContent className="flex justify-center py-0">
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {court.modalities.map((modality, index) => <Badge key={index} className="bg-[#F35410] text-white hover:bg-[#BA2D0B] py-0 my-[13px] rounded-xl">
-                      {modality}
-                    </Badge>)}
+                  {court.sports.map((sport, index) => (
+                    <Badge
+                      key={index}
+                      className="bg-[#F35410] text-white hover:bg-[#BA2D0B] py-0 my-[13px] rounded-xl"
+                    >
+                      {sport === 'FOOTBALL' ? 'Futebol' : 
+                       sport === 'BASKETBALL' ? 'Basquete' : 
+                       sport === 'VOLLEYBALL' ? 'Vôlei' : 
+                       sport === 'TENNIS' ? 'Tênis' : sport}
+                    </Badge>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -179,50 +201,88 @@ const CourtDetailsPage = () => {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   {court.amenities.map((amenity, index) => {
-                  const IconComponent = amenity.icon;
-                  return <div key={index} className={`flex items-center gap-3 p-3 rounded-lg ${amenity.available ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
-                        
-                        <span className="text-white text-sm">{amenity.name}</span>
-                        {amenity.available}
-                      </div>;
-                })}
+                    const IconComponent = facilityIcons[amenity as keyof typeof facilityIcons];
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-3 rounded-lg bg-green-600/20 text-green-400"
+                      >
+                        {IconComponent && <IconComponent className="w-4 h-4" />}
+                        <span className="text-white text-sm">{amenity}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-          
-          <TabsContent value="reviews" className="space-y-4 mt-6">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex items-center gap-2">
-                <Star className="w-6 h-6 fill-[#F35410] text-[#F35410]" />
-                <span className="text-2xl font-bold text-white">{court.rating}</span>
-              </div>
-              <span className="text-white/60">({court.totalReviews} avaliações)</span>
-            </div>
-            
-            {court.reviews.map((review, index) => <Card key={index} className="bg-white/10 border-white/20">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold text-white">{review.user}</span>
-                    <div className="flex items-center gap-1">
-                      {Array.from({
-                    length: review.rating
-                  }).map((_, i) => <Star key={i} className="w-4 h-4 text-[#F35410] fill-current" />)}
+
+            {/* Alternative Courts for Unavailable Courts */}
+            {!isAvailable && alternativeCourts.length > 0 && (
+              <Card className="bg-white/10 border-white/20">
+                <CardHeader>
+                  <CardTitle className="text-white text-lg">Quadras Alternativas</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {alternativeCourts.map((altCourt) => (
+                    <div
+                      key={altCourt.id}
+                      className="flex items-center justify-between p-3 bg-white/5 rounded-lg cursor-pointer hover:bg-white/10"
+                      onClick={() => navigate(`/cliente/quadra/${altCourt.id}`)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={altCourt.images[0]}
+                          alt={altCourt.name}
+                          className="w-12 h-12 object-cover rounded-lg"
+                        />
+                        <div>
+                          <h4 className="text-white font-medium">{altCourt.name}</h4>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span className="text-white/70 text-sm">{altCourt.rating}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[#F35410] font-bold">R$ {altCourt.hourlyRate}</span>
+                        <Badge className="bg-green-500 text-white text-xs ml-2">Disponível</Badge>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-white/80 mb-2">{review.comment}</p>
-                  <span className="text-white/60 text-sm">{review.date}</span>
+                  ))}
                 </CardContent>
-              </Card>)}
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="reviews" className="space-y-4 mt-6">
+            <div className="text-center py-8">
+              <Star className="w-12 h-12 mx-auto mb-4 text-white/60" />
+              <h3 className="text-lg font-semibold text-white mb-2">Sistema de Avaliações</h3>
+              <p className="text-white/70">Em desenvolvimento - Em breve você poderá ver as avaliações dos usuários</p>
+            </div>
           </TabsContent>
         </Tabs>
 
         {/* Book Button */}
-        <Button onClick={() => navigate(`/cliente/quadra/${court.id}/agendar`)} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl">
-          <Calendar className="w-5 h-5 mr-2" />
-          Agendar Horário
-        </Button>
+        {isAvailable ? (
+          <Button
+            onClick={() => navigate(`/cliente/quadra/${court.id}/agendar`)}
+            className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl"
+          >
+            <Calendar className="w-5 h-5 mr-2" />
+            Agendar Horário
+          </Button>
+        ) : (
+          <Button
+            disabled
+            className="w-full bg-gray-600 text-white py-4 text-lg font-semibold rounded-2xl opacity-50 cursor-not-allowed"
+          >
+            Quadra Indisponível
+          </Button>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default CourtDetailsPage;
