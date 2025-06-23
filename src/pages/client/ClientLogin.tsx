@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -30,12 +29,12 @@ const ClientLogin = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center justify-center mb-6">
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={() => navigate('/')} 
-            className="text-white hover:bg-white/20"
+            className="absolute left-4 top-4 text-white hover:bg-white/20"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
