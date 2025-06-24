@@ -10,7 +10,6 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BookingStatus } from '@/types';
 import ClientProfileModal from '@/components/ClientProfileModal';
-
 const ManagerBookings = () => {
   const navigate = useNavigate();
   const {
@@ -38,19 +37,15 @@ const ManagerBookings = () => {
         return true;
     }
   });
-  
   const pendingCount = getPendingBookingsByManager(managerId).length;
-  
   const handleApprove = (bookingId: string) => {
     approveBooking(bookingId);
     setSelectedBooking(null);
   };
-  
   const handleReject = (bookingId: string) => {
     rejectBooking(bookingId, 'Rejeitado pelo gestor');
     setSelectedBooking(null);
   };
-  
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
@@ -64,7 +59,6 @@ const ManagerBookings = () => {
         return 'bg-gray-500';
     }
   };
-  
   const getStatusText = (status: string) => {
     switch (status) {
       case 'confirmed':
@@ -79,80 +73,53 @@ const ManagerBookings = () => {
         return status;
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => navigate('/gestor/dashboard')} 
-            className="text-white hover:bg-white/20"
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate('/gestor/dashboard')} className="text-white hover:bg-white/20">
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-xl font-bold text-white">Agendamentos</h1>
-          {pendingCount > 0 && (
-            <Badge className="bg-yellow-500 text-white">
+          <h1 className="font-bold text-white text-lg">Agendamentos</h1>
+          {pendingCount > 0 && <Badge className="bg-yellow-500 text-white">
               {pendingCount} pendente{pendingCount !== 1 ? 's' : ''}
-            </Badge>
-          )}
+            </Badge>}
         </div>
       </div>
 
       <div className="p-4 space-y-6">
         {/* Filter Buttons */}
         <div className="flex gap-2 overflow-x-auto">
-          <Button 
-            variant={filter === 'pending' ? 'default' : 'outline'} 
-            onClick={() => setFilter('pending')} 
-            className={filter === 'pending' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}
-          >
+          <Button variant={filter === 'pending' ? 'default' : 'outline'} onClick={() => setFilter('pending')} className={filter === 'pending' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}>
             Pendentes {pendingCount > 0 && `(${pendingCount})`}
           </Button>
-          <Button 
-            variant={filter === 'confirmed' ? 'default' : 'outline'} 
-            onClick={() => setFilter('confirmed')} 
-            className={filter === 'confirmed' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}
-          >
+          <Button variant={filter === 'confirmed' ? 'default' : 'outline'} onClick={() => setFilter('confirmed')} className={filter === 'confirmed' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}>
             Confirmados
           </Button>
-          <Button 
-            variant={filter === 'cancelled' ? 'default' : 'outline'} 
-            onClick={() => setFilter('cancelled')} 
-            className={filter === 'cancelled' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}
-          >
+          <Button variant={filter === 'cancelled' ? 'default' : 'outline'} onClick={() => setFilter('cancelled')} className={filter === 'cancelled' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}>
             Cancelados
           </Button>
-          <Button 
-            variant={filter === 'all' ? 'default' : 'outline'} 
-            onClick={() => setFilter('all')} 
-            className={filter === 'all' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}
-          >
+          <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} className={filter === 'all' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}>
             Todos
           </Button>
         </div>
 
         {/* Bookings List */}
         <div className="space-y-4">
-          {filteredBookings.length === 0 ? (
-            <Card className="bg-white border-gray-200 shadow-sm">
+          {filteredBookings.length === 0 ? <Card className="bg-white border-gray-200 shadow-sm">
               <CardContent className="p-6 text-center">
                 <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600">Nenhum agendamento encontrado</p>
               </CardContent>
-            </Card>
-          ) : (
-            filteredBookings.map(booking => (
-              <Card key={booking.id} className="bg-white border-gray-200 shadow-sm">
+            </Card> : filteredBookings.map(booking => <Card key={booking.id} className="bg-white border-gray-200 shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-[#F35410]" />
                       <span className="text-gray-800 font-semibold">
-                        {format(new Date(booking.date), "dd 'de' MMMM", { locale: ptBR })}
+                        {format(new Date(booking.date), "dd 'de' MMMM", {
+                    locale: ptBR
+                  })}
                       </span>
                     </div>
                     <Badge className={`${getStatusColor(booking.status)} text-white`}>
@@ -192,25 +159,15 @@ const ManagerBookings = () => {
                       
                       <div className="flex gap-1 items-center">
                         {/* Ver Perfil Button */}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setSelectedClientId(booking.userId)}
-                          className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs px-2 py-1 h-7"
-                        >
+                        <Button size="sm" variant="outline" onClick={() => setSelectedClientId(booking.userId)} className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs px-2 py-1 h-7">
                           <Eye className="w-3 h-3 mr-1" />
                           Perfil
                         </Button>
 
-                        {booking.status === BookingStatus.PENDING && (
-                          <>
+                        {booking.status === BookingStatus.PENDING && <>
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button 
-                                  size="sm" 
-                                  className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 h-7" 
-                                  onClick={() => setSelectedBooking(booking)}
-                                >
+                                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 h-7" onClick={() => setSelectedBooking(booking)}>
                                   <Check className="w-3 h-3 mr-1" />
                                   Aprovar
                                 </Button>
@@ -225,14 +182,13 @@ const ManagerBookings = () => {
                                   </p>
                                   <div className="text-gray-600 text-sm space-y-1">
                                     <p><strong>Cliente:</strong> {booking.userName}</p>
-                                    <p><strong>Data:</strong> {format(new Date(booking.date), "dd/MM/yyyy", { locale: ptBR })}</p>
+                                    <p><strong>Data:</strong> {format(new Date(booking.date), "dd/MM/yyyy", {
+                                locale: ptBR
+                              })}</p>
                                     <p><strong>Horário:</strong> {booking.startTime} - {booking.endTime}</p>
                                   </div>
                                   <div className="flex gap-2 pt-4">
-                                    <Button 
-                                      onClick={() => handleApprove(booking.id)} 
-                                      className="bg-green-600 hover:bg-green-700 text-white flex-1"
-                                    >
+                                    <Button onClick={() => handleApprove(booking.id)} className="bg-green-600 hover:bg-green-700 text-white flex-1">
                                       Confirmar Aprovação
                                     </Button>
                                   </div>
@@ -242,12 +198,7 @@ const ManagerBookings = () => {
                             
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button 
-                                  size="sm" 
-                                  variant="destructive" 
-                                  onClick={() => setSelectedBooking(booking)}
-                                  className="text-xs px-2 py-1 h-7"
-                                >
+                                <Button size="sm" variant="destructive" onClick={() => setSelectedBooking(booking)} className="text-xs px-2 py-1 h-7">
                                   <X className="w-3 h-3 mr-1" />
                                   Rejeitar
                                 </Button>
@@ -262,43 +213,30 @@ const ManagerBookings = () => {
                                   </p>
                                   <div className="text-gray-600 text-sm space-y-1">
                                     <p><strong>Cliente:</strong> {booking.userName}</p>
-                                    <p><strong>Data:</strong> {format(new Date(booking.date), "dd/MM/yyyy", { locale: ptBR })}</p>
+                                    <p><strong>Data:</strong> {format(new Date(booking.date), "dd/MM/yyyy", {
+                                locale: ptBR
+                              })}</p>
                                     <p><strong>Horário:</strong> {booking.startTime} - {booking.endTime}</p>
                                   </div>
                                   <div className="flex gap-2 pt-4">
-                                    <Button 
-                                      onClick={() => handleReject(booking.id)} 
-                                      variant="destructive" 
-                                      className="flex-1"
-                                    >
+                                    <Button onClick={() => handleReject(booking.id)} variant="destructive" className="flex-1">
                                       Confirmar Rejeição
                                     </Button>
                                   </div>
                                 </div>
                               </DialogContent>
                             </Dialog>
-                          </>
-                        )}
+                          </>}
                       </div>
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-            ))
-          )}
+              </Card>)}
         </div>
       </div>
 
       {/* Client Profile Modal */}
-      {selectedClientId && (
-        <ClientProfileModal
-          userId={selectedClientId}
-          isOpen={!!selectedClientId}
-          onClose={() => setSelectedClientId(null)}
-        />
-      )}
-    </div>
-  );
+      {selectedClientId && <ClientProfileModal userId={selectedClientId} isOpen={!!selectedClientId} onClose={() => setSelectedClientId(null)} />}
+    </div>;
 };
-
 export default ManagerBookings;
