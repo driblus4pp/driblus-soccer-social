@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Building, 
   DollarSign, 
-  Clock, 
   Settings, 
   Save, 
   Upload,
@@ -48,7 +46,6 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
   ];
 
   const handleSaveBasicInfo = () => {
-    // Aqui seria a integração com backend
     toast({
       title: "Informações Salvas",
       description: "Dados da quadra atualizados com sucesso"
@@ -104,7 +101,7 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
   if (!court) {
     return (
       <div className="text-center py-12">
-        <p className="text-white">Quadra não encontrada</p>
+        <p className="text-gray-800">Quadra não encontrada</p>
         <Button onClick={onBack} className="mt-4">Voltar</Button>
       </div>
     );
@@ -113,32 +110,32 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Configurações da Quadra</h2>
-        <Button onClick={onBack} variant="outline" className="border-white/20 text-white">
+        <h2 className="text-2xl font-bold text-gray-800">Configurações da Quadra</h2>
+        <Button onClick={onBack} variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
           Voltar
         </Button>
       </div>
 
       <Tabs defaultValue="basic" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 bg-white/10 border-white/20">
-          <TabsTrigger value="basic" className="text-white data-[state=active]:bg-[#F35410]">
+        <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+          <TabsTrigger value="basic" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
             Básico
           </TabsTrigger>
-          <TabsTrigger value="pricing" className="text-white data-[state=active]:bg-[#F35410]">
+          <TabsTrigger value="pricing" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
             Preços
           </TabsTrigger>
-          <TabsTrigger value="amenities" className="text-white data-[state=active]:bg-[#F35410]">
+          <TabsTrigger value="amenities" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
             Comodidades
           </TabsTrigger>
-          <TabsTrigger value="images" className="text-white data-[state=active]:bg-[#F35410]">
+          <TabsTrigger value="images" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
             Imagens
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic" className="space-y-6">
-          <Card className="bg-white/10 border-white/20">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-gray-800 flex items-center gap-2">
                 <Building className="w-5 h-5" />
                 Status da Quadra
               </CardTitle>
@@ -146,8 +143,8 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="text-white font-semibold">Quadra Ativa</Label>
-                  <p className="text-white/70 text-sm">
+                  <Label className="text-gray-800 font-semibold">Quadra Ativa</Label>
+                  <p className="text-gray-600 text-sm">
                     {formData.isActive ? 'Disponível para agendamentos' : 'Indisponível para agendamentos'}
                   </p>
                 </div>
@@ -159,37 +156,37 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
               
               {!formData.isActive && (
                 <div className="space-y-2">
-                  <Label className="text-white">Motivo da Indisponibilidade</Label>
+                  <Label className="text-gray-800">Motivo da Indisponibilidade</Label>
                   <Textarea
                     value={formData.unavailabilityReason}
                     onChange={(e) => setFormData(prev => ({ ...prev, unavailabilityReason: e.target.value }))}
                     placeholder="Ex: Manutenção preventiva, reforma em andamento..."
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                    className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-500"
                   />
                 </div>
               )}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 border-white/20">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white">Informações Básicas</CardTitle>
+              <CardTitle className="text-gray-800">Informações Básicas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-white">Nome da Quadra</Label>
+                <Label className="text-gray-800">Nome da Quadra</Label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="bg-white/10 border-white/20 text-white"
+                  className="bg-white border-gray-300 text-gray-800"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-white">Descrição</Label>
+                <Label className="text-gray-800">Descrição</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  className="bg-white/10 border-white/20 text-white"
+                  className="bg-white border-gray-300 text-gray-800"
                 />
               </div>
               <Button onClick={handleSaveBasicInfo} className="bg-[#F35410] hover:bg-[#BA2D0B]">
@@ -201,21 +198,21 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
         </TabsContent>
 
         <TabsContent value="pricing" className="space-y-6">
-          <Card className="bg-white/10 border-white/20">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-gray-800 flex items-center gap-2">
                 <DollarSign className="w-5 h-5" />
                 Configuração de Preços
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-white">Preço por Hora (R$)</Label>
+                <Label className="text-gray-800">Preço por Hora (R$)</Label>
                 <Input
                   type="number"
                   value={formData.hourlyRate}
                   onChange={(e) => setFormData(prev => ({ ...prev, hourlyRate: Number(e.target.value) }))}
-                  className="bg-white/10 border-white/20 text-white"
+                  className="bg-white border-gray-300 text-gray-800"
                 />
               </div>
               <Button onClick={handleSavePricing} className="bg-[#F35410] hover:bg-[#BA2D0B]">
@@ -227,9 +224,9 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
         </TabsContent>
 
         <TabsContent value="amenities" className="space-y-6">
-          <Card className="bg-white/10 border-white/20">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white">Comodidades Disponíveis</CardTitle>
+              <CardTitle className="text-gray-800">Comodidades Disponíveis</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-wrap gap-2 mb-4">
@@ -252,7 +249,7 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
                   value={newAmenity}
                   onChange={(e) => setNewAmenity(e.target.value)}
                   placeholder="Digite uma nova comodidade"
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-500"
                   onKeyPress={(e) => e.key === 'Enter' && handleAddAmenity()}
                 />
                 <Button onClick={handleAddAmenity} className="bg-[#F35410] hover:bg-[#BA2D0B]">
@@ -260,7 +257,7 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
                 </Button>
               </div>
               
-              <div className="text-sm text-white/70">
+              <div className="text-sm text-gray-600">
                 <p className="mb-2">Sugestões:</p>
                 <div className="flex flex-wrap gap-2">
                   {availableAmenities
@@ -269,7 +266,7 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
                       <Badge 
                         key={index}
                         variant="outline" 
-                        className="border-white/20 text-white/70 cursor-pointer hover:bg-white/10"
+                        className="border-gray-300 text-gray-600 cursor-pointer hover:bg-gray-50"
                         onClick={() => {
                           setNewAmenity(amenity);
                         }}
@@ -284,9 +281,9 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
         </TabsContent>
 
         <TabsContent value="images" className="space-y-6">
-          <Card className="bg-white/10 border-white/20">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-gray-800 flex items-center gap-2">
                 <Upload className="w-5 h-5" />
                 Galeria de Imagens
               </CardTitle>
@@ -303,7 +300,7 @@ const ManagerCourtSettings = ({ courtId, onBack }: ManagerCourtSettingsProps) =>
                   </div>
                 ))}
               </div>
-              <Button className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20" variant="outline">
+              <Button className="w-full bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200" variant="outline">
                 <Upload className="w-4 h-4 mr-2" />
                 Adicionar Imagens (Em Desenvolvimento)
               </Button>
