@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -186,18 +185,21 @@ const ManagerBookings = () => {
                   
                   <div className="mt-4 pt-3 border-t border-gray-200">
                     <div className="flex justify-between items-center">
-                      <span className="text-[#F35410] font-semibold">R$ {booking.totalPrice}</span>
+                      <div className="flex flex-col">
+                        <span className="text-2xl font-bold text-[#F35410]">R$ {booking.totalPrice}</span>
+                        <span className="text-xs text-gray-500">Valor total</span>
+                      </div>
                       
-                      <div className="flex gap-2 items-center">
+                      <div className="flex gap-1 items-center">
                         {/* Ver Perfil Button */}
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => setSelectedClientId(booking.userId)}
-                          className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                          className="border-gray-300 text-gray-700 hover:bg-gray-50 text-xs px-2 py-1 h-7"
                         >
-                          <Eye className="w-4 h-4 mr-1" />
-                          Ver Perfil
+                          <Eye className="w-3 h-3 mr-1" />
+                          Perfil
                         </Button>
 
                         {booking.status === BookingStatus.PENDING && (
@@ -206,10 +208,10 @@ const ManagerBookings = () => {
                               <DialogTrigger asChild>
                                 <Button 
                                   size="sm" 
-                                  className="bg-green-600 hover:bg-green-700 text-white" 
+                                  className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 h-7" 
                                   onClick={() => setSelectedBooking(booking)}
                                 >
-                                  <Check className="w-4 h-4 mr-1" />
+                                  <Check className="w-3 h-3 mr-1" />
                                   Aprovar
                                 </Button>
                               </DialogTrigger>
@@ -244,8 +246,9 @@ const ManagerBookings = () => {
                                   size="sm" 
                                   variant="destructive" 
                                   onClick={() => setSelectedBooking(booking)}
+                                  className="text-xs px-2 py-1 h-7"
                                 >
-                                  <X className="w-4 h-4 mr-1" />
+                                  <X className="w-3 h-3 mr-1" />
                                   Rejeitar
                                 </Button>
                               </DialogTrigger>
