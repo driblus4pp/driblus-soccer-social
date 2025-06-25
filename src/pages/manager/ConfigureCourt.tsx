@@ -69,7 +69,7 @@ const ConfigureCourt = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 shadow-sm">
+      <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] p-4 shadow-sm">
         <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
