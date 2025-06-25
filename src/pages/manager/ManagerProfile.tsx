@@ -50,7 +50,11 @@ const ManagerProfile = () => {
                   Gestor Aprovado
                 </Badge>
               </div>
-              <Button variant="outline" size="icon">
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={() => navigate('/gestor/perfil/editar')}
+              >
                 <Edit className="w-4 h-4" />
               </Button>
             </div>
@@ -114,15 +118,27 @@ const ManagerProfile = () => {
         {/* Configurações */}
         <Card>
           <CardContent className="p-4 space-y-3">
-            <Button variant="ghost" className="w-full justify-start">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start"
+              onClick={() => navigate('/gestor/perfil/editar')}
+            >
               <User className="w-4 h-4 mr-3" />
               Editar Perfil
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start"
+              onClick={() => navigate('/gestor/quadra/configuracoes')}
+            >
               <Building2 className="w-4 h-4 mr-3" />
               Configurações da Quadra
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start"
+              onClick={() => navigate('/gestor/preferencias')}
+            >
               <Settings className="w-4 h-4 mr-3" />
               Preferências
             </Button>

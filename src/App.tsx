@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,6 +29,9 @@ import ConfigureCourt from "./pages/manager/ConfigureCourt";
 import ManagerBookings from "./pages/manager/ManagerBookings";
 import ManagerReports from "./pages/manager/ManagerReports";
 import ManagerProfile from "./pages/manager/ManagerProfile";
+import ManagerEditProfile from "./pages/manager/ManagerEditProfile";
+import ManagerCourtSettings from "./pages/manager/ManagerCourtSettings";
+import ManagerPreferences from "./pages/manager/ManagerPreferences";
 
 // Admin Routes
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -71,6 +75,9 @@ const App = () => (
             <Route path="/gestor/agendamentos" element={<ManagerBookings />} />
             <Route path="/gestor/relatorios" element={<ManagerReports />} />
             <Route path="/gestor/perfil" element={<ManagerProfile />} />
+            <Route path="/gestor/perfil/editar" element={<ManagerEditProfile />} />
+            <Route path="/gestor/quadra/configuracoes" element={<ManagerCourtSettings />} />
+            <Route path="/gestor/preferencias" element={<ManagerPreferences />} />
             
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
