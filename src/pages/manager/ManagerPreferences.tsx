@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -49,7 +48,7 @@ const ManagerPreferences = () => {
     }));
   };
 
-  const handleBookingChange = (key: string, value: string) => {
+  const handleBookingChange = (key: string, value: string | boolean) => {
     setPreferences(prev => ({
       ...prev,
       booking: {
