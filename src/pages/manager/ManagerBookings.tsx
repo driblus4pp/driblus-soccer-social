@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BookingStatus } from '@/types';
 import ClientProfileModal from '@/components/ClientProfileModal';
+
 const ManagerBookings = () => {
   const navigate = useNavigate();
   const {
@@ -75,7 +76,7 @@ const ManagerBookings = () => {
   };
   return <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 shadow-sm">
+      <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] p-4 shadow-sm">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate('/gestor/dashboard')} className="text-white hover:bg-white/20">
             <ArrowLeft className="w-5 h-5" />
