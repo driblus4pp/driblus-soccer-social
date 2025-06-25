@@ -7,11 +7,11 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft, Save, Bell, Clock, CreditCard, Globe, Palette } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
 const ManagerPreferences = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const [preferences, setPreferences] = useState({
     notifications: {
       email: true,
@@ -37,7 +37,6 @@ const ManagerPreferences = () => {
       theme: 'light'
     }
   });
-
   const handleNotificationChange = (key: string, value: boolean) => {
     setPreferences(prev => ({
       ...prev,
@@ -47,7 +46,6 @@ const ManagerPreferences = () => {
       }
     }));
   };
-
   const handleBookingChange = (key: string, value: string | boolean) => {
     setPreferences(prev => ({
       ...prev,
@@ -57,7 +55,6 @@ const ManagerPreferences = () => {
       }
     }));
   };
-
   const handlePaymentChange = (key: string, value: boolean | string) => {
     setPreferences(prev => ({
       ...prev,
@@ -67,7 +64,6 @@ const ManagerPreferences = () => {
       }
     }));
   };
-
   const handleSystemChange = (key: string, value: string) => {
     setPreferences(prev => ({
       ...prev,
@@ -77,25 +73,17 @@ const ManagerPreferences = () => {
       }
     }));
   };
-
   const handleSave = () => {
     toast({
       title: "Preferências Salvas",
       description: "Suas preferências foram atualizadas com sucesso"
     });
   };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] p-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => navigate('/gestor/perfil')} 
-            className="text-white hover:bg-white/20"
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate('/gestor/perfil')} className="text-white hover:bg-white/20">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-white">Preferências</h1>
@@ -117,10 +105,7 @@ const ManagerPreferences = () => {
                 <Label className="text-gray-700">Notificações por Email</Label>
                 <p className="text-sm text-gray-500">Receber notificações no email</p>
               </div>
-              <Switch 
-                checked={preferences.notifications.email} 
-                onCheckedChange={(checked) => handleNotificationChange('email', checked)} 
-              />
+              <Switch checked={preferences.notifications.email} onCheckedChange={checked => handleNotificationChange('email', checked)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -128,10 +113,7 @@ const ManagerPreferences = () => {
                 <Label className="text-gray-700">Notificações Push</Label>
                 <p className="text-sm text-gray-500">Receber notificações no navegador</p>
               </div>
-              <Switch 
-                checked={preferences.notifications.push} 
-                onCheckedChange={(checked) => handleNotificationChange('push', checked)} 
-              />
+              <Switch checked={preferences.notifications.push} onCheckedChange={checked => handleNotificationChange('push', checked)} />
             </div>
             
             <div className="flex items-center justify-between">
@@ -139,10 +121,7 @@ const ManagerPreferences = () => {
                 <Label className="text-gray-700">Notificações por SMS</Label>
                 <p className="text-sm text-gray-500">Receber notificações por mensagem</p>
               </div>
-              <Switch 
-                checked={preferences.notifications.sms} 
-                onCheckedChange={(checked) => handleNotificationChange('sms', checked)} 
-              />
+              <Switch checked={preferences.notifications.sms} onCheckedChange={checked => handleNotificationChange('sms', checked)} />
             </div>
 
             <div className="border-t pt-4">
@@ -151,34 +130,22 @@ const ManagerPreferences = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <Label className="text-gray-600">Novas Reservas</Label>
-                  <Switch 
-                    checked={preferences.notifications.newBookings} 
-                    onCheckedChange={(checked) => handleNotificationChange('newBookings', checked)} 
-                  />
+                  <Switch checked={preferences.notifications.newBookings} onCheckedChange={checked => handleNotificationChange('newBookings', checked)} />
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <Label className="text-gray-600">Cancelamentos</Label>
-                  <Switch 
-                    checked={preferences.notifications.cancellations} 
-                    onCheckedChange={(checked) => handleNotificationChange('cancellations', checked)} 
-                  />
+                  <Switch checked={preferences.notifications.cancellations} onCheckedChange={checked => handleNotificationChange('cancellations', checked)} />
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <Label className="text-gray-600">Pagamentos</Label>
-                  <Switch 
-                    checked={preferences.notifications.payments} 
-                    onCheckedChange={(checked) => handleNotificationChange('payments', checked)} 
-                  />
+                  <Switch checked={preferences.notifications.payments} onCheckedChange={checked => handleNotificationChange('payments', checked)} />
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <Label className="text-gray-600">Lembretes</Label>
-                  <Switch 
-                    checked={preferences.notifications.reminders} 
-                    onCheckedChange={(checked) => handleNotificationChange('reminders', checked)} 
-                  />
+                  <Switch checked={preferences.notifications.reminders} onCheckedChange={checked => handleNotificationChange('reminders', checked)} />
                 </div>
               </div>
             </div>
@@ -199,19 +166,12 @@ const ManagerPreferences = () => {
                 <Label className="text-gray-700">Aprovação Automática</Label>
                 <p className="text-sm text-gray-500">Aprovar reservas automaticamente</p>
               </div>
-              <Switch 
-                checked={preferences.booking.autoApproval} 
-                onCheckedChange={(checked) => handleBookingChange('autoApproval', checked)} 
-              />
+              <Switch checked={preferences.booking.autoApproval} onCheckedChange={checked => handleBookingChange('autoApproval', checked)} />
             </div>
 
             <div>
               <Label className="text-gray-700">Tempo para Confirmação</Label>
-              <RadioGroup 
-                value={preferences.booking.confirmationTimeout} 
-                onValueChange={(value) => handleBookingChange('confirmationTimeout', value)}
-                className="mt-2"
-              >
+              <RadioGroup value={preferences.booking.confirmationTimeout} onValueChange={value => handleBookingChange('confirmationTimeout', value)} className="mt-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="30m" id="30m" />
                   <Label htmlFor="30m" className="text-gray-600">30 minutos</Label>
@@ -233,11 +193,7 @@ const ManagerPreferences = () => {
 
             <div>
               <Label className="text-gray-700">Antecedência Máxima</Label>
-              <RadioGroup 
-                value={preferences.booking.advanceBooking} 
-                onValueChange={(value) => handleBookingChange('advanceBooking', value)}
-                className="mt-2"
-              >
+              <RadioGroup value={preferences.booking.advanceBooking} onValueChange={value => handleBookingChange('advanceBooking', value)} className="mt-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="7d" id="7d" />
                   <Label htmlFor="7d" className="text-gray-600">7 dias</Label>
@@ -273,19 +229,12 @@ const ManagerPreferences = () => {
                 <Label className="text-gray-700">Pagamento Instantâneo</Label>
                 <p className="text-sm text-gray-500">Exigir pagamento na reserva</p>
               </div>
-              <Switch 
-                checked={preferences.payment.instantPayment} 
-                onCheckedChange={(checked) => handlePaymentChange('instantPayment', checked)} 
-              />
+              <Switch checked={preferences.payment.instantPayment} onCheckedChange={checked => handlePaymentChange('instantPayment', checked)} />
             </div>
 
             <div>
               <Label className="text-gray-700">Prazo para Pagamento</Label>
-              <RadioGroup 
-                value={preferences.payment.paymentDeadline} 
-                onValueChange={(value) => handlePaymentChange('paymentDeadline', value)}
-                className="mt-2"
-              >
+              <RadioGroup value={preferences.payment.paymentDeadline} onValueChange={value => handlePaymentChange('paymentDeadline', value)} className="mt-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="1h" id="pay-1h" />
                   <Label htmlFor="pay-1h" className="text-gray-600">1 hora</Label>
@@ -316,35 +265,11 @@ const ManagerPreferences = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <Label className="text-gray-700">Idioma</Label>
-              <RadioGroup 
-                value={preferences.system.language} 
-                onValueChange={(value) => handleSystemChange('language', value)}
-                className="mt-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pt-BR" id="pt-BR" />
-                  <Label htmlFor="pt-BR" className="text-gray-600">Português (Brasil)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="en-US" id="en-US" />
-                  <Label htmlFor="en-US" className="text-gray-600">English (US)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="es-ES" id="es-ES" />
-                  <Label htmlFor="es-ES" className="text-gray-600">Español</Label>
-                </div>
-              </RadioGroup>
-            </div>
+            
 
             <div>
               <Label className="text-gray-700">Fuso Horário</Label>
-              <RadioGroup 
-                value={preferences.system.timezone} 
-                onValueChange={(value) => handleSystemChange('timezone', value)}
-                className="mt-2"
-              >
+              <RadioGroup value={preferences.system.timezone} onValueChange={value => handleSystemChange('timezone', value)} className="mt-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="America/Fortaleza" id="fortaleza" />
                   <Label htmlFor="fortaleza" className="text-gray-600">Fortaleza (GMT-3)</Label>
@@ -362,11 +287,7 @@ const ManagerPreferences = () => {
 
             <div>
               <Label className="text-gray-700">Tema</Label>
-              <RadioGroup 
-                value={preferences.system.theme} 
-                onValueChange={(value) => handleSystemChange('theme', value)}
-                className="mt-2"
-              >
+              <RadioGroup value={preferences.system.theme} onValueChange={value => handleSystemChange('theme', value)} className="mt-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="light" id="light" />
                   <Label htmlFor="light" className="text-gray-600">Claro</Label>
@@ -384,16 +305,11 @@ const ManagerPreferences = () => {
           </CardContent>
         </Card>
 
-        <Button 
-          onClick={handleSave} 
-          className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3"
-        >
+        <Button onClick={handleSave} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3">
           <Save className="w-4 h-4 mr-2" />
           Salvar Preferências
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ManagerPreferences;
