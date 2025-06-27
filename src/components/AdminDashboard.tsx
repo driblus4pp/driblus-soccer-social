@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,10 +18,16 @@ import {
   Settings
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCourts } from "@/hooks/useCourts";
+import { useManagers } from "@/hooks/useManagers";
+import { useRevenue } from "@/hooks/useRevenue";
 import { PlatformStats } from '@/types';
 
 const AdminDashboard = () => {
   const { user, getPlatformStats } = useAuth();
+  const { getActiveCourts, getPendingCourts } = useCourts();
+  const { getAllManagersStats } = useManagers();
+  const { getPlatformRevenue } = useRevenue();
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState<PlatformStats | null>(null);
 
@@ -33,6 +38,11 @@ const AdminDashboard = () => {
     };
     loadStats();
   }, [getPlatformStats]);
+
+  const activeCourts = getActiveCourts();
+  const pendingCourts = getPendingCourts();
+  const managersStats = getAllManagersStats();
+  const revenueStats = getPlatformRevenue();
 
   const pendingApprovals = [
     {
@@ -141,7 +151,7 @@ const AdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            {/* KPI Cards */}
+            {/* Updated KPI Cards with real data */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="bg-white/10 border-white/20">
                 <CardContent className="p-6">
@@ -150,9 +160,9 @@ const AdminDashboard = () => {
                       <Users className="w-6 h-6 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-white/70 text-sm">Usuários Totais</p>
-                      <p className="text-2xl font-bold text-white">{stats.totalUsers.toLocaleString()}</p>
-                      <p className="text-green-400 text-xs">+{stats.growthRate}% este mês</p>
+                      <p className="text-white/70 text-sm">Total Gestores</p>
+                      <p className="text-2xl font-bold text-white">{managersStats.totalManagers}</p>
+                      <p className="text-green-400 text-xs">{managersStats.verifiedManagers} verificados</p>
                     </div>
                   </div>
                 </CardContent>
@@ -166,8 +176,8 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <p className="text-white/70 text-sm">Quadras Ativas</p>
-                      <p className="text-2xl font-bold text-white">{stats.totalCourts}</p>
-                      <p className="text-orange-400 text-xs">{stats.pendingApprovals} pendentes</p>
+                      <p className="text-2xl font-bold text-white">{activeCourts.length}</p>
+                      <p className="text-orange-400 text-xs">{pendingCourts.length} pendentes</p>
                     </div>
                   </div>
                 </CardContent>
@@ -181,8 +191,8 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <p className="text-white/70 text-sm">Receita Mensal</p>
-                      <p className="text-2xl font-bold text-white">R$ {stats.monthlyRevenue.toLocaleString()}</p>
-                      <p className="text-green-400 text-xs">+15% vs mês anterior</p>
+                      <p className="text-2xl font-bold text-white">R$ {revenueStats.monthlyRevenue.toLocaleString()}</p>
+                      <p className="text-green-400 text-xs">Média: R$ {revenueStats.averageBookingValue.toFixed(0)}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -196,33 +206,62 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <p className="text-white/70 text-sm">Agendamentos</p>
-                      <p className="text-2xl font-bold text-white">{stats.totalBookings.toLocaleString()}</p>
-                      <p className="text-purple-400 text-xs">{stats.activeUsers} usuários ativos</p>
+                      <p className="text-2xl font-bold text-white">{revenueStats.totalBookings}</p>
+                      <p className="text-purple-400 text-xs">Este mês</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Top Courts */}
+            {/* Top Performing Courts */}
             <Card className="bg-white/10 border-white/20">
               <CardHeader>
                 <CardTitle className="text-white">Quadras com Melhor Performance</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {topCourts.map(court => (
-                  <div key={court.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
-                    <div className="flex-1">
-                      <h4 className="text-white font-medium">{court.name}</h4>
-                      <p className="text-white/70 text-sm">{court.owner} • {court.city}</p>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-white/70 text-sm">{court.rating}</span>
+                {revenueStats.topPerformingCourts.map((court, index) => (
+                  <div key={court.courtId} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-[#F35410] rounded-full flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">{index + 1}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-white font-medium">{court.courtName}</h4>
+                        <p className="text-white/70 text-sm">Gestor: {court.managerName}</p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-white/70 text-sm">4.8</span>
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-white font-bold">R$ {court.revenue.toLocaleString()}</p>
-                      <p className="text-white/70 text-sm">{court.bookings} agendamentos</p>
+                      <p className="text-white font-bold">R$ {court.monthlyRevenue.toLocaleString()}</p>
+                      <p className="text-white/70 text-sm">{court.totalBookings} agendamentos</p>
+                      <div className={`text-xs ${court.growth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {court.growth >= 0 ? '+' : ''}{court.growth.toFixed(1)}% crescimento
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Revenue by Manager */}
+            <Card className="bg-white/10 border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Receita por Gestor</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {revenueStats.revenueByManager.slice(0, 5).map((manager) => (
+                  <div key={manager.managerId} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                    <div>
+                      <h4 className="text-white font-medium">{manager.managerName}</h4>
+                      <p className="text-white/70 text-sm">{manager.courts} quadra(s) gerenciada(s)</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-white font-bold">R$ {manager.revenue.toLocaleString()}</p>
+                      <p className="text-white/70 text-sm">mensal</p>
                     </div>
                   </div>
                 ))}
