@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,6 +32,8 @@ import ManagerProfile from "./pages/manager/ManagerProfile";
 import ManagerEditProfile from "./pages/manager/ManagerEditProfile";
 import ManagerCourtSettings from "./pages/manager/ManagerCourtSettings";
 import ManagerPreferences from "./pages/manager/ManagerPreferences";
+import ManagerFinancialReports from "./pages/manager/ManagerFinancialReports";
+import ManagerNotifications from "./pages/manager/ManagerNotifications";
 
 // Admin Routes
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -41,7 +44,6 @@ import AdminManagers from "./pages/admin/AdminManagers";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminReports from "./pages/admin/AdminReports";
-import ManagerFinancialReports from "./pages/manager/ManagerFinancialReports";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +78,7 @@ const App = () => (
             <Route path="/gestor/agendamentos" element={<ManagerBookings />} />
             <Route path="/gestor/relatorios" element={<ManagerReports />} />
             <Route path="/gestor/relatorios/financeiro" element={<ManagerFinancialReports />} />
+            <Route path="/gestor/notificacoes" element={<ManagerNotifications />} />
             <Route path="/gestor/perfil" element={<ManagerProfile />} />
             <Route path="/gestor/perfil/editar" element={<ManagerEditProfile />} />
             <Route path="/gestor/quadra/configuracoes" element={<ManagerCourtSettings />} />

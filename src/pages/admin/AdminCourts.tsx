@@ -4,170 +4,231 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Building, MapPin, Star, Eye, Check, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  ArrowLeft, 
+  Search, 
+  Filter, 
+  MapPin, 
+  Star, 
+  Eye,
+  CheckCircle,
+  Clock,
+  Building
+} from "lucide-react";
 import { useCourts } from "@/hooks/useCourts";
 import { useToast } from "@/hooks/use-toast";
+import BottomNavigation from "@/components/navigation/BottomNavigation";
+import CourtApprovalModal from "@/components/CourtApprovalModal";
+import { Court } from '@/types';
 
 const AdminCourts = () => {
   const navigate = useNavigate();
-  const { courts, approveCourt } = useCourts();
+  const { courts } = useCourts();
   const { toast } = useToast();
-  const [filter, setFilter] = useState<'all' | 'active' | 'pending'>('all');
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending_approval' | 'inactive'>('all');
+  const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
 
   const filteredCourts = courts.filter(court => {
-    switch (filter) {
-      case 'active':
-        return court.status === 'active';
-      case 'pending':
-        return court.status === 'pending_approval';
-      default:
-        return true;
-    }
+    const matchesSearch = court.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         court.location.city.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || court.status === statusFilter;
+    return matchesSearch && matchesStatus;
   });
 
-  const handleApproveCourt = (courtId: string) => {
-    approveCourt(courtId);
+  const stats = {
+    total: courts.length,
+    active: courts.filter(c => c.status === 'active').length,
+    pending: courts.filter(c => c.status === 'pending_approval').length,
+    inactive: courts.filter(c => c.status === 'inactive').length
+  };
+
+  const handleApprovalClick = (court: Court) => {
+    setSelectedCourt(court);
+    setIsApprovalModalOpen(true);
+  };
+
+  const handleApproveCourt = (courtId: string, comment?: string) => {
+    // Aqui seria feita a chamada para o backend
     toast({
       title: "Quadra Aprovada",
-      description: "A quadra foi aprovada e está agora ativa na plataforma",
+      description: "A quadra foi aprovada e está agora ativa na plataforma.",
     });
+    
+    console.log('Aprovando quadra:', courtId, 'Comentário:', comment);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-500';
-      case 'pending_approval':
-        return 'bg-yellow-500';
-      case 'inactive':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
+  const handleRejectCourt = (courtId: string, comment: string) => {
+    // Aqui seria feita a chamada para o backend
+    toast({
+      title: "Quadra Reprovada",
+      description: "A quadra foi reprovada e o gestor foi notificado.",
+      variant: "destructive"
+    });
+    
+    console.log('Reprovando quadra:', courtId, 'Motivo:', comment);
   };
 
-  const getStatusText = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return 'Ativa';
+        return <Badge className="bg-green-100 text-green-800">Ativa</Badge>;
       case 'pending_approval':
-        return 'Pendente';
+        return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
       case 'inactive':
-        return 'Inativa';
+        return <Badge className="bg-red-100 text-red-800">Inativa</Badge>;
       default:
-        return status;
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/admin/dashboard')}
+      <div className="bg-gradient-to-r from-[#062B4B] to-[#0A3B5C] text-white p-6">
+        <div className="flex items-center gap-4 mb-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate('/admin/dashboard')} 
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-xl font-bold text-white">Gerenciar Quadras</h1>
+          <div>
+            <h1 className="text-xl font-semibold">Gerenciar Quadras</h1>
+            <p className="text-white/80 text-sm">
+              {stats.pending} quadras aguardando aprovação
+            </p>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-4 gap-3">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-xs text-white/80">Total</div>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-green-300">{stats.active}</div>
+            <div className="text-xs text-white/80">Ativas</div>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-yellow-300">{stats.pending}</div>
+            <div className="text-xs text-white/80">Pendentes</div>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-red-300">{stats.inactive}</div>
+            <div className="text-xs text-white/80">Inativas</div>
+          </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-6">
-        {/* Filter Buttons */}
-        <div className="flex gap-2">
-          <Button
-            variant={filter === 'all' ? 'default' : 'outline'}
-            onClick={() => setFilter('all')}
-            className={filter === 'all' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-white/20 text-white hover:bg-white/10'}
-          >
-            Todas
-          </Button>
-          <Button
-            variant={filter === 'active' ? 'default' : 'outline'}
-            onClick={() => setFilter('active')}
-            className={filter === 'active' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-white/20 text-white hover:bg-white/10'}
-          >
-            Ativas
-          </Button>
-          <Button
-            variant={filter === 'pending' ? 'default' : 'outline'}
-            onClick={() => setFilter('pending')}
-            className={filter === 'pending' ? 'bg-[#F35410] hover:bg-[#BA2D0B]' : 'border-white/20 text-white hover:bg-white/10'}
-          >
-            Pendentes
-          </Button>
+      <div className="p-4 space-y-4">
+        {/* Search and Filter */}
+        <div className="flex gap-3">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Buscar quadras..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              <SelectItem value="active">Ativas</SelectItem>
+              <SelectItem value="pending_approval">Pendentes</SelectItem>
+              <SelectItem value="inactive">Inativas</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Courts List */}
-        <div className="space-y-4">
-          {filteredCourts.length === 0 ? (
-            <Card className="bg-white/10 border-white/20">
-              <CardContent className="p-6 text-center">
-                <Building className="w-12 h-12 text-white/40 mx-auto mb-4" />
-                <p className="text-white/70">Nenhuma quadra encontrada</p>
+        <div className="space-y-3">
+          {filteredCourts.map(court => (
+            <Card key={court.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                  <img 
+                    src={court.images[0]} 
+                    alt={court.name}
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-semibold text-gray-800">{court.name}</h3>
+                        <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
+                          <MapPin className="w-3 h-3" />
+                          <span>{court.location.city}</span>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span>{court.rating}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          {getStatusBadge(court.status)}
+                          <span className="text-sm font-semibold text-gray-800">
+                            R$ {court.hourlyRate}/hora
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/admin/quadras/${court.id}`)}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {court.status === 'pending_approval' && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleApprovalClick(court)}
+                            className="bg-[#F35410] hover:bg-[#BA2D0B] text-white"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Avaliar
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          ) : (
-            filteredCourts.map((court) => (
-              <Card key={court.id} className="bg-white/10 border-white/20">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-white font-semibold text-lg">{court.name}</h3>
-                      <div className="flex items-center gap-1 text-white/70 text-sm mt-1">
-                        <MapPin className="w-3 h-3" />
-                        <span>{court.location.city}, {court.location.state}</span>
-                      </div>
-                    </div>
-                    <Badge className={`${getStatusColor(court.status)} text-white`}>
-                      {getStatusText(court.status)}
-                    </Badge>
-                  </div>
-                  
-                  <div className="space-y-2 mb-4">
-                    <p className="text-white/90 text-sm">{court.description}</p>
-                    <div className="flex items-center gap-4 text-sm text-white/70">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                        <span>{court.rating}</span>
-                      </div>
-                      <span>R$ {court.hourlyRate}/h</span>
-                      <span>Gestor: {court.ownerName}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => navigate(`/admin/quadras/${court.id}`)}
-                      variant="outline"
-                      size="sm"
-                      className="border-white/20 text-white hover:bg-white/10"
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      Ver Detalhes
-                    </Button>
-                    
-                    {court.status === 'pending_approval' && (
-                      <Button
-                        onClick={() => handleApproveCourt(court.id)}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <Check className="w-4 h-4 mr-1" />
-                        Aprovar
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
+          ))}
         </div>
+
+        {filteredCourts.length === 0 && (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Building className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <p className="text-gray-600">Nenhuma quadra encontrada</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      <CourtApprovalModal
+        court={selectedCourt}
+        isOpen={isApprovalModalOpen}
+        onClose={() => setIsApprovalModalOpen(false)}
+        onApprove={handleApproveCourt}
+        onReject={handleRejectCourt}
+      />
+
+      <BottomNavigation userType="admin" />
     </div>
   );
 };
