@@ -1,10 +1,11 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Star, Search, Filter, AlertCircle } from "lucide-react";
+import { MapPin, Star, Search, Filter, AlertCircle, Calendar } from "lucide-react";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import FilterModal, { FilterState } from "@/components/FilterModal";
 import { useCourts } from "@/hooks/useCourts";
@@ -15,6 +16,7 @@ const ClientCourts = () => {
   const { courts } = useCourts();
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [selectedSportFilter, setSelectedSportFilter] = useState<string>('all');
   const [filters, setFilters] = useState<FilterState>({
     city: '',
     neighborhood: '',
@@ -22,21 +24,31 @@ const ClientCourts = () => {
     operatingHours: ''
   });
 
+  const sportFilters = [
+    { id: 'all', label: 'Todos', sport: null },
+    { id: 'football', label: 'Futebol', sport: SportType.FOOTBALL },
+    { id: 'basketball', label: 'Basquete', sport: SportType.BASKETBALL },
+    { id: 'tennis', label: 'Tênis', sport: SportType.TENNIS },
+    { id: 'volleyball', label: 'Vôlei', sport: SportType.VOLLEYBALL }
+  ];
+
   const courtData = courts.map(court => ({
     id: court.id,
     name: court.name,
     location: `${court.location.city}, ${court.location.state}`,
-    distance: '2.5 km', // Simulado
+    address: court.location.address,
+    distance: '2.5 km',
     price: `R$ ${court.hourlyRate}`,
     rating: court.rating,
     status: court.status === 'active' ? 'available' : 'unavailable',
     image: court.images[0],
     amenities: court.amenities,
+    sports: court.sports,
     city: court.location.city.toLowerCase(),
     neighborhood: court.location.address.toLowerCase(),
     modality: court.sports.includes(SportType.FOOTBALL) ? 'futebol' : 
               court.sports.includes(SportType.BASKETBALL) ? 'basquete' : 'volleyball',
-    operatingHours: '24h', // Simplificado
+    operatingHours: '24h',
     unavailabilityReason: court.unavailabilityReason
   }));
 
@@ -47,8 +59,31 @@ const ClientCourts = () => {
                           (!filters.neighborhood || court.neighborhood.includes(filters.neighborhood)) && 
                           (!filters.modality || court.modality === filters.modality) && 
                           (!filters.operatingHours || court.operatingHours === filters.operatingHours);
-    return matchesSearch && matchesFilters;
+    
+    const matchesSportFilter = selectedSportFilter === 'all' || 
+                              court.sports.includes(sportFilters.find(f => f.id === selectedSportFilter)?.sport!);
+    
+    return matchesSearch && matchesFilters && matchesSportFilter;
   });
+
+  const getSportLabel = (sport: SportType) => {
+    switch (sport) {
+      case SportType.FOOTBALL:
+        return 'Futebol';
+      case SportType.FUTSAL:
+        return 'Futsal';
+      case SportType.BASKETBALL:
+        return 'Basquete';
+      case SportType.VOLLEYBALL:
+        return 'Vôlei';
+      case SportType.TENNIS:
+        return 'Tênis';
+      case SportType.PADEL:
+        return 'Padel';
+      default:
+        return sport;
+    }
+  };
 
   const getStatusBadge = (status: string, unavailabilityReason?: string) => {
     if (status === 'available') {
@@ -72,7 +107,7 @@ const ClientCourts = () => {
     setFilters(newFilters);
   };
 
-  const hasActiveFilters = filters.city || filters.neighborhood || filters.modality || filters.operatingHours;
+  const hasActiveFilters = filters.city || filters.neighborhood || filters.modality || filters.operatingHours || selectedSportFilter !== 'all';
 
   return (
     <div className="min-h-screen bg-[#093758] pb-20">
@@ -105,72 +140,191 @@ const ClientCourts = () => {
           </Button>
         </div>
 
+        {/* Filtros por modalidade esportiva */}
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+          {sportFilters.map((filter) => (
+            <Button
+              key={filter.id}
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedSportFilter(filter.id)}
+              className={`flex-shrink-0 rounded-full border transition-all duration-200 ${
+                selectedSportFilter === filter.id
+                  ? 'bg-[#F35410] border-[#F35410] text-white hover:bg-[#BA2D0B]'
+                  : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
+              }`}
+            >
+              {filter.label}
+            </Button>
+          ))}
+        </div>
+
         {/* Indicador de filtros ativos */}
         {hasActiveFilters && (
           <div className="flex gap-2 mb-2">
             <span className="text-white/70 text-sm">Filtros ativos:</span>
+            {selectedSportFilter !== 'all' && (
+              <Badge className="bg-white/20 text-white text-xs">
+                {sportFilters.find(f => f.id === selectedSportFilter)?.label}
+              </Badge>
+            )}
             {filters.city && <Badge className="bg-white/20 text-white text-xs">{filters.city}</Badge>}
             {filters.neighborhood && <Badge className="bg-white/20 text-white text-xs">{filters.neighborhood}</Badge>}
             {filters.modality && <Badge className="bg-white/20 text-white text-xs">{filters.modality}</Badge>}
             {filters.operatingHours && <Badge className="bg-white/20 text-white text-xs">{filters.operatingHours}</Badge>}
           </div>
         )}
+
+        {/* Contador de resultados */}
+        <div className="text-white/70 text-sm mb-4">
+          {filteredCourts.length} {filteredCourts.length === 1 ? 'quadra encontrada' : 'quadras encontradas'}
+        </div>
       </div>
 
-      <div className="px-4 space-y-4">
-        {filteredCourts.map((court) => (
-          <Card
-            key={court.id}
-            className="cursor-pointer hover:shadow-md transition-shadow bg-white/10 border-white/20"
-            onClick={() => navigate(`/cliente/quadra/${court.id}`)}
-          >
-            <CardContent className="p-0">
-              <div className="flex gap-3">
-                <img
-                  src={court.image}
-                  alt={court.name}
-                  className="w-24 h-24 object-cover rounded-l-lg"
-                />
-                <div className="flex-1 p-3">
-                  <div className="flex items-start justify-between mb-1">
-                    <h3 className="font-semibold text-white">{court.name}</h3>
+      {/* Cards de quadras - Layout em grid */}
+      <div className="px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredCourts.map((court) => (
+            <Card
+              key={court.id}
+              className="cursor-pointer hover:shadow-lg transition-all duration-300 bg-white border-0 overflow-hidden group"
+              onClick={() => navigate(`/cliente/quadra/${court.id}`)}
+            >
+              <CardContent className="p-0">
+                {/* Imagem de destaque */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={court.image}
+                    alt={court.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
                     {getStatusBadge(court.status, court.unavailabilityReason)}
                   </div>
-                  <div className="flex items-center gap-1 text-white/70 text-sm mb-2">
-                    <MapPin className="w-3 h-3" />
-                    <span>{court.location}</span>
-                    <span>• {court.distance}</span>
-                  </div>
-                  {court.status === 'unavailable' && court.unavailabilityReason && (
-                    <div className="bg-yellow-500/20 border border-yellow-500/30 rounded p-2 mb-2">
-                      <p className="text-yellow-200 text-xs">{court.unavailabilityReason}</p>
+                  <div className="absolute top-3 left-3">
+                    <div className="flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
+                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                      <span className="text-white text-xs font-medium">{court.rating}</span>
                     </div>
-                  )}
-                  <div className="flex gap-1 mb-2">
-                    {court.amenities.slice(0, 2).map((amenity, index) => (
+                  </div>
+                </div>
+
+                {/* Conteúdo do card */}
+                <div className="p-4">
+                  {/* Nome da quadra */}
+                  <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-1">
+                    {court.name}
+                  </h3>
+
+                  {/* Localização */}
+                  <div className="flex items-center gap-1 text-gray-600 text-sm mb-3">
+                    <MapPin className="w-4 h-4 flex-shrink-0" />
+                    <span className="line-clamp-1">{court.address}</span>
+                    <span className="text-gray-400">• {court.distance}</span>
+                  </div>
+
+                  {/* Modalidades esportivas */}
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {court.sports.slice(0, 3).map((sport, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="bg-blue-100 text-blue-800 text-xs px-2 py-1"
+                      >
+                        {getSportLabel(sport)}
+                      </Badge>
+                    ))}
+                    {court.sports.length > 3 && (
+                      <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs px-2 py-1">
+                        +{court.sports.length - 3}
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Comodidades */}
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {court.amenities.slice(0, 3).map((amenity, index) => (
                       <span
                         key={index}
-                        className="bg-white/20 text-white text-xs px-2 py-1 rounded-full"
+                        className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
                       >
                         {amenity}
                       </span>
                     ))}
+                    {court.amenities.length > 3 && (
+                      <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
+                        +{court.amenities.length - 3}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Mensagem de indisponibilidade */}
+                  {court.status === 'unavailable' && court.unavailabilityReason && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                      <p className="text-yellow-800 text-xs font-medium">{court.unavailabilityReason}</p>
+                    </div>
+                  )}
+
+                  {/* Preço e botão de ação */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm text-white">{court.rating}</span>
+                    <div className="flex flex-col">
+                      <div className="flex items-baseline gap-1">
+                        <span className="font-bold text-[#F35410] text-xl">{court.price}</span>
+                        <span className="text-gray-500 text-sm">/hora</span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-bold text-[#F35410]">{court.price}</span>
-                      <span className="text-white/60 text-xs">/h</span>
-                    </div>
+                    
+                    <Button
+                      size="sm"
+                      className={`flex items-center gap-1 ${
+                        court.status === 'available'
+                          ? 'bg-[#F35410] hover:bg-[#BA2D0B] text-white'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                      disabled={court.status !== 'available'}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (court.status === 'available') {
+                          navigate(`/cliente/quadra/${court.id}`);
+                        }
+                      }}
+                    >
+                      <Calendar className="w-4 h-4" />
+                      {court.status === 'available' ? 'Agendar' : 'Indisponível'}
+                    </Button>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Mensagem quando não há resultados */}
+        {filteredCourts.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-white/70 mb-4">
+              <Search className="w-12 h-12 mx-auto mb-2" />
+              <p className="text-lg">Nenhuma quadra encontrada</p>
+              <p className="text-sm">Tente ajustar os filtros de busca</p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedSportFilter('all');
+                setFilters({
+                  city: '',
+                  neighborhood: '',
+                  modality: '',
+                  operatingHours: ''
+                });
+              }}
+              className="border-white/20 bg-white/10 text-white hover:bg-white/20"
+            >
+              Limpar filtros
+            </Button>
+          </div>
+        )}
       </div>
 
       <FilterModal
