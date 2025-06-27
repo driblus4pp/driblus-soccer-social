@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -41,6 +40,8 @@ import AdminCourtDetails from "./pages/admin/AdminCourtDetails";
 import AdminManagers from "./pages/admin/AdminManagers";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminReports from "./pages/admin/AdminReports";
+import ManagerFinancialReports from "./pages/manager/ManagerFinancialReports";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +75,7 @@ const App = () => (
             <Route path="/gestor/quadra/configurar" element={<ConfigureCourt />} />
             <Route path="/gestor/agendamentos" element={<ManagerBookings />} />
             <Route path="/gestor/relatorios" element={<ManagerReports />} />
+            <Route path="/gestor/relatorios/financeiro" element={<ManagerFinancialReports />} />
             <Route path="/gestor/perfil" element={<ManagerProfile />} />
             <Route path="/gestor/perfil/editar" element={<ManagerEditProfile />} />
             <Route path="/gestor/quadra/configuracoes" element={<ManagerCourtSettings />} />
@@ -86,6 +88,7 @@ const App = () => (
             <Route path="/admin/quadras/:id" element={<AdminCourtDetails />} />
             <Route path="/admin/gestores" element={<AdminManagers />} />
             <Route path="/admin/agendamentos" element={<AdminBookings />} />
+            <Route path="/admin/relatorios" element={<AdminReports />} />
             <Route path="/admin/configuracoes" element={<AdminSettings />} />
             
             <Route path="*" element={<NotFound />} />
