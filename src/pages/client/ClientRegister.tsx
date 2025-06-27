@@ -42,7 +42,7 @@ const ClientRegister = () => {
 
         <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-2xl">
           <CardHeader>
-            <CardTitle className="text-white text-center">Cadastro do Cliente</CardTitle>
+            <CardTitle className="text-white text-center">Crie a sua conta</CardTitle>
             <CardDescription className="text-white/70 text-center">
               Crie sua conta para agendar quadras
             </CardDescription>
