@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Settings, Sync, ExternalLink, CheckCircle, Clock } from "lucide-react";
+import { Calendar, Settings, RefreshCw, ExternalLink, CheckCircle, Clock } from "lucide-react";
 import GoogleCalendarIntegration from '../GoogleCalendarIntegration';
 
 interface CalendarEvent {
@@ -75,7 +75,7 @@ const GoogleCalendarManager = () => {
       <Card className="bg-white/10 border-white/20">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Sync className="w-5 h-5" />
+            <RefreshCw className="w-5 h-5" />
             Sincronização
           </CardTitle>
         </CardHeader>
@@ -107,7 +107,7 @@ const GoogleCalendarManager = () => {
                 </>
               ) : (
                 <>
-                  <Sync className="w-4 h-4 mr-2" />
+                  <RefreshCw className="w-4 h-4 mr-2" />
                   Sincronizar Agora
                 </>
               )}

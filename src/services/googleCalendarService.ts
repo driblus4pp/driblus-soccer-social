@@ -213,6 +213,11 @@ class GoogleCalendarService {
     return !!this.accessToken;
   }
 
+  signOut(): void {
+    this.accessToken = null;
+    localStorage.removeItem('google_access_token');
+  }
+
   disconnect(): void {
     this.accessToken = null;
     localStorage.removeItem('google_access_token');
