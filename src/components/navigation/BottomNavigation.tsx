@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Home, Calendar, Bell, User, Building, BarChart3, Users, Settings } from "lucide-react";
 import { useManagerNotifications } from "@/hooks/useManagerNotifications";
+
 interface BottomNavigationProps {
   userType: 'client' | 'manager' | 'admin';
 }
+
 const BottomNavigation = ({
   userType
 }: BottomNavigationProps) => {
@@ -18,6 +20,7 @@ const BottomNavigation = ({
   } = userType === 'manager' ? useManagerNotifications() : {
     unreadCount: 0
   };
+
   const getNavItems = () => {
     switch (userType) {
       case 'client':
@@ -91,26 +94,43 @@ const BottomNavigation = ({
         return [];
     }
   };
+
   const navItems = getNavItems();
   const isActive = (path: string) => location.pathname === path;
-  return <div className="fixed bottom-0 left-0 right-0 bg-blue border-t border-gray-200 px-4 py-2 z-50">
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-bottomNav border-t border-blue-600 px-4 py-2 z-50">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navItems.map(item => {
-        const Icon = item.icon;
-        const active = isActive(item.path);
-        return <Button key={item.path} variant="ghost" size="sm" onClick={() => navigate(item.path)} className={`flex flex-col items-center gap-1 px-2 py-3 h-auto relative ${active ? 'text-[#F35410]' : 'text-gray-600'}`}>
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+            <Button
+              key={item.path}
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center gap-1 px-2 py-3 h-auto relative ${
+                active ? 'text-[#F35410]' : 'text-white hover:text-gray-200'
+              }`}
+            >
               <div className="relative">
-                <Icon className={`h-5 w-5 ${active ? 'text-[#F35410]' : 'text-gray-600'}`} />
-                {item.badge && item.badge > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs min-w-[20px]">
+                <Icon className={`h-5 w-5 ${active ? 'text-[#F35410]' : 'text-white'}`} />
+                {item.badge && item.badge > 0 && (
+                  <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs min-w-[20px]">
                     {item.badge > 99 ? '99+' : item.badge}
-                  </Badge>}
+                  </Badge>
+                )}
               </div>
-              <span className={`text-xs ${active ? 'text-[#F35410]' : 'text-gray-600'}`}>
+              <span className={`text-xs ${active ? 'text-[#F35410]' : 'text-white'}`}>
                 {item.label}
               </span>
-            </Button>;
-      })}
+            </Button>
+          );
+        })}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default BottomNavigation;
