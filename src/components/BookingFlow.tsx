@@ -2,12 +2,9 @@
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import BookingStepOne from './booking/BookingStepOne';
-import BookingStepTwo from './booking/BookingStepTwo';
-import BookingStepThree from './booking/BookingStepThree';
-import { useUsers } from '@/hooks/useUsers';
-import { useBookings } from '@/hooks/useBookings';
-import { format } from 'date-fns';
+import BookingDetails from './BookingDetails';
+import BookingSummary from './BookingSummary';
+import BookingConfirmation from './BookingConfirmation';
 
 interface Court {
   id: number;
@@ -20,6 +17,18 @@ interface Court {
   image: string;
 }
 
+interface BookingData {
+  numberOfPeople: number;
+  observations: string;
+  needsEquipment: boolean;
+  date: string;
+  time: string;
+  duration: number;
+  selectedDate: undefined;
+  selectedTime: undefined;
+  formattedDateTime: undefined;
+}
+
 interface BookingFlowProps {
   court: Court;
   onBack: () => void;
@@ -27,62 +36,32 @@ interface BookingFlowProps {
 
 const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [bookingData, setBookingData] = useState<any>({});
-  const { getUserById } = useUsers();
-  const { createBooking } = useBookings();
+  const [bookingData, setBookingData] = useState<BookingData>({
+    numberOfPeople: 10,
+    observations: '',
+    needsEquipment: false,
+    date: '2024-12-20',
+    time: '19:00',
+    duration: 1,
+    selectedDate: undefined,
+    selectedTime: undefined,
+    formattedDateTime: undefined
+  });
 
-  // Simular usuário logado
-  const userData = getUserById('user_1') || {
-    name: 'Maria Santos',
-    email: 'maria@email.com',
-    phone: '+55 85 88888-8888'
-  };
-
-  const handleStepOneNext = (data: any) => {
-    setBookingData(prev => ({ ...prev, ...data }));
-    setCurrentStep(2);
-  };
-
-  const handleStepTwoNext = () => {
-    setCurrentStep(3);
-
-    // Criar o agendamento
-    const courtPrice = parseInt(court.price.replace('R$ ', '').replace('/hora', ''));
-    const endTime = `${parseInt(bookingData.selectedTime.split(':')[0]) + 1}:00`;
-    const dateStr = format(bookingData.selectedDate, 'yyyy-MM-dd');
-
-    const newBooking = {
-      courtId: court.id.toString(),
-      courtName: court.name,
-      courtImage: court.image,
-      userId: 'user_1',
-      userName: userData.name,
-      userEmail: userData.email,
-      userPhone: userData.phone,
-      date: dateStr,
-      startTime: bookingData.selectedTime,
-      endTime,
-      duration: 1,
-      totalPrice: courtPrice,
-      serviceFee: 0,
-      numberOfPlayers: 10,
-      needsEquipment: false,
-      managerId: 'manager-1'
-    };
-
-    createBooking(newBooking);
-  };
-
-  const handleFinish = () => {
-    onBack();
+  const handleNext = () => {
+    setCurrentStep(prev => prev + 1);
   };
 
   const handlePrevious = () => {
     setCurrentStep(prev => prev - 1);
   };
 
+  const handleBookingDataUpdate = (data: Partial<BookingData>) => {
+    setBookingData(prev => ({ ...prev, ...data }));
+  };
+
   const renderHeader = () => {
-    if (currentStep === 3) return null;
+    if (currentStep === 3) return null; // No header for confirmation screen
     
     return (
       <div className="flex items-center gap-4 mb-6">
@@ -126,28 +105,28 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
     switch (currentStep) {
       case 1:
         return (
-          <BookingStepOne
+          <BookingDetails
             court={court}
-            onNext={handleStepOneNext}
-            initialData={bookingData}
+            bookingData={bookingData}
+            onNext={handleNext}
+            onUpdateData={handleBookingDataUpdate}
           />
         );
       case 2:
         return (
-          <BookingStepTwo
+          <BookingSummary
             court={court}
             bookingData={bookingData}
-            userData={userData}
-            onNext={handleStepTwoNext}
+            onNext={handleNext}
+            onUpdateData={handleBookingDataUpdate}
           />
         );
       case 3:
         return (
-          <BookingStepThree
+          <BookingConfirmation
             court={court}
             bookingData={bookingData}
-            userData={userData}
-            onFinish={handleFinish}
+            onBack={onBack}
           />
         );
       default:
