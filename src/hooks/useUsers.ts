@@ -78,6 +78,11 @@ export const useUsers = () => {
     return users.find(user => user.id === userId);
   };
 
+  const getCurrentUser = () => {
+    // Simular usuário logado - em um sistema real, viria do contexto de autenticação
+    return getUserById('user_1');
+  };
+
   const getUserStats = (userId: string) => {
     const user = getUserById(userId);
     return user?.stats;
@@ -103,6 +108,7 @@ export const useUsers = () => {
   return {
     users,
     getUserById,
+    getCurrentUser,
     getUserStats,
     getUserPreferences,
     getClientBookingHistory
