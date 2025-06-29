@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ const timeSlots = [
 const BookingPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { createBooking, isTimeSlotAvailable } = useBookings();
+  const { isTimeSlotAvailable } = useBookings();
   const { getCourtById } = useCourts();
   const { getCurrentUser } = useUsers();
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -53,7 +52,7 @@ const BookingPage = () => {
     });
   };
 
-  const handleBooking = async () => {
+  const handleProceedToConfirmation = () => {
     if (!selectedDate || !selectedTime || !numberOfPeople || !court) {
       alert('Por favor, preencha todos os campos obrigatórios');
       return;
@@ -81,24 +80,17 @@ const BookingPage = () => {
       endTime,
       duration: 1,
       totalPrice: court.hourlyRate,
-      serviceFee: 0,
+      serviceFee: 5,
       numberOfPlayers: parseInt(numberOfPeople),
       needsEquipment: false,
-      managerId: court.ownerId
+      managerId: court.ownerId,
+      formattedDate: format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
     };
 
-    const newBooking = createBooking(bookingData);
-    
-    // Redirect to confirmation
-    navigate('/cliente/confirmacao', { 
+    navigate(`/cliente/quadra/${id}/confirmacao`, { 
       state: { 
-        booking: {
-          ...bookingData,
-          time: selectedTime,
-          numberOfPeople: parseInt(numberOfPeople)
-        },
-        formattedDate: format(selectedDate, "dd 'de' MMMM", { locale: ptBR }),
-        isPending: true
+        bookingData,
+        court
       } 
     });
   };
@@ -235,7 +227,7 @@ const BookingPage = () => {
           </Card>
         )}
 
-        {/* Booking Summary & Confirm */}
+        {/* Booking Summary & Proceed */}
         {selectedDate && selectedTime && numberOfPeople && (
           <Card className="bg-white/10 border-white/20">
             <CardHeader>
@@ -247,14 +239,13 @@ const BookingPage = () => {
                 <p><strong>Horário:</strong> {selectedTime} - {getEndTime(selectedTime)}</p>
                 <p><strong>Participantes:</strong> {numberOfPeople} pessoas</p>
                 <p><strong>Valor:</strong> R$ {court?.hourlyRate || 120},00</p>
-                <p className="text-yellow-400 text-sm"><strong>Status:</strong> Aguardando aprovação do gestor</p>
               </div>
               
               <Button
-                onClick={handleBooking}
+                onClick={handleProceedToConfirmation}
                 className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold"
               >
-                Solicitar Agendamento
+                Prosseguir para Confirmação
               </Button>
             </CardContent>
           </Card>

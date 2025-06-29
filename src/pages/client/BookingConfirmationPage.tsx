@@ -1,180 +1,218 @@
 
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Calendar, Clock, User, Phone, Mail, AlertCircle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowLeft, MapPin, Calendar, Clock, Users, CreditCard } from "lucide-react";
+import { useBookings } from "@/hooks/useBookings";
 
 const BookingConfirmationPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const {
-    booking,
-    formattedDate,
-    isPending
-  } = location.state || {};
+  const { createBooking } = useBookings();
+  const [paymentAccepted, setPaymentAccepted] = useState(false);
+  
+  const { bookingData, court } = location.state || {};
 
-  if (!booking) {
-    return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
+  if (!bookingData || !court) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
         <div className="text-white text-center">
-          <p>Agendamento não encontrado</p>
+          <p>Dados do agendamento não encontrados</p>
           <Button onClick={() => navigate('/cliente/dashboard')} className="mt-4">
             Voltar ao Dashboard
           </Button>
         </div>
-      </div>;
+      </div>
+    );
   }
 
-  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
-      <div className="p-4 space-y-6">
-        {/* Success Header */}
-        <div className="text-center py-8">
-          {isPending ? (
-            <>
-              <AlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-              <h1 className="text-3xl font-bold text-white mb-2">Solicitação Enviada!</h1>
-              <p className="text-white/70">Aguardando aprovação do gestor da quadra</p>
-            </>
-          ) : (
-            <>
-              <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-              <h1 className="text-3xl font-bold text-white mb-2">Agendamento Confirmado!</h1>
-              <p className="text-white/70">Seu horário foi reservado com sucesso</p>
-            </>
-          )}
-        </div>
+  const handleConfirmBooking = () => {
+    if (!paymentAccepted) {
+      alert('Por favor, confirme que concorda com o pagamento no local');
+      return;
+    }
 
-        {/* Status Alert */}
-        {isPending && (
-          <Card className="bg-yellow-500/20 border-yellow-500/30">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-yellow-400" />
-                <div>
-                  <p className="text-white font-medium">Aguardando Aprovação</p>
-                  <p className="text-white/70 text-sm">
-                    O gestor da quadra foi notificado e analisará sua solicitação. 
-                    Você receberá uma notificação quando houver uma resposta.
-                  </p>
+    // Criar booking com status CONFIRMED (ordem direta para o gestor)
+    const newBooking = createBooking({
+      ...bookingData,
+      status: 'CONFIRMED' // Mudança: agora cria direto como confirmado
+    });
+
+    // Redirecionar para página de sucesso
+    navigate('/cliente/agendamento-sucesso', {
+      state: {
+        booking: newBooking,
+        court: court
+      }
+    });
+  };
+
+  const totalPrice = bookingData.totalPrice + bookingData.serviceFee;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+      {/* Header */}
+      <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="text-white hover:bg-white/20"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-white">Resumo da Reserva</h1>
+        </div>
+      </div>
+
+      <div className="p-4 space-y-4">
+        {/* Court Information */}
+        <Card className="bg-white/10 border-white/20">
+          <CardContent className="p-4">
+            <div className="flex gap-4">
+              <img 
+                src={bookingData.courtImage} 
+                alt={bookingData.courtName}
+                className="w-20 h-20 rounded-lg object-cover"
+              />
+              <div className="flex-1">
+                <h2 className="text-white font-bold text-lg">{bookingData.courtName}</h2>
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <MapPin className="w-4 h-4" />
+                  <span>{court.location}</span>
+                </div>
+                <div className="mt-2">
+                  <span className="inline-block bg-[#F35410] text-white text-xs px-2 py-1 rounded">
+                    {court.sport || 'Futebol'}
+                  </span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Booking Details */}
         <Card className="bg-white/10 border-white/20">
           <CardHeader>
-            <CardTitle className="text-white">Detalhes da Reserva</CardTitle>
+            <CardTitle className="text-white text-lg">Detalhes da Reserva</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 text-white">
-              <Calendar className="w-5 h-5 text-[#F35410]" />
-              <div>
-                <p className="font-semibold">{formattedDate}</p>
-                <p className="text-white/70 text-sm">Data do agendamento</p>
+            <div className="flex items-center justify-between text-white">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-[#F35410]" />
+                <span>Data</span>
               </div>
+              <span className="font-semibold">{bookingData.formattedDate}</span>
+            </div>
+
+            <div className="flex items-center justify-between text-white">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-[#F35410]" />
+                <span>Horário</span>
+              </div>
+              <span className="font-semibold">{bookingData.startTime} - {bookingData.endTime}</span>
+            </div>
+
+            <div className="flex items-center justify-between text-white">
+              <span>Duração</span>
+              <span className="font-semibold">{bookingData.duration}h</span>
+            </div>
+
+            <div className="flex items-center justify-between text-white">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#F35410]" />
+                <span>Pessoas</span>
+              </div>
+              <span className="font-semibold">{bookingData.numberOfPlayers}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Price Breakdown */}
+        <Card className="bg-white/10 border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white text-lg">Valores</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between text-white">
+              <span>Valor da quadra</span>
+              <span>R$ {bookingData.totalPrice},00</span>
             </div>
             
-            <div className="flex items-center gap-3 text-white">
-              <Clock className="w-5 h-5 text-[#F35410]" />
-              <div>
-                <p className="font-semibold">{booking.time} - {parseInt(booking.time.split(':')[0]) + 1}:00</p>
-                <p className="text-white/70 text-sm">Horário da partida</p>
+            <div className="flex justify-between text-white">
+              <span>Taxa de serviço</span>
+              <span>R$ {bookingData.serviceFee},00</span>
+            </div>
+            
+            <div className="border-t border-white/20 pt-3">
+              <div className="flex justify-between text-white font-bold text-lg">
+                <span>Total</span>
+                <span className="text-[#F35410]">R$ {totalPrice},00</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Client Data */}
+        {/* Payment Method */}
         <Card className="bg-white/10 border-white/20">
           <CardHeader>
-            <CardTitle className="text-white">Dados do Cliente</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 text-white">
-              <User className="w-5 h-5 text-[#F35410]" />
-              <span>{booking.clientData.name}</span>
-            </div>
-            
-            <div className="flex items-center gap-3 text-white">
-              <Phone className="w-5 h-5 text-[#F35410]" />
-              <span>{booking.clientData.phone}</span>
-            </div>
-            
-            <div className="flex items-center gap-3 text-white">
-              <Mail className="w-5 h-5 text-[#F35410]" />
-              <span>{booking.clientData.email}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Payment Info */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white">Informações de Pagamento</CardTitle>
+            <CardTitle className="text-white text-lg flex items-center gap-2">
+              <CreditCard className="w-5 h-5" />
+              Forma de Pagamento
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center p-4 bg-[#F35410]/20 rounded-lg">
-              <p className="text-white font-semibold text-lg">R$ 120,00</p>
-              <p className="text-white/90 text-sm">
-                {isPending ? 'Pagamento será cobrado após aprovação' : 'Pagamento será realizado no local'}
-              </p>
+            <div className="bg-[#F35410]/20 border border-[#F35410]/30 rounded-lg p-4">
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-[#F35410]" />
+                <div>
+                  <p className="text-white font-semibold">Pagamento no Local</p>
+                  <p className="text-white/70 text-sm">Dinheiro, PIX ou cartão no balcão</p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Important Notes */}
+        {/* Payment Confirmation Checkbox */}
         <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white">Observações Importantes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {isPending ? (
-              <>
-                <p className="text-white/90 text-sm">
-                  • O gestor tem até 24h para aprovar ou rejeitar a solicitação
-                </p>
-                <p className="text-white/90 text-sm">
-                  • Você será notificado por email sobre a decisão
-                </p>
-                <p className="text-white/90 text-sm">
-                  • O horário ficará reservado temporariamente
-                </p>
-                <p className="text-white/90 text-sm">
-                  • Você pode acompanhar o status no seu painel
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-white/90 text-sm">
-                  • Chegue com 10 minutos de antecedência
-                </p>
-                <p className="text-white/90 text-sm">
-                  • O pagamento deve ser feito diretamente na quadra
-                </p>
-                <p className="text-white/90 text-sm">
-                  • Para cancelar, entre em contato com até 24h de antecedência
-                </p>
-                <p className="text-white/90 text-sm">
-                  • O gestor da quadra receberá seus dados automaticamente
-                </p>
-              </>
-            )}
+          <CardContent className="p-4">
+            <div className="flex items-start space-x-3">
+              <Checkbox 
+                id="payment-confirmation"
+                checked={paymentAccepted}
+                onCheckedChange={setPaymentAccepted}
+                className="border-white/20 data-[state=checked]:bg-[#F35410] data-[state=checked]:border-[#F35410]"
+              />
+              <label htmlFor="payment-confirmation" className="text-white text-sm leading-relaxed cursor-pointer">
+                Eu concordo em realizar o pagamento no valor de <strong>R$ {totalPrice},00</strong> diretamente no local, no balcão da quadra, podendo ser em dinheiro, PIX ou cartão.
+              </label>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Actions */}
-        <div className="space-y-3">
-          <Button onClick={() => navigate('/cliente/dashboard')} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3">
-            Voltar ao Dashboard
-          </Button>
-          
-          <Button variant="outline" onClick={() => navigate('/cliente/dashboard')} className="w-full border-white/20 text-slate-950 bg-slate-50">
-            Fazer Novo Agendamento
-          </Button>
-        </div>
+        {/* Confirm Button */}
+        <Button
+          onClick={handleConfirmBooking}
+          disabled={!paymentAccepted}
+          className={`w-full py-4 text-lg font-semibold ${
+            paymentAccepted 
+              ? 'bg-[#F35410] hover:bg-[#BA2D0B] text-white' 
+              : 'bg-gray-600 text-gray-300 cursor-not-allowed'
+          }`}
+        >
+          Confirmar Agendamento
+        </Button>
+
+        <p className="text-white/70 text-center text-sm">
+          Ao confirmar, uma ordem de agendamento será enviada diretamente ao gestor da quadra
+        </p>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default BookingConfirmationPage;

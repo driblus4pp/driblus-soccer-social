@@ -21,6 +21,7 @@ import ClientEditProfile from "./pages/client/ClientEditProfile";
 import CourtDetailsPage from "./pages/client/CourtDetailsPage";
 import BookingPage from "./pages/client/BookingPage";
 import BookingConfirmationPage from "./pages/client/BookingConfirmationPage";
+import BookingSuccessPage from "./pages/client/BookingSuccessPage";
 
 // Manager Routes
 import ManagerLogin from "./pages/manager/ManagerLogin";
@@ -69,7 +70,8 @@ const App = () => (
             <Route path="/cliente/perfil/editar" element={<ClientEditProfile />} />
             <Route path="/cliente/quadra/:id" element={<CourtDetailsPage />} />
             <Route path="/cliente/quadra/:id/agendar" element={<BookingPage />} />
-            <Route path="/cliente/confirmacao" element={<BookingConfirmationPage />} />
+            <Route path="/cliente/quadra/:id/confirmacao" element={<BookingConfirmationPage />} />
+            <Route path="/cliente/agendamento-sucesso" element={<BookingSuccessPage />} />
             
             {/* Manager Routes */}
             <Route path="/gestor/login" element={<ManagerLogin />} />

@@ -178,7 +178,7 @@ export const useBookings = () => {
   const createBooking = (bookingData: Partial<Booking>) => {
     const newBooking: Booking = {
       id: `booking_${Date.now()}`,
-      status: BookingStatus.PENDING,
+      status: BookingStatus.CONFIRMED, // Mudança: agora cria direto como confirmado
       paymentStatus: 'pending',
       createdAt: new Date(),
       ...bookingData
@@ -186,8 +186,10 @@ export const useBookings = () => {
 
     setBookings(prev => [...prev, newBooking]);
     
-    // Simular notificação para o gestor
-    console.log(`Novo agendamento criado - Notificação enviada ao gestor`);
+    // Simular notificação para o gestor sobre nova ordem de agendamento
+    console.log(`Nova ordem de agendamento criada - Notificação enviada ao gestor da quadra`);
+    console.log(`Dados do cliente: ${newBooking.userName} - ${newBooking.userPhone} - ${newBooking.userEmail}`);
+    console.log(`Detalhes: ${newBooking.date} às ${newBooking.startTime} para ${newBooking.numberOfPlayers} pessoas`);
     
     return newBooking;
   };
