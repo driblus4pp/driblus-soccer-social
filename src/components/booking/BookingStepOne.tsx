@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
-import { Calendar as CalendarIcon, Clock, MapPin } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Calendar as CalendarIcon, Clock, MapPin, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -22,16 +24,18 @@ const timeSlots = [
 const BookingStepOne = ({ court, onNext, initialData }: BookingStepOneProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(initialData?.selectedDate);
   const [selectedTime, setSelectedTime] = useState<string>(initialData?.selectedTime || '');
+  const [numberOfPeople, setNumberOfPeople] = useState<string>(initialData?.numberOfPeople || '10');
 
   const handleContinue = () => {
-    if (!selectedDate || !selectedTime) {
-      alert('Por favor, selecione uma data e horário');
+    if (!selectedDate || !selectedTime || !numberOfPeople) {
+      alert('Por favor, selecione uma data, horário e número de pessoas');
       return;
     }
 
     onNext({
       selectedDate,
       selectedTime,
+      numberOfPeople: parseInt(numberOfPeople),
       formattedDateTime: format(selectedDate, "dd 'de' MMMM", { locale: ptBR }) + ` • ${selectedTime}`
     });
   };
@@ -131,10 +135,39 @@ const BookingStepOne = ({ court, onNext, initialData }: BookingStepOneProps) => 
         </Card>
       )}
 
+      {/* Number of People */}
+      {selectedDate && selectedTime && (
+        <Card className="bg-white/10 border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Quantas pessoas participarão?
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <Label htmlFor="people" className="text-white">Número de pessoas esperadas</Label>
+              <Select value={numberOfPeople} onValueChange={setNumberOfPeople}>
+                <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                  <SelectValue placeholder="Selecione o número de pessoas" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#062B4B] border-white/20">
+                  {Array.from({ length: 40 }, (_, i) => i + 1).map(num => (
+                    <SelectItem key={num} value={num.toString()} className="text-white hover:bg-white/10">
+                      {num} {num === 1 ? 'pessoa' : 'pessoas'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Continue Button */}
       <Button
         onClick={handleContinue}
-        disabled={!selectedDate || !selectedTime}
+        disabled={!selectedDate || !selectedTime || !numberOfPeople}
         className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white font-semibold py-3 disabled:opacity-50"
       >
         Continuar

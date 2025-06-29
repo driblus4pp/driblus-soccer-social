@@ -28,11 +28,11 @@ interface BookingFlowProps {
 const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [bookingData, setBookingData] = useState<any>({});
-  const { getUserById } = useUsers();
+  const { getCurrentUser } = useUsers();
   const { createBooking } = useBookings();
 
-  // Simular usuário logado
-  const userData = getUserById('user_1') || {
+  // Usar dados do usuário logado automaticamente
+  const userData = getCurrentUser() || {
     name: 'Maria Santos',
     email: 'maria@email.com',
     phone: '+55 85 88888-8888'
@@ -46,7 +46,7 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
   const handleStepTwoNext = () => {
     setCurrentStep(3);
 
-    // Criar o agendamento
+    // Criar o agendamento com os dados do usuário logado
     const courtPrice = parseInt(court.price.replace('R$ ', '').replace('/hora', ''));
     const endTime = `${parseInt(bookingData.selectedTime.split(':')[0]) + 1}:00`;
     const dateStr = format(bookingData.selectedDate, 'yyyy-MM-dd');
@@ -65,7 +65,7 @@ const BookingFlow = ({ court, onBack }: BookingFlowProps) => {
       duration: 1,
       totalPrice: courtPrice,
       serviceFee: 0,
-      numberOfPlayers: 10,
+      numberOfPlayers: bookingData.numberOfPeople,
       needsEquipment: false,
       managerId: 'manager-1'
     };

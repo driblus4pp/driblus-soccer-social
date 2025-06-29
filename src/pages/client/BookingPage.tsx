@@ -3,14 +3,15 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { ArrowLeft, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { ArrowLeft, Calendar as CalendarIcon, Clock, Users } from "lucide-react";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useBookings } from "@/hooks/useBookings";
 import { useCourts } from "@/hooks/useCourts";
+import { useUsers } from "@/hooks/useUsers";
 
 const timeSlots = [
   '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
@@ -22,15 +23,19 @@ const BookingPage = () => {
   const navigate = useNavigate();
   const { createBooking, isTimeSlotAvailable } = useBookings();
   const { getCourtById } = useCourts();
+  const { getCurrentUser } = useUsers();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
-  const [clientData, setClientData] = useState({
-    name: '',
-    phone: '',
-    email: ''
-  });
+  const [numberOfPeople, setNumberOfPeople] = useState('10');
 
   const court = getCourtById(id || '');
+  
+  // Usar dados do usuário logado automaticamente
+  const userData = getCurrentUser() || {
+    name: 'Maria Santos',
+    email: 'maria@email.com',
+    phone: '+55 85 88888-8888'
+  };
 
   const getEndTime = (startTime: string) => {
     const [hour] = startTime.split(':');
@@ -49,7 +54,7 @@ const BookingPage = () => {
   };
 
   const handleBooking = async () => {
-    if (!selectedDate || !selectedTime || !clientData.name || !clientData.phone || !clientData.email || !court) {
+    if (!selectedDate || !selectedTime || !numberOfPeople || !court) {
       alert('Por favor, preencha todos os campos obrigatórios');
       return;
     }
@@ -67,17 +72,17 @@ const BookingPage = () => {
       courtId: court.id,
       courtName: court.name,
       courtImage: court.images[0] || '',
-      userId: 'user_1', // Em um sistema real, viria do contexto de autenticação
-      userName: clientData.name,
-      userEmail: clientData.email,
-      userPhone: clientData.phone,
+      userId: 'user_1',
+      userName: userData.name,
+      userEmail: userData.email,
+      userPhone: userData.phone,
       date: dateStr,
       startTime: selectedTime,
       endTime,
       duration: 1,
       totalPrice: court.hourlyRate,
       serviceFee: 0,
-      numberOfPlayers: 10,
+      numberOfPlayers: parseInt(numberOfPeople),
       needsEquipment: false,
       managerId: court.ownerId
     };
@@ -90,7 +95,7 @@ const BookingPage = () => {
         booking: {
           ...bookingData,
           time: selectedTime,
-          clientData
+          numberOfPeople: parseInt(numberOfPeople)
         },
         formattedDate: format(selectedDate, "dd 'de' MMMM", { locale: ptBR }),
         isPending: true
@@ -182,54 +187,56 @@ const BookingPage = () => {
           </Card>
         )}
 
-        {/* Client Data Form */}
+        {/* Number of People Selection */}
         {selectedDate && selectedTime && (
           <Card className="bg-white/10 border-white/20">
             <CardHeader>
-              <CardTitle className="text-white">Dados do Cliente</CardTitle>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Quantas pessoas participarão?
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-white">Nome Completo *</Label>
-                <Input
-                  id="name"
-                  value={clientData.name}
-                  onChange={(e) => setClientData(prev => ({ ...prev, name: e.target.value }))}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  placeholder="Digite seu nome completo"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-white">Telefone *</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={clientData.phone}
-                  onChange={(e) => setClientData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  placeholder="(85) 99999-9999"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">E-mail *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={clientData.email}
-                  onChange={(e) => setClientData(prev => ({ ...prev, email: e.target.value }))}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  placeholder="seu@email.com"
-                  required
-                />
+                <Label htmlFor="people" className="text-white">Número de pessoas esperadas</Label>
+                <Select value={numberOfPeople} onValueChange={setNumberOfPeople}>
+                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                    <SelectValue placeholder="Selecione o número de pessoas" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#062B4B] border-white/20">
+                    {Array.from({ length: 40 }, (_, i) => i + 1).map(num => (
+                      <SelectItem key={num} value={num.toString()} className="text-white hover:bg-white/10">
+                        {num} {num === 1 ? 'pessoa' : 'pessoas'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
         )}
 
+        {/* User Data Display - Automatically loaded */}
+        {selectedDate && selectedTime && numberOfPeople && (
+          <Card className="bg-white/10 border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white">Dados do Responsável</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="text-white">
+                <p><strong>Nome:</strong> {userData.name}</p>
+                <p><strong>Telefone:</strong> {userData.phone}</p>
+                <p><strong>E-mail:</strong> {userData.email}</p>
+              </div>
+              <p className="text-white/70 text-sm mt-2">
+                * Dados obtidos automaticamente do seu perfil
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Booking Summary & Confirm */}
-        {selectedDate && selectedTime && clientData.name && clientData.phone && clientData.email && (
+        {selectedDate && selectedTime && numberOfPeople && (
           <Card className="bg-white/10 border-white/20">
             <CardHeader>
               <CardTitle className="text-white">Resumo do Agendamento</CardTitle>
@@ -238,6 +245,7 @@ const BookingPage = () => {
               <div className="space-y-2 text-white">
                 <p><strong>Data:</strong> {format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
                 <p><strong>Horário:</strong> {selectedTime} - {getEndTime(selectedTime)}</p>
+                <p><strong>Participantes:</strong> {numberOfPeople} pessoas</p>
                 <p><strong>Valor:</strong> R$ {court?.hourlyRate || 120},00</p>
                 <p className="text-yellow-400 text-sm"><strong>Status:</strong> Aguardando aprovação do gestor</p>
               </div>

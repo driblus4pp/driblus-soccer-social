@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { MapPin, Info } from 'lucide-react';
+import { MapPin, Info, Users, User, Phone, Mail } from 'lucide-react';
 
 interface BookingStepTwoProps {
   court: any;
@@ -18,9 +18,49 @@ const BookingStepTwo = ({ court, bookingData, userData, onNext }: BookingStepTwo
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-white mb-2">Forma de Pagamento</h2>
-        <p className="text-white/70">Como você deseja pagar sua reserva?</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Confirmação dos Dados</h2>
+        <p className="text-white/70">Verifique os dados da sua reserva</p>
       </div>
+
+      {/* User Data - Automatically loaded */}
+      <Card className="bg-white/10 border-white/20">
+        <CardHeader>
+          <CardTitle className="text-white">Dados do Responsável</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-3 text-white">
+            <User className="w-5 h-5 text-[#F35410]" />
+            <div>
+              <p className="font-semibold">{userData.name}</p>
+              <p className="text-white/70 text-sm">Nome completo</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3 text-white">
+            <Phone className="w-5 h-5 text-[#F35410]" />
+            <div>
+              <p className="font-semibold">{userData.phone}</p>
+              <p className="text-white/70 text-sm">Telefone de contato</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3 text-white">
+            <Mail className="w-5 h-5 text-[#F35410]" />
+            <div>
+              <p className="font-semibold">{userData.email}</p>
+              <p className="text-white/70 text-sm">E-mail</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 text-white">
+            <Users className="w-5 h-5 text-[#F35410]" />
+            <div>
+              <p className="font-semibold">{bookingData.numberOfPeople} pessoas</p>
+              <p className="text-white/70 text-sm">Número de participantes</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Payment Method */}
       <Card className="bg-white/10 border-white/20">
@@ -77,8 +117,12 @@ const BookingStepTwo = ({ court, bookingData, userData, onNext }: BookingStepTwo
               <span className="font-semibold">{bookingData.formattedDateTime}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cliente:</span>
+              <span>Responsável:</span>
               <span className="font-semibold">{userData.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Participantes:</span>
+              <span className="font-semibold">{bookingData.numberOfPeople} pessoas</span>
             </div>
             <div className="border-t border-white/20 pt-2 mt-3">
               <div className="flex justify-between text-lg">
