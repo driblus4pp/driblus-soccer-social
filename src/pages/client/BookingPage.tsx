@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,10 @@ const BookingPage = () => {
   const [selectedTime, setSelectedTime] = useState('');
   const [numberOfPeople, setNumberOfPeople] = useState('10');
 
+  console.log('BookingPage - Court ID:', id);
+  
   const court = getCourtById(id || '');
+  console.log('BookingPage - Court found:', court);
   
   // Usar dados do usuário logado automaticamente
   const userData = getCurrentUser() || {
@@ -35,6 +39,8 @@ const BookingPage = () => {
     email: 'maria@email.com',
     phone: '+55 85 88888-8888'
   };
+
+  console.log('BookingPage - User data:', userData);
 
   const getEndTime = (startTime: string) => {
     const [hour] = startTime.split(':');
@@ -45,28 +51,71 @@ const BookingPage = () => {
     if (!selectedDate || !court) return timeSlots;
     
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    console.log('BookingPage - Checking availability for date:', dateStr);
     
     return timeSlots.filter(time => {
       const endTime = getEndTime(time);
-      return isTimeSlotAvailable(court.id, dateStr, time, endTime);
+      const isAvailable = isTimeSlotAvailable(court.id, dateStr, time, endTime);
+      console.log(`BookingPage - Time ${time}-${endTime} available:`, isAvailable);
+      return isAvailable;
     });
   };
 
   const handleProceedToConfirmation = () => {
-    if (!selectedDate || !selectedTime || !numberOfPeople || !court) {
-      alert('Por favor, preencha todos os campos obrigatórios');
+    console.log('=== INÍCIO DO DEBUG handleProceedToConfirmation ===');
+    console.log('selectedDate:', selectedDate);
+    console.log('selectedTime:', selectedTime);
+    console.log('numberOfPeople:', numberOfPeople);
+    console.log('court:', court);
+    
+    // Verificação 1: Campos obrigatórios
+    if (!selectedDate) {
+      console.log('ERROR: selectedDate não está definida');
+      alert('Por favor, selecione uma data');
       return;
     }
+    
+    if (!selectedTime) {
+      console.log('ERROR: selectedTime não está definido');
+      alert('Por favor, selecione um horário');
+      return;
+    }
+    
+    if (!numberOfPeople) {
+      console.log('ERROR: numberOfPeople não está definido');
+      alert('Por favor, selecione o número de pessoas');
+      return;
+    }
+    
+    if (!court) {
+      console.log('ERROR: court não foi encontrada');
+      alert('Quadra não encontrada');
+      return;
+    }
+
+    console.log('✓ Todos os campos obrigatórios estão preenchidos');
 
     const endTime = getEndTime(selectedTime);
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
-    // Verificar disponibilidade uma última vez
-    if (!isTimeSlotAvailable(court.id, dateStr, selectedTime, endTime)) {
+    console.log('Dados calculados:');
+    console.log('- endTime:', endTime);
+    console.log('- dateStr:', dateStr);
+
+    // Verificação 2: Disponibilidade do horário
+    console.log('Verificando disponibilidade...');
+    const isAvailable = isTimeSlotAvailable(court.id, dateStr, selectedTime, endTime);
+    console.log('isTimeSlotAvailable result:', isAvailable);
+    
+    if (!isAvailable) {
+      console.log('ERROR: Horário não está mais disponível');
       alert('Este horário não está mais disponível. Por favor, escolha outro horário.');
       return;
     }
 
+    console.log('✓ Horário está disponível');
+
+    // Verificação 3: Criação dos dados do booking
     const bookingData = {
       courtId: court.id,
       courtName: court.name,
@@ -87,15 +136,44 @@ const BookingPage = () => {
       formattedDate: format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
     };
 
-    navigate(`/cliente/quadra/${id}/confirmacao`, { 
-      state: { 
-        bookingData,
-        court
-      } 
-    });
+    console.log('✓ Dados do booking criados:', bookingData);
+
+    // Verificação 4: Navegação
+    const targetRoute = `/cliente/quadra/${id}/confirmacao`;
+    console.log('Tentando navegar para:', targetRoute);
+    console.log('Estado a ser passado:', { bookingData, court });
+
+    try {
+      navigate(targetRoute, { 
+        state: { 
+          bookingData,
+          court
+        } 
+      });
+      console.log('✓ Navigate chamado com sucesso');
+    } catch (error) {
+      console.error('ERROR na navegação:', error);
+      alert('Erro ao navegar para confirmação. Tente novamente.');
+    }
+
+    console.log('=== FIM DO DEBUG handleProceedToConfirmation ===');
   };
 
   const availableSlots = getAvailableTimeSlots();
+  console.log('BookingPage - Available slots:', availableSlots);
+
+  if (!court) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
+        <div className="text-white text-center">
+          <p>Quadra não encontrada</p>
+          <Button onClick={() => navigate('/cliente/quadras')} className="mt-4">
+            Voltar às Quadras
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
@@ -168,7 +246,10 @@ const BookingPage = () => {
                           ? "bg-[#F35410] hover:bg-[#BA2D0B] text-white border-[#F35410]" 
                           : "border-white/20 text-white hover:bg-white/20 hover:text-slate-900 bg-transparent"
                       }`}
-                      onClick={() => setSelectedTime(time)}
+                      onClick={() => {
+                        console.log('Time selected:', time);
+                        setSelectedTime(time);
+                      }}
                     >
                       {time}
                     </Button>
@@ -191,7 +272,10 @@ const BookingPage = () => {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="people" className="text-white">Número de pessoas esperadas</Label>
-                <Select value={numberOfPeople} onValueChange={setNumberOfPeople}>
+                <Select value={numberOfPeople} onValueChange={(value) => {
+                  console.log('Number of people selected:', value);
+                  setNumberOfPeople(value);
+                }}>
                   <SelectTrigger className="bg-white/10 border-white/20 text-white">
                     <SelectValue placeholder="Selecione o número de pessoas" />
                   </SelectTrigger>

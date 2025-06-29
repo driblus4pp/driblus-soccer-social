@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Booking, BookingStatus } from '@/types';
 
@@ -176,15 +175,23 @@ export const useBookings = () => {
   };
 
   const createBooking = (bookingData: Partial<Booking>) => {
+    console.log('useBookings - createBooking called with:', bookingData);
+    
     const newBooking: Booking = {
       id: `booking_${Date.now()}`,
-      status: BookingStatus.CONFIRMED, // Mudança: agora cria direto como confirmado
+      status: BookingStatus.CONFIRMED,
       paymentStatus: 'pending',
       createdAt: new Date(),
       ...bookingData
     } as Booking;
 
-    setBookings(prev => [...prev, newBooking]);
+    console.log('useBookings - newBooking created:', newBooking);
+
+    setBookings(prev => {
+      const updated = [...prev, newBooking];
+      console.log('useBookings - bookings updated, total count:', updated.length);
+      return updated;
+    });
     
     // Simular notificação para o gestor sobre nova ordem de agendamento
     console.log(`Nova ordem de agendamento criada - Notificação enviada ao gestor da quadra`);
@@ -195,19 +202,46 @@ export const useBookings = () => {
   };
 
   const isTimeSlotAvailable = (courtId: string, date: string, startTime: string, endTime: string) => {
-    const confirmedBookings = bookings.filter(booking => 
-      booking.courtId === courtId && 
-      booking.date === date && 
-      booking.status === BookingStatus.CONFIRMED
-    );
+    console.log('useBookings - isTimeSlotAvailable called with:');
+    console.log('- courtId:', courtId);
+    console.log('- date:', date);
+    console.log('- startTime:', startTime);
+    console.log('- endTime:', endTime);
+    
+    const confirmedBookings = bookings.filter(booking => {
+      const matches = booking.courtId === courtId && 
+        booking.date === date && 
+        booking.status === BookingStatus.CONFIRMED;
+      
+      if (matches) {
+        console.log('useBookings - Found confirmed booking:', booking);
+      }
+      
+      return matches;
+    });
 
-    return !confirmedBookings.some(booking => {
+    console.log('useBookings - confirmedBookings for this slot:', confirmedBookings);
+
+    const hasConflict = confirmedBookings.some(booking => {
       const bookingStart = booking.startTime;
       const bookingEnd = booking.endTime;
       
       // Verificar sobreposição de horários
-      return (startTime < bookingEnd && endTime > bookingStart);
+      const conflict = startTime < bookingEnd && endTime > bookingStart;
+      
+      if (conflict) {
+        console.log('useBookings - Time conflict detected with booking:', booking);
+        console.log(`- Existing: ${bookingStart}-${bookingEnd}`);
+        console.log(`- Requested: ${startTime}-${endTime}`);
+      }
+      
+      return conflict;
     });
+
+    const isAvailable = !hasConflict;
+    console.log('useBookings - isTimeSlotAvailable result:', isAvailable);
+    
+    return isAvailable;
   };
 
   const addRating = (bookingId: string, stars: number, comment: string) => {
