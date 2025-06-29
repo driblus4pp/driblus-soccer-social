@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { ArrowLeft, Calendar as CalendarIcon, Clock, Users } from "lucide-react";
+import { ArrowLeft, Calendar as CalendarIcon, Clock, Users, AlertCircle } from "lucide-react";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useBookings } from "@/hooks/useBookings";
@@ -26,7 +26,8 @@ const BookingPage = () => {
   const { getCurrentUser } = useUsers();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
-  const [numberOfPeople, setNumberOfPeople] = useState('10');
+  const [numberOfPeople, setNumberOfPeople] = useState('');
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   console.log('BookingPage - Court ID:', id);
   
@@ -61,6 +62,25 @@ const BookingPage = () => {
     });
   };
 
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (!selectedDate) {
+      newErrors.date = 'Por favor, selecione uma data';
+    }
+
+    if (!selectedTime) {
+      newErrors.time = 'Por favor, selecione um horário';
+    }
+
+    if (!numberOfPeople || numberOfPeople === '0') {
+      newErrors.people = 'Por favor, informe quantas pessoas participarão';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleProceedToConfirmation = () => {
     console.log('=== INÍCIO DO DEBUG handleProceedToConfirmation ===');
     console.log('selectedDate:', selectedDate);
@@ -68,22 +88,9 @@ const BookingPage = () => {
     console.log('numberOfPeople:', numberOfPeople);
     console.log('court:', court);
     
-    // Verificação 1: Campos obrigatórios
-    if (!selectedDate) {
-      console.log('ERROR: selectedDate não está definida');
-      alert('Por favor, selecione uma data');
-      return;
-    }
-    
-    if (!selectedTime) {
-      console.log('ERROR: selectedTime não está definido');
-      alert('Por favor, selecione um horário');
-      return;
-    }
-    
-    if (!numberOfPeople) {
-      console.log('ERROR: numberOfPeople não está definido');
-      alert('Por favor, selecione o número de pessoas');
+    // Validar formulário
+    if (!validateForm()) {
+      console.log('ERROR: Formulário inválido, erros:', errors);
       return;
     }
     
@@ -96,13 +103,13 @@ const BookingPage = () => {
     console.log('✓ Todos os campos obrigatórios estão preenchidos');
 
     const endTime = getEndTime(selectedTime);
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    const dateStr = format(selectedDate!, 'yyyy-MM-dd');
 
     console.log('Dados calculados:');
     console.log('- endTime:', endTime);
     console.log('- dateStr:', dateStr);
 
-    // Verificação 2: Disponibilidade do horário
+    // Verificação de disponibilidade do horário
     console.log('Verificando disponibilidade...');
     const isAvailable = isTimeSlotAvailable(court.id, dateStr, selectedTime, endTime);
     console.log('isTimeSlotAvailable result:', isAvailable);
@@ -115,7 +122,7 @@ const BookingPage = () => {
 
     console.log('✓ Horário está disponível');
 
-    // Verificação 3: Criação dos dados do booking
+    // Criação dos dados do booking
     const bookingData = {
       courtId: court.id,
       courtName: court.name,
@@ -129,16 +136,16 @@ const BookingPage = () => {
       endTime,
       duration: 1,
       totalPrice: court.hourlyRate,
-      serviceFee: 5,
+      serviceFee: 0, // Taxa de serviço removida
       numberOfPlayers: parseInt(numberOfPeople),
       needsEquipment: false,
       managerId: court.ownerId,
-      formattedDate: format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+      formattedDate: format(selectedDate!, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
     };
 
     console.log('✓ Dados do booking criados:', bookingData);
 
-    // Verificação 4: Navegação
+    // Navegação
     const targetRoute = `/cliente/quadra/${id}/confirmacao`;
     console.log('Tentando navegar para:', targetRoute);
     console.log('Estado a ser passado:', { bookingData, court });
@@ -199,13 +206,19 @@ const BookingPage = () => {
             <CardTitle className="text-white flex items-center gap-2">
               <CalendarIcon className="w-5 h-5" />
               Selecione a Data
+              <span className="text-red-400">*</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={setSelectedDate}
+              onSelect={(date) => {
+                setSelectedDate(date);
+                if (errors.date) {
+                  setErrors(prev => ({ ...prev, date: '' }));
+                }
+              }}
               disabled={(date) => date < new Date() || date.getDay() === 0}
               className="bg-white/10 border-white/20 text-white"
               locale={ptBR}
@@ -218,6 +231,12 @@ const BookingPage = () => {
                 nav_button: "text-white hover:bg-white/20 hover:text-slate-900 border-white/20"
               }}
             />
+            {errors.date && (
+              <div className="flex items-center gap-2 mt-2 text-red-400 text-sm">
+                <AlertCircle className="w-4 h-4" />
+                <span>{errors.date}</span>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -228,6 +247,7 @@ const BookingPage = () => {
               <CardTitle className="text-white flex items-center gap-2">
                 <Clock className="w-5 h-5" />
                 Horários Disponíveis
+                <span className="text-red-400">*</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -249,11 +269,20 @@ const BookingPage = () => {
                       onClick={() => {
                         console.log('Time selected:', time);
                         setSelectedTime(time);
+                        if (errors.time) {
+                          setErrors(prev => ({ ...prev, time: '' }));
+                        }
                       }}
                     >
                       {time}
                     </Button>
                   ))}
+                </div>
+              )}
+              {errors.time && (
+                <div className="flex items-center gap-2 mt-2 text-red-400 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{errors.time}</span>
                 </div>
               )}
             </CardContent>
@@ -267,16 +296,25 @@ const BookingPage = () => {
               <CardTitle className="text-white flex items-center gap-2">
                 <Users className="w-5 h-5" />
                 Quantas pessoas participarão?
+                <span className="text-red-400">*</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="people" className="text-white">Número de pessoas esperadas</Label>
-                <Select value={numberOfPeople} onValueChange={(value) => {
-                  console.log('Number of people selected:', value);
-                  setNumberOfPeople(value);
-                }}>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                <Label htmlFor="people" className="text-white">
+                  Número de pessoas esperadas (obrigatório)
+                </Label>
+                <Select 
+                  value={numberOfPeople} 
+                  onValueChange={(value) => {
+                    console.log('Number of people selected:', value);
+                    setNumberOfPeople(value);
+                    if (errors.people) {
+                      setErrors(prev => ({ ...prev, people: '' }));
+                    }
+                  }}
+                >
+                  <SelectTrigger className={`bg-white/10 border-white/20 text-white ${errors.people ? 'border-red-400' : ''}`}>
                     <SelectValue placeholder="Selecione o número de pessoas" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#062B4B] border-white/20">
@@ -287,6 +325,12 @@ const BookingPage = () => {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.people && (
+                  <div className="flex items-center gap-2 text-red-400 text-sm">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>{errors.people}</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -323,6 +367,7 @@ const BookingPage = () => {
                 <p><strong>Horário:</strong> {selectedTime} - {getEndTime(selectedTime)}</p>
                 <p><strong>Participantes:</strong> {numberOfPeople} pessoas</p>
                 <p><strong>Valor:</strong> R$ {court?.hourlyRate || 120},00</p>
+                <p className="text-sm text-white/70">* Sem taxa de serviço adicional</p>
               </div>
               
               <Button

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,7 @@ const BookingConfirmationPage = () => {
     });
   };
 
-  const totalPrice = bookingData.totalPrice + bookingData.serviceFee;
+  const totalPrice = bookingData.totalPrice; // Removida a taxa de serviço
 
   // Corrigir a renderização do court.location
   const getCourtLocationText = (location: any) => {
@@ -164,16 +165,12 @@ const BookingConfirmationPage = () => {
               <span>R$ {bookingData.totalPrice},00</span>
             </div>
             
-            <div className="flex justify-between text-white">
-              <span>Taxa de serviço</span>
-              <span>R$ {bookingData.serviceFee},00</span>
-            </div>
-            
             <div className="border-t border-white/20 pt-3">
               <div className="flex justify-between text-white font-bold text-lg">
                 <span>Total</span>
                 <span className="text-[#F35410]">R$ {totalPrice},00</span>
               </div>
+              <p className="text-white/70 text-sm">Sem taxas adicionais</p>
             </div>
           </CardContent>
         </Card>
