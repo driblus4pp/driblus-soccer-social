@@ -184,7 +184,7 @@ const BookingConfirmationPage = () => {
               <Checkbox 
                 id="payment-confirmation"
                 checked={paymentAccepted}
-                onCheckedChange={setPaymentAccepted}
+                onCheckedChange={(checked) => setPaymentAccepted(checked === true)}
                 className="border-white/20 data-[state=checked]:bg-[#F35410] data-[state=checked]:border-[#F35410]"
               />
               <label htmlFor="payment-confirmation" className="text-white text-sm leading-relaxed cursor-pointer">
