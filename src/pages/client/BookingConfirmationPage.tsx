@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,11 @@ const BookingConfirmationPage = () => {
   
   const { bookingData, court } = location.state || {};
 
+  console.log('BookingConfirmationPage - bookingData:', bookingData);
+  console.log('BookingConfirmationPage - court:', court);
+
   if (!bookingData || !court) {
+    console.log('BookingConfirmationPage - Missing data, redirecting to dashboard');
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
         <div className="text-white text-center">
@@ -29,16 +32,24 @@ const BookingConfirmationPage = () => {
   }
 
   const handleConfirmBooking = () => {
+    console.log('BookingConfirmationPage - handleConfirmBooking called');
+    console.log('BookingConfirmationPage - paymentAccepted:', paymentAccepted);
+    
     if (!paymentAccepted) {
       alert('Por favor, confirme que concorda com o pagamento no local');
       return;
     }
+
+    console.log('BookingConfirmationPage - Creating booking with data:', bookingData);
 
     // Criar booking com status CONFIRMED (ordem direta para o gestor)
     const newBooking = createBooking({
       ...bookingData,
       status: 'CONFIRMED'
     });
+
+    console.log('BookingConfirmationPage - Booking created:', newBooking);
+    console.log('BookingConfirmationPage - Navigating to success page');
 
     // Redirecionar para página de sucesso
     navigate('/cliente/agendamento-sucesso', {
@@ -50,6 +61,17 @@ const BookingConfirmationPage = () => {
   };
 
   const totalPrice = bookingData.totalPrice + bookingData.serviceFee;
+
+  // Corrigir a renderização do court.location
+  const getCourtLocationText = (location: any) => {
+    if (typeof location === 'string') {
+      return location;
+    }
+    if (typeof location === 'object' && location) {
+      return location.address || location.name || 'Localização não informada';
+    }
+    return 'Localização não informada';
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
@@ -82,7 +104,7 @@ const BookingConfirmationPage = () => {
                 <h2 className="text-white font-bold text-lg">{bookingData.courtName}</h2>
                 <div className="flex items-center gap-2 text-white/70 text-sm">
                   <MapPin className="w-4 h-4" />
-                  <span>{court.location}</span>
+                  <span>{getCourtLocationText(court.location)}</span>
                 </div>
                 <div className="mt-2">
                   <span className="inline-block bg-[#F35410] text-white text-xs px-2 py-1 rounded">

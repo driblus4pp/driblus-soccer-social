@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +8,11 @@ const BookingSuccessPage = () => {
   const navigate = useNavigate();
   const { booking, court } = location.state || {};
 
+  console.log('BookingSuccessPage - booking:', booking);
+  console.log('BookingSuccessPage - court:', court);
+
   if (!booking || !court) {
+    console.log('BookingSuccessPage - Missing data, redirecting to dashboard');
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
         <div className="text-white text-center">
@@ -21,6 +24,17 @@ const BookingSuccessPage = () => {
       </div>
     );
   }
+
+  // Corrigir a renderização do court.location
+  const getCourtLocationText = (location: any) => {
+    if (typeof location === 'string') {
+      return location;
+    }
+    if (typeof location === 'object' && location) {
+      return location.address || location.name || 'Localização não informada';
+    }
+    return 'Localização não informada';
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
@@ -58,7 +72,7 @@ const BookingSuccessPage = () => {
               <MapPin className="w-5 h-5 text-[#F35410]" />
               <div>
                 <p className="font-semibold">{booking.courtName}</p>
-                <p className="text-white/70 text-sm">{court.location}</p>
+                <p className="text-white/70 text-sm">{getCourtLocationText(court.location)}</p>
               </div>
             </div>
 
