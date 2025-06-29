@@ -2,27 +2,25 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Calendar, Clock, User, Phone, Mail, MapPin, Users } from "lucide-react";
-
 const BookingSuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { booking, court } = location.state || {};
-
+  const {
+    booking,
+    court
+  } = location.state || {};
   console.log('BookingSuccessPage - booking:', booking);
   console.log('BookingSuccessPage - court:', court);
-
   if (!booking || !court) {
     console.log('BookingSuccessPage - Missing data, redirecting to dashboard');
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
         <div className="text-white text-center">
           <p>Informações do agendamento não encontradas</p>
           <Button onClick={() => navigate('/cliente/dashboard')} className="mt-4">
             Voltar ao Dashboard
           </Button>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // Corrigir a renderização do court.location
@@ -35,9 +33,7 @@ const BookingSuccessPage = () => {
     }
     return 'Localização não informada';
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       <div className="p-4 space-y-6">
         {/* Success Header */}
         <div className="text-center py-8">
@@ -116,7 +112,7 @@ const BookingSuccessPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-center p-4 bg-[#F35410]/20 rounded-lg">
-              <p className="text-white font-semibold text-lg">R$ {(booking.totalPrice + booking.serviceFee)},00</p>
+              <p className="text-white font-semibold text-lg">R$ {booking.totalPrice + booking.serviceFee},00</p>
               <p className="text-white/90 text-sm">Pagamento será realizado no local no balcão</p>
             </div>
           </CardContent>
@@ -145,24 +141,15 @@ const BookingSuccessPage = () => {
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <Button 
-            onClick={() => navigate('/cliente/dashboard')}
-            className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3"
-          >
+          <Button onClick={() => navigate('/cliente/dashboard')} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3">
             Voltar ao Dashboard
           </Button>
           
-          <Button 
-            onClick={() => navigate('/cliente/agendamentos')}
-            variant="outline" 
-            className="w-full border-white/20 text-white hover:bg-white/10"
-          >
+          <Button onClick={() => navigate('/cliente/agendamentos')} variant="outline" className="w-full border-white/20 hover:bg-white/10 text-zinc-950">
             Ver Meus Agendamentos
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BookingSuccessPage;
