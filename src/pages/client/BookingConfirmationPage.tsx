@@ -37,7 +37,7 @@ const BookingConfirmationPage = () => {
     // Criar booking com status CONFIRMED (ordem direta para o gestor)
     const newBooking = createBooking({
       ...bookingData,
-      status: 'CONFIRMED' // Mudança: agora cria direto como confirmado
+      status: 'CONFIRMED'
     });
 
     // Redirecionar para página de sucesso
