@@ -1,3 +1,4 @@
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -110,7 +111,7 @@ const BottomNavigation = ({
               variant="ghost"
               size="sm"
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-1 px-2 py-3 h-auto relative ${
+              className={`flex flex-col items-center gap-1 px-2 py-3 h-auto relative hover:bg-transparent ${
                 active ? 'text-[#F35410]' : 'text-white hover:text-gray-200'
               }`}
             >
