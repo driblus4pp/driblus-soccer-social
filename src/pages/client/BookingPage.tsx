@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -35,11 +34,12 @@ const BookingPage = () => {
   const court = getCourtById(id || '');
   console.log('BookingPage - Court found:', court);
   
-  // Usar dados do usuário logado automaticamente
-  const userData = getCurrentUser() || {
-    name: 'Maria Santos',
-    email: 'maria@email.com',
-    phone: '+55 85 88888-8888'
+  // Ensure userData always has the required properties
+  const currentUser = getCurrentUser();
+  const userData = {
+    name: currentUser?.name || 'Maria Santos',
+    email: currentUser?.email || 'maria@email.com',
+    phone: currentUser?.phone || '+55 85 88888-8888'
   };
 
   console.log('BookingPage - User data:', userData);
