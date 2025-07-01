@@ -1,12 +1,13 @@
+
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+
 const ClientLogin = () => {
   const navigate = useNavigate();
   const {
@@ -23,6 +24,7 @@ const ClientLogin = () => {
     email: '',
     password: ''
   });
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login(formData.email, formData.password);
@@ -30,61 +32,86 @@ const ClientLogin = () => {
       navigate('/cliente/dashboard');
     }
   };
-  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="flex items-center justify-center mb-6">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="absolute left-4 top-4 text-white hover:bg-white/20">
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex items-center gap-3">
-            
-            <span className="text-5xl font-bold text-orange-600">Driblus</span>
-          </div>
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] flex flex-col">
+      {/* Back Button */}
+      <div className="absolute top-6 left-6 z-10">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => navigate('/')} 
+          className="text-white hover:bg-white/20 rounded-full"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-8">
+        {/* Logo/Title */}
+        <div className="text-center mb-16">
+          <h1 className="text-6xl font-bold text-white mb-2">Driblus</h1>
+          <div className="w-16 h-1 bg-[#F35410] mx-auto rounded"></div>
         </div>
 
-        <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-2xl">
-          <CardHeader>
-            <CardTitle className="text-white text-center">Login do Cliente</CardTitle>
-            <CardDescription className="text-white/70 text-center">
-              Acesse sua conta para agendar quadras
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                <Input placeholder="Email" type="email" value={formData.email} onChange={e => setFormData(prev => ({
-                ...prev,
-                email: e.target.value
-              }))} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+        {/* Login Form */}
+        <div className="w-full max-w-sm space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <Input 
+                  placeholder="Login:" 
+                  type="email"
+                  value={formData.email} 
+                  onChange={e => setFormData(prev => ({
+                    ...prev,
+                    email: e.target.value
+                  }))} 
+                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/60 rounded-lg text-base focus:border-[#F35410] focus:ring-[#F35410]" 
+                  required 
+                />
               </div>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                <Input placeholder="Senha" type="password" value={formData.password} onChange={e => setFormData(prev => ({
-                ...prev,
-                password: e.target.value
-              }))} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+              <div>
+                <Input 
+                  placeholder="Senha:" 
+                  type="password"
+                  value={formData.password} 
+                  onChange={e => setFormData(prev => ({
+                    ...prev,
+                    password: e.target.value
+                  }))} 
+                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/60 rounded-lg text-base focus:border-[#F35410] focus:ring-[#F35410]" 
+                  required 
+                />
               </div>
-
-              <Button type="submit" disabled={isLoading} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3 rounded-xl font-semibold">
-                {isLoading ? 'Entrando...' : 'Entrar'}
-              </Button>
-            </form>
-
-            <div className="mt-4 text-center">
-              <p className="text-white/70 text-sm">
-                Não tem conta?{' '}
-                <Link to="/cliente/cadastro" className="text-[#F35410] hover:underline">
-                  Cadastre-se aqui
-                </Link>
-              </p>
             </div>
-          </CardContent>
-        </Card>
+
+            <Button 
+              type="submit" 
+              disabled={isLoading} 
+              className="w-full h-12 bg-[#F35410] hover:bg-[#BA2D0B] text-white rounded-full font-medium text-base"
+            >
+              {isLoading ? 'entrando...' : 'entrar'}
+            </Button>
+          </form>
+
+          {/* Register Link */}
+          <div className="text-center pt-8">
+            <p className="text-white/70 text-sm">
+              Não tem conta?{' '}
+              <Link to="/cliente/cadastro" className="text-[#F35410] hover:underline font-medium">
+                Cadastre-se aqui
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* PWA Install Prompt */}
       {canInstall && <PWAInstallPrompt show={showPrompt} onInstall={installApp} onDismiss={dismissPrompt} />}
-    </div>;
+    </div>
+  );
 };
+
 export default ClientLogin;
