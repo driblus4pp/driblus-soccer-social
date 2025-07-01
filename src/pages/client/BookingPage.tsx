@@ -2,16 +2,17 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
-import { ArrowLeft, Calendar as CalendarIcon, Clock, Users, AlertCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useBookings } from "@/hooks/useBookings";
 import { useCourts } from "@/hooks/useCourts";
 import { useUsers } from "@/hooks/useUsers";
+import DateSelectionCard from "@/components/booking/DateSelectionCard";
+import TimeSlotCard from "@/components/booking/TimeSlotCard";
+import PeopleSelectionCard from "@/components/booking/PeopleSelectionCard";
+import UserDataCard from "@/components/booking/UserDataCard";
+import BookingSummaryCard from "@/components/booking/BookingSummaryCard";
 
 const timeSlots = [
   '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
@@ -136,7 +137,7 @@ const BookingPage = () => {
       endTime,
       duration: 1,
       totalPrice: court.hourlyRate,
-      serviceFee: 0, // Taxa de serviço removida
+      serviceFee: 0,
       numberOfPlayers: parseInt(numberOfPeople),
       needsEquipment: false,
       managerId: court.ownerId,
@@ -164,6 +165,29 @@ const BookingPage = () => {
     }
 
     console.log('=== FIM DO DEBUG handleProceedToConfirmation ===');
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setSelectedDate(date);
+    if (errors.date) {
+      setErrors(prev => ({ ...prev, date: '' }));
+    }
+  };
+
+  const handleTimeChange = (time: string) => {
+    console.log('Time selected:', time);
+    setSelectedTime(time);
+    if (errors.time) {
+      setErrors(prev => ({ ...prev, time: '' }));
+    }
+  };
+
+  const handlePeopleChange = (people: string) => {
+    console.log('Number of people selected:', people);
+    setNumberOfPeople(people);
+    if (errors.people) {
+      setErrors(prev => ({ ...prev, people: '' }));
+    }
   };
 
   const availableSlots = getAvailableTimeSlots();
@@ -201,183 +225,45 @@ const BookingPage = () => {
 
       <div className="p-4 space-y-6">
         {/* Date Selection */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <CalendarIcon className="w-5 h-5" />
-              Selecione a Data
-              <span className="text-red-400">*</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => {
-                setSelectedDate(date);
-                if (errors.date) {
-                  setErrors(prev => ({ ...prev, date: '' }));
-                }
-              }}
-              disabled={(date) => date < new Date() || date.getDay() === 0}
-              className="bg-white/10 border-white/20 text-white"
-              locale={ptBR}
-              classNames={{
-                day_selected: "bg-[#F35410] text-white hover:bg-[#F35410] hover:text-white focus:bg-[#F35410] focus:text-white",
-                day_today: "bg-white/20 text-white hover:bg-white/30 hover:text-slate-900",
-                day: "text-white hover:bg-white/20 hover:text-slate-900",
-                head_cell: "text-white/70",
-                caption_label: "text-white",
-                nav_button: "text-white hover:bg-white/20 hover:text-slate-900 border-white/20"
-              }}
-            />
-            {errors.date && (
-              <div className="flex items-center gap-2 mt-2 text-red-400 text-sm">
-                <AlertCircle className="w-4 h-4" />
-                <span>{errors.date}</span>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <DateSelectionCard
+          selectedDate={selectedDate}
+          onDateChange={handleDateChange}
+          error={errors.date}
+        />
 
         {/* Time Selection */}
         {selectedDate && (
-          <Card className="bg-white/10 border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Horários Disponíveis
-                <span className="text-red-400">*</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {availableSlots.length === 0 ? (
-                <p className="text-white/70 text-center py-4">
-                  Nenhum horário disponível para esta data. Tente outra data.
-                </p>
-              ) : (
-                <div className="grid grid-cols-3 gap-2">
-                  {availableSlots.map((time) => (
-                    <Button
-                      key={time}
-                      variant={selectedTime === time ? "default" : "outline"}
-                      className={`${
-                        selectedTime === time 
-                          ? "bg-[#F35410] hover:bg-[#BA2D0B] text-white border-[#F35410]" 
-                          : "border-white/20 text-white hover:bg-white/20 hover:text-slate-900 bg-transparent"
-                      }`}
-                      onClick={() => {
-                        console.log('Time selected:', time);
-                        setSelectedTime(time);
-                        if (errors.time) {
-                          setErrors(prev => ({ ...prev, time: '' }));
-                        }
-                      }}
-                    >
-                      {time}
-                    </Button>
-                  ))}
-                </div>
-              )}
-              {errors.time && (
-                <div className="flex items-center gap-2 mt-2 text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{errors.time}</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <TimeSlotCard
+            selectedTime={selectedTime}
+            onTimeChange={handleTimeChange}
+            availableSlots={availableSlots}
+            error={errors.time}
+          />
         )}
 
         {/* Number of People Selection */}
         {selectedDate && selectedTime && (
-          <Card className="bg-white/10 border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Quantas pessoas participarão?
-                <span className="text-red-400">*</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="people" className="text-white">
-                  Número de pessoas esperadas (obrigatório)
-                </Label>
-                <Select 
-                  value={numberOfPeople} 
-                  onValueChange={(value) => {
-                    console.log('Number of people selected:', value);
-                    setNumberOfPeople(value);
-                    if (errors.people) {
-                      setErrors(prev => ({ ...prev, people: '' }));
-                    }
-                  }}
-                >
-                  <SelectTrigger className={`bg-white/10 border-white/20 text-white ${errors.people ? 'border-red-400' : ''}`}>
-                    <SelectValue placeholder="Selecione o número de pessoas" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#062B4B] border-white/20">
-                    {Array.from({ length: 40 }, (_, i) => i + 1).map(num => (
-                      <SelectItem key={num} value={num.toString()} className="text-white hover:bg-white/10">
-                        {num} {num === 1 ? 'pessoa' : 'pessoas'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.people && (
-                  <div className="flex items-center gap-2 text-red-400 text-sm">
-                    <AlertCircle className="w-4 h-4" />
-                    <span>{errors.people}</span>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <PeopleSelectionCard
+            numberOfPeople={numberOfPeople}
+            onPeopleChange={handlePeopleChange}
+            error={errors.people}
+          />
         )}
 
         {/* User Data Display - Automatically loaded */}
         {selectedDate && selectedTime && numberOfPeople && (
-          <Card className="bg-white/10 border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Dados do Responsável</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="text-white">
-                <p><strong>Nome:</strong> {userData.name}</p>
-                <p><strong>Telefone:</strong> {userData.phone}</p>
-                <p><strong>E-mail:</strong> {userData.email}</p>
-              </div>
-              <p className="text-white/70 text-sm mt-2">
-                * Dados obtidos automaticamente do seu perfil
-              </p>
-            </CardContent>
-          </Card>
+          <UserDataCard userData={userData} />
         )}
 
         {/* Booking Summary & Proceed */}
         {selectedDate && selectedTime && numberOfPeople && (
-          <Card className="bg-white/10 border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Resumo do Agendamento</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2 text-white">
-                <p><strong>Data:</strong> {format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
-                <p><strong>Horário:</strong> {selectedTime} - {getEndTime(selectedTime)}</p>
-                <p><strong>Participantes:</strong> {numberOfPeople} pessoas</p>
-                <p><strong>Valor:</strong> R$ {court?.hourlyRate || 120},00</p>
-                <p className="text-sm text-white/70">* Sem taxa de serviço adicional</p>
-              </div>
-              
-              <Button
-                onClick={handleProceedToConfirmation}
-                className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold"
-              >
-                Prosseguir para Confirmação
-              </Button>
-            </CardContent>
-          </Card>
+          <BookingSummaryCard
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            numberOfPeople={numberOfPeople}
+            courtPrice={court?.hourlyRate || 120}
+            onProceed={handleProceedToConfirmation}
+          />
         )}
       </div>
     </div>
