@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { X, Download } from "lucide-react";
 
@@ -10,19 +9,25 @@ interface PWAInstallBalloonProps {
 }
 
 const PWAInstallBalloon = ({ onInstall, onDismiss, show }: PWAInstallBalloonProps) => {
-  const [isVisible, setIsVisible] = useState(show);
+  console.log('PWAInstallBalloon: Renderizando com show =', show);
 
-  if (!show && !isVisible) return null;
+  if (!show) {
+    console.log('PWAInstallBalloon: Não renderizando (show = false)');
+    return null;
+  }
 
   const handleDismiss = (permanent = false) => {
-    setIsVisible(false);
-    setTimeout(() => onDismiss(permanent), 300);
+    console.log('PWAInstallBalloon: Dismiss clicado, permanent =', permanent);
+    onDismiss(permanent);
+  };
+
+  const handleInstall = () => {
+    console.log('PWAInstallBalloon: Install clicado');
+    onInstall();
   };
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 transform transition-all duration-300 ${
-      show && isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
-    }`}>
+    <div className="fixed bottom-6 right-6 z-[9999] transform transition-all duration-300 animate-in slide-in-from-bottom-4">
       <div className="bg-white/95 backdrop-blur-md border border-white/20 shadow-2xl rounded-2xl p-4 max-w-[300px]">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -53,7 +58,7 @@ const PWAInstallBalloon = ({ onInstall, onDismiss, show }: PWAInstallBalloonProp
 
           <div className="flex gap-2">
             <Button
-              onClick={onInstall}
+              onClick={handleInstall}
               size="sm"
               className="flex-1 bg-[#F35410] hover:bg-[#BA2D0B] text-white text-xs h-8"
             >

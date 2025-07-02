@@ -24,6 +24,7 @@ const ClientLogin = () => {
     email: '',
     password: ''
   });
+  const [forceShowBalloon, setForceShowBalloon] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +33,8 @@ const ClientLogin = () => {
       navigate('/cliente/dashboard');
     }
   };
+
+  console.log('ClientLogin: PWA Estado =', { canInstall, showPrompt, forceShowBalloon });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] flex flex-col">
@@ -44,6 +47,23 @@ const ClientLogin = () => {
           className="text-white hover:bg-white/20 rounded-full"
         >
           <ArrowLeft className="w-5 h-5" />
+        </Button>
+      </div>
+
+      {/* Test Button - Temporary */}
+      <div className="absolute top-6 right-6 z-10">
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => {
+            console.log('Botão teste clicado');
+            setForceShowBalloon(!forceShowBalloon);
+            // Clear localStorage for testing
+            localStorage.removeItem('pwa-install-rejected');
+          }}
+          className="text-white border-white/20 hover:bg-white/10 text-xs"
+        >
+          {forceShowBalloon ? 'Ocultar' : 'Testar'} PWA
         </Button>
       </div>
 
@@ -109,13 +129,11 @@ const ClientLogin = () => {
       </div>
 
       {/* PWA Install Balloon */}
-      {canInstall && (
-        <PWAInstallBalloon
-          show={showPrompt}
-          onInstall={installApp}
-          onDismiss={dismissPrompt}
-        />
-      )}
+      <PWAInstallBalloon
+        show={showPrompt || forceShowBalloon}
+        onInstall={installApp}
+        onDismiss={dismissPrompt}
+      />
     </div>
   );
 };
