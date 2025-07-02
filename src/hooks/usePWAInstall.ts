@@ -20,10 +20,10 @@ export const usePWAInstall = () => {
       // Check if user has already dismissed the prompt
       const hasRejected = localStorage.getItem('pwa-install-rejected');
       if (!hasRejected) {
-        // Show prompt after 3 seconds
+        // Show prompt after 2 seconds for balloon (faster than modal)
         setTimeout(() => {
           setShowPrompt(true);
-        }, 3000);
+        }, 2000);
       }
     };
 

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import PWAInstallBalloon from "@/components/PWAInstallBalloon";
 
 const ManagerLogin = () => {
   const navigate = useNavigate();
@@ -116,8 +116,14 @@ const ManagerLogin = () => {
         </div>
       </div>
 
-      {/* PWA Install Prompt */}
-      {canInstall && <PWAInstallPrompt show={showPrompt} onInstall={installApp} onDismiss={dismissPrompt} />}
+      {/* PWA Install Balloon */}
+      {canInstall && (
+        <PWAInstallBalloon
+          show={showPrompt}
+          onInstall={installApp}
+          onDismiss={dismissPrompt}
+        />
+      )}
     </div>
   );
 };
