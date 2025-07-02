@@ -55,7 +55,7 @@ const AdminLogin = () => {
             <div className="space-y-4">
               <div>
                 <Input 
-                  placeholder="Login:" 
+                  placeholder="Digite seu email de administrador" 
                   type="email"
                   value={formData.email} 
                   onChange={e => setFormData(prev => ({
@@ -68,7 +68,7 @@ const AdminLogin = () => {
               </div>
               <div>
                 <Input 
-                  placeholder="Senha:" 
+                  placeholder="Digite sua senha" 
                   type="password"
                   value={formData.password} 
                   onChange={e => setFormData(prev => ({
