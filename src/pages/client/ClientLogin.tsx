@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,6 @@ import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import PWAInstallBalloon from "@/components/PWAInstallBalloon";
-
 const ClientLogin = () => {
   const navigate = useNavigate();
   const {
@@ -25,7 +23,6 @@ const ClientLogin = () => {
     password: ''
   });
   const [forceShowBalloon, setForceShowBalloon] = useState(false);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login(formData.email, formData.password);
@@ -33,36 +30,27 @@ const ClientLogin = () => {
       navigate('/cliente/dashboard');
     }
   };
-
-  console.log('ClientLogin: PWA Estado =', { canInstall, showPrompt, forceShowBalloon });
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] flex flex-col">
+  console.log('ClientLogin: PWA Estado =', {
+    canInstall,
+    showPrompt,
+    forceShowBalloon
+  });
+  return <div className="min-h-screen bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] flex flex-col">
       {/* Back Button */}
       <div className="absolute top-6 left-6 z-10">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => navigate('/')} 
-          className="text-white hover:bg-white/20 rounded-full"
-        >
+        <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="text-white hover:bg-white/20 rounded-full">
           <ArrowLeft className="w-5 h-5" />
         </Button>
       </div>
 
       {/* Test Button - Temporary */}
       <div className="absolute top-6 right-6 z-10">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => {
-            console.log('Botão teste clicado');
-            setForceShowBalloon(!forceShowBalloon);
-            // Clear localStorage for testing
-            localStorage.removeItem('pwa-install-rejected');
-          }}
-          className="text-white border-white/20 hover:bg-white/10 text-xs"
-        >
+        <Button variant="outline" size="sm" onClick={() => {
+        console.log('Botão teste clicado');
+        setForceShowBalloon(!forceShowBalloon);
+        // Clear localStorage for testing
+        localStorage.removeItem('pwa-install-rejected');
+      }} className="text-white border-white/20 hover:bg-white/10 text-xs">
           {forceShowBalloon ? 'Ocultar' : 'Testar'} PWA
         </Button>
       </div>
@@ -71,7 +59,7 @@ const ClientLogin = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-8">
         {/* Logo/Title */}
         <div className="text-center mb-16">
-          <h1 className="text-6xl font-bold text-white mb-2">Driblus</h1>
+          <h1 className="text-6xl font-bold mb-2 text-orange-700">Driblus</h1>
           <div className="w-16 h-1 bg-[#F35410] mx-auto rounded"></div>
         </div>
 
@@ -80,38 +68,20 @@ const ClientLogin = () => {
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-4">
               <div>
-                <Input 
-                  placeholder="Digite seu email" 
-                  type="email"
-                  value={formData.email} 
-                  onChange={e => setFormData(prev => ({
-                    ...prev,
-                    email: e.target.value
-                  }))} 
-                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/60 rounded-lg text-base focus:border-[#F35410] focus:ring-[#F35410]" 
-                  required 
-                />
+                <Input placeholder="Digite seu email" type="email" value={formData.email} onChange={e => setFormData(prev => ({
+                ...prev,
+                email: e.target.value
+              }))} className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/60 rounded-lg text-base focus:border-[#F35410] focus:ring-[#F35410]" required />
               </div>
               <div>
-                <Input 
-                  placeholder="Digite sua senha" 
-                  type="password"
-                  value={formData.password} 
-                  onChange={e => setFormData(prev => ({
-                    ...prev,
-                    password: e.target.value
-                  }))} 
-                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/60 rounded-lg text-base focus:border-[#F35410] focus:ring-[#F35410]" 
-                  required 
-                />
+                <Input placeholder="Digite sua senha" type="password" value={formData.password} onChange={e => setFormData(prev => ({
+                ...prev,
+                password: e.target.value
+              }))} className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/60 rounded-lg text-base focus:border-[#F35410] focus:ring-[#F35410]" required />
               </div>
             </div>
 
-            <Button 
-              type="submit" 
-              disabled={isLoading} 
-              className="w-full h-12 bg-[#F35410] hover:bg-[#BA2D0B] text-white rounded-full font-medium text-base"
-            >
+            <Button type="submit" disabled={isLoading} className="w-full h-12 text-white rounded-full font-medium text-base bg-orange-700 hover:bg-orange-600">
               {isLoading ? 'entrando...' : 'entrar'}
             </Button>
           </form>
@@ -129,13 +99,7 @@ const ClientLogin = () => {
       </div>
 
       {/* PWA Install Balloon */}
-      <PWAInstallBalloon
-        show={showPrompt || forceShowBalloon}
-        onInstall={installApp}
-        onDismiss={dismissPrompt}
-      />
-    </div>
-  );
+      <PWAInstallBalloon show={showPrompt || forceShowBalloon} onInstall={installApp} onDismiss={dismissPrompt} />
+    </div>;
 };
-
 export default ClientLogin;
