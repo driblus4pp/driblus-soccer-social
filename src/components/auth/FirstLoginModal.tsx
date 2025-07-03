@@ -57,7 +57,7 @@ const FirstLoginModal = ({ isOpen, userEmail, onPasswordChanged }: FirstLoginMod
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md" hideClose>
+      <DialogContent className="sm:max-w-md [&>button]:hidden">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Lock className="w-5 h-5 text-[#F35410]" />
