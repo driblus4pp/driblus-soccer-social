@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,8 @@ import {
   Eye,
   CheckCircle,
   Clock,
-  Building
+  Building,
+  Plus
 } from "lucide-react";
 import { useCourts } from "@/hooks/useCourts";
 import { useToast } from "@/hooks/use-toast";
@@ -90,21 +90,30 @@ const AdminCourts = () => {
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#062B4B] to-[#0A3B5C] text-white p-6">
-        <div className="flex items-center gap-4 mb-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => navigate('/admin/dashboard')} 
-            className="text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <h1 className="text-xl font-semibold">Gerenciar Quadras</h1>
-            <p className="text-white/80 text-sm">
-              {stats.pending} quadras aguardando aprovação
-            </p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate('/admin/dashboard')} 
+              className="text-white hover:bg-white/20"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-xl font-semibold">Gerenciar Quadras</h1>
+              <p className="text-white/80 text-sm">
+                {stats.pending} quadras aguardando aprovação
+              </p>
+            </div>
           </div>
+          <Button 
+            onClick={() => navigate('/admin/quadras/nova')}
+            className="bg-[#F35410] hover:bg-[#BA2D0B] text-white"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nova Quadra
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -227,7 +236,7 @@ const AdminCourts = () => {
         onApprove={handleApproveCourt}
         onReject={handleRejectCourt}
       />
-
+      
       <BottomNavigation userType="admin" />
     </div>
   );

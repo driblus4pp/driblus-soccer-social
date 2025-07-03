@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -45,6 +44,7 @@ import AdminManagers from "./pages/admin/AdminManagers";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminReports from "./pages/admin/AdminReports";
+import AdminCreateCourt from "./pages/admin/AdminCreateCourt";
 
 const queryClient = new QueryClient();
 
@@ -73,26 +73,21 @@ const App = () => (
             <Route path="/cliente/quadra/:id/confirmacao" element={<BookingConfirmationPage />} />
             <Route path="/cliente/agendamento-sucesso" element={<BookingSuccessPage />} />
             
-            {/* Manager Routes */}
+            {/* Manager Routes - Simplificadas */}
             <Route path="/gestor/login" element={<ManagerLogin />} />
             <Route path="/gestor/dashboard" element={<ManagerDashboard />} />
-            <Route path="/gestor/quadra/configurar" element={<ConfigureCourt />} />
             <Route path="/gestor/agendamentos" element={<ManagerBookings />} />
-            <Route path="/gestor/relatorios" element={<ManagerReports />} />
-            <Route path="/gestor/relatorios/financeiro" element={<ManagerFinancialReports />} />
             <Route path="/gestor/notificacoes" element={<ManagerNotifications />} />
             <Route path="/gestor/perfil" element={<ManagerProfile />} />
             <Route path="/gestor/perfil/editar" element={<ManagerEditProfile />} />
-            <Route path="/gestor/quadra/configuracoes" element={<ManagerCourtSettings />} />
-            <Route path="/gestor/preferencias" element={<ManagerPreferences />} />
             
-            {/* Admin Routes */}
+            {/* Admin Routes - Simplificadas */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/quadras" element={<AdminCourts />} />
+            <Route path="/admin/quadras/nova" element={<AdminCreateCourt />} />
             <Route path="/admin/quadras/:id" element={<AdminCourtDetails />} />
             <Route path="/admin/gestores" element={<AdminManagers />} />
-            <Route path="/admin/agendamentos" element={<AdminBookings />} />
             <Route path="/admin/relatorios" element={<AdminReports />} />
             <Route path="/admin/configuracoes" element={<AdminSettings />} />
             

@@ -1,43 +1,54 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, DollarSign, Users, TrendingUp, Clock, MapPin, Settings } from "lucide-react";
+import { Calendar, DollarSign, Users, Clock, MapPin, Settings, Building } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
-import GoogleCalendarManager from "@/components/manager/GoogleCalendarManager";
+import ManagerCourtManager from "@/components/manager/ManagerCourtManager";
+import FirstLoginModal from "@/components/auth/FirstLoginModal";
+
 const ManagerDashboard = () => {
-  const {
-    user,
-    logout
-  } = useAuth();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [showFirstLoginModal, setShowFirstLoginModal] = useState(false); // Simular primeiro acesso
+
+  // Simulando dados do gestor
+  const managerId = 'manager-1';
   const mockStats = {
-    todayBookings: 12,
+    todayBookings: 5,
     monthlyRevenue: 8500,
-    totalCustomers: 145,
-    occupancyRate: 78
+    courtStatus: 'active',
+    nextBookings: [
+      {
+        id: 1,
+        time: '14:00',
+        customer: 'João Silva',
+        status: 'confirmed'
+      },
+      {
+        id: 2,
+        time: '16:00', 
+        customer: 'Maria Santos',
+        status: 'pending'
+      },
+      {
+        id: 3,
+        time: '18:00',
+        customer: 'Pedro Costa', 
+        status: 'confirmed'
+      }
+    ]
   };
-  const mockBookings = [{
-    id: 1,
-    time: '09:00',
-    customer: 'João Silva',
-    court: 'Quadra 1',
-    status: 'confirmed'
-  }, {
-    id: 2,
-    time: '10:30',
-    customer: 'Maria Santos',
-    court: 'Quadra 2',
-    status: 'pending'
-  }, {
-    id: 3,
-    time: '14:00',
-    customer: 'Pedro Costa',
-    court: 'Quadra 1',
-    status: 'confirmed'
-  }];
-  return <div className="min-h-screen bg-gray-50 pb-20">
+
+  const handlePasswordChanged = (newPassword: string) => {
+    console.log('Nova senha definida:', newPassword);
+    setShowFirstLoginModal(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] text-white p-6">
         <div className="flex items-center justify-between">
@@ -45,7 +56,7 @@ const ManagerDashboard = () => {
             <h1 className="text-2xl font-bold">
               Olá, {user?.name?.split(' ')[0] || 'Gestor'}! 👋
             </h1>
-            <p className="text-white/90 mt-1">Bem-vindo ao painel de gestão</p>
+            <p className="text-white/90 mt-1">Como está sua quadra hoje?</p>
           </div>
           <Button variant="ghost" onClick={logout} className="text-white hover:bg-white/20">
             Sair
@@ -54,21 +65,24 @@ const ManagerDashboard = () => {
       </div>
 
       <div className="p-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 bg-slate-50">
-          <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
             <TabsTrigger value="overview" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
-              Visão Geral
+              Início
             </TabsTrigger>
-            <TabsTrigger value="calendar" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
-              Calendário
+            <TabsTrigger value="court" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+              Quadra  
             </TabsTrigger>
-            <TabsTrigger value="settings" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
-              Configurações
+            <TabsTrigger value="bookings" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+              Agenda
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+              Perfil
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            {/* Cards de estatísticas */}
+          <TabsContent value="overview" className="space-y-4">
+            {/* Cards de estatísticas simplificados */}
             <div className="grid grid-cols-2 gap-4">
               <Card>
                 <CardContent className="p-4">
@@ -91,90 +105,129 @@ const ManagerDashboard = () => {
                       <DollarSign className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Receita</p>
+                      <p className="text-sm text-gray-600">Este Mês</p>
                       <p className="text-xl font-bold">R$ {mockStats.monthlyRevenue}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      <Users className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Clientes</p>
-                      <p className="text-xl font-bold">{mockStats.totalCustomers}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-orange-100 rounded-lg">
-                      <TrendingUp className="w-5 h-5 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Ocupação</p>
-                      <p className="text-xl font-bold">{mockStats.occupancyRate}%</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Agendamentos de hoje */}
+            {/* Status da Quadra */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building className="w-5 h-5" />
+                  Status da Quadra
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <div>
+                      <p className="font-medium text-green-800">Quadra Ativa</p>
+                      <p className="text-sm text-green-600">Disponível para reservas</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => setActiveTab('court')}>
+                    Gerenciar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Próximos Agendamentos */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="w-5 h-5" />
-                  Agendamentos de Hoje
+                  Próximos Agendamentos
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {mockBookings.map(booking => <div key={booking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  {mockStats.nextBookings.map(booking => (
+                    <div key={booking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-[#F35410] rounded-lg flex items-center justify-center">
                           <span className="text-white font-bold text-sm">{booking.time}</span>
                         </div>
                         <div>
                           <p className="font-semibold">{booking.customer}</p>
-                          <div className="flex items-center gap-1 text-sm text-gray-600">
-                            <MapPin className="w-3 h-3" />
-                            <span>{booking.court}</span>
-                          </div>
+                          <p className="text-sm text-gray-600">Agendamento</p>
                         </div>
                       </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        booking.status === 'confirmed' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}>
                         {booking.status === 'confirmed' ? 'Confirmado' : 'Pendente'}
                       </div>
-                    </div>)}
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="calendar" className="space-y-6">
-            <GoogleCalendarManager />
+          <TabsContent value="court" className="space-y-6">
+            <ManagerCourtManager managerId={managerId} />
           </TabsContent>
 
-          <TabsContent value="settings" className="space-y-6">
-            <div className="text-center py-12">
-              <Settings className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Configurações</h3>
-              <p className="text-gray-600">Gerencie preferências e configurações</p>
-            </div>
+          <TabsContent value="bookings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Todos os Agendamentos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-600">Lista completa de agendamentos</p>
+                  <Button className="mt-4 bg-[#F35410] hover:bg-[#BA2D0B]">
+                    Ver Agenda Completa
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="profile" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Meu Perfil
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <div className="w-20 h-20 bg-[#F35410] rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{user?.name || 'Gestor'}</h3>
+                  <p className="text-gray-600 mb-4">{user?.email || 'gestor@email.com'}</p>
+                  <Button variant="outline" className="w-full">
+                    Editar Perfil
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
 
-      {/* Navegação inferior */}
+      {/* Modal de primeiro login */}
+      <FirstLoginModal
+        isOpen={showFirstLoginModal}
+        userEmail={user?.email || 'gestor@email.com'}
+        onPasswordChanged={handlePasswordChanged}
+      />
+
       <BottomNavigation userType="manager" />
-    </div>;
+    </div>
+  );
 };
+
 export default ManagerDashboard;
