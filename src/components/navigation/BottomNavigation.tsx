@@ -24,7 +24,7 @@ const BottomNavigation = ({ userType }: BottomNavigationProps) => {
       case 'manager':
         return [
           { path: '/gestor/dashboard', icon: Home, label: 'Início' },
-          { path: '/gestor/agendamentos', icon: Calendar, label: 'Agenda' },
+          { path: '/gestor/dashboard?tab=schedule', icon: Calendar, label: 'Agenda' },
           { path: '/gestor/notificacoes', icon: Bell, label: 'Avisos' },
           { path: '/gestor/perfil', icon: User, label: 'Perfil' }
         ];
@@ -42,12 +42,24 @@ const BottomNavigation = ({ userType }: BottomNavigationProps) => {
 
   const navigationItems = getNavigationItems();
 
+  const isItemActive = (itemPath: string) => {
+    // Para o caso específico da agenda do gestor
+    if (itemPath === '/gestor/dashboard?tab=schedule') {
+      return location.pathname === '/gestor/dashboard' && 
+             (location.search.includes('tab=schedule') || 
+              new URLSearchParams(location.search).get('tab') === 'schedule');
+    }
+    
+    // Para outros casos, comparação direta
+    return location.pathname === itemPath;
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-50">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navigationItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const isActive = isItemActive(item.path);
           
           return (
             <button

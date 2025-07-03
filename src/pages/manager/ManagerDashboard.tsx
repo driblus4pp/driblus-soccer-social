@@ -1,5 +1,5 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,7 +11,22 @@ import ManagerSchedule from "@/components/manager/ManagerSchedule";
 
 const ManagerDashboard = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Ler parâmetro da URL para definir aba ativa
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tabParam = searchParams.get('tab');
+    
+    if (tabParam === 'schedule') {
+      setActiveTab('schedule');
+    } else if (tabParam === 'court') {
+      setActiveTab('court');
+    } else {
+      setActiveTab('overview');
+    }
+  }, [location.search]);
 
   // Simulando dados do gestor
   const managerId = 'manager-1';
