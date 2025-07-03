@@ -50,7 +50,7 @@ const ClientLogin = () => {
         setForceShowBalloon(!forceShowBalloon);
         // Clear localStorage for testing
         localStorage.removeItem('pwa-install-rejected');
-      }} className="text-white border-white/20 hover:bg-white/10 text-xs">
+      }} className="border-white/20 hover:bg-white/10 text-xs text-zinc-950">
           {forceShowBalloon ? 'Ocultar' : 'Testar'} PWA
         </Button>
       </div>
