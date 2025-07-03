@@ -49,7 +49,7 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
       actionRequired: false
     });
 
-    // Simular notificação para o cliente
+    // Simular notificação personalizada para o cliente
     console.log(`📱 Notificação enviada para ${booking.userName}:`);
     console.log(`🎉 Tudo certo com sua reserva! Seu pedido foi confirmado pelo gestor e nos veremos em campo no dia ${format(new Date(booking.date), "dd/MM/yyyy", { locale: ptBR })} às ${booking.startTime}. Prepare-se para o jogo! ⚽`);
   };

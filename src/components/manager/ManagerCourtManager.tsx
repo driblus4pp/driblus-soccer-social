@@ -3,12 +3,20 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Building, Save, Upload, Clock, DollarSign, AlertCircle } from "lucide-react";
-import { useCourts } from "@/hooks/useCourts";
+import { 
+  Building, 
+  MapPin, 
+  DollarSign, 
+  Clock, 
+  Users, 
+  Settings,
+  Save,
+  Camera,
+  Calendar
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ManagerCourtManagerProps {
@@ -16,82 +24,30 @@ interface ManagerCourtManagerProps {
 }
 
 const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
-  const { getCourtsByManager, updateCourtStatus, updateCourtPricing } = useCourts();
   const { toast } = useToast();
-  
-  const managerCourt = getCourtsByManager(managerId)[0]; // MVP: um gestor = uma quadra
-  
-  const [isActive, setIsActive] = useState(managerCourt?.status === 'active');
-  const [inactiveReason, setInactiveReason] = useState(managerCourt?.unavailabilityReason || '');
-  const [courtData, setCourtData] = useState({
-    name: managerCourt?.name || '',
-    description: managerCourt?.description || '',
-    hourlyRate: managerCourt?.hourlyRate || 0,
-    workingHours: managerCourt?.workingHours || {
-      monday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      tuesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      wednesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      thursday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      friday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      saturday: { isOpen: true, openTime: '07:00', closeTime: '20:00' },
-      sunday: { isOpen: false, openTime: '07:00', closeTime: '20:00' }
-    }
+
+  const [courtInfo, setCourtInfo] = useState({
+    name: 'Arena Central',
+    location: 'Aldeota, Fortaleza - CE',
+    description: 'Quadra de futebol society com grama sintética',
+    capacity: 14,
+    hourlyRate: 80,
+    isActive: true
   });
 
-  const handleStatusToggle = (checked: boolean) => {
-    setIsActive(checked);
-    if (managerCourt) {
-      const status = checked ? 'active' : 'inactive';
-      updateCourtStatus(managerCourt.id, status, checked ? undefined : inactiveReason);
-      
-      toast({
-        title: checked ? "Quadra Ativada" : "Quadra Desativada",
-        description: checked 
-          ? "Sua quadra está novamente disponível para reservas"
-          : "Sua quadra foi removida da listagem para clientes"
-      });
-    }
-  };
-
-  const handleSave = () => {
-    if (managerCourt) {
-      updateCourtPricing(managerCourt.id, courtData.hourlyRate);
-      
-      toast({
-        title: "Dados Salvos",
-        description: "As informações da quadra foram atualizadas com sucesso"
-      });
-    }
-  };
-
-  const handleWorkingHourChange = (day: string, field: string, value: string | boolean) => {
-    setCourtData(prev => ({
-      ...prev,
-      workingHours: {
-        ...prev.workingHours,
-        [day]: {
-          ...prev.workingHours[day as keyof typeof prev.workingHours],
-          [field]: value
-        }
-      }
-    }));
-  };
-
-  if (!managerCourt) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <Building className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">Nenhuma Quadra Encontrada</h3>
-          <p className="text-gray-600">Entre em contato com o administrador</p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const [workingHours, setWorkingHours] = useState({
+    monday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+    tuesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+    wednesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+    thursday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+    friday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+    saturday: { isOpen: true, openTime: '07:00', closeTime: '23:00' },
+    sunday: { isOpen: true, openTime: '07:00', closeTime: '21:00' }
+  });
 
   const dayNames = {
     monday: 'Segunda-feira',
-    tuesday: 'Terça-feira', 
+    tuesday: 'Terça-feira',
     wednesday: 'Quarta-feira',
     thursday: 'Quinta-feira',
     friday: 'Sexta-feira',
@@ -99,194 +55,202 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
     sunday: 'Domingo'
   };
 
+  const handleCourtInfoChange = (field: string, value: any) => {
+    setCourtInfo(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleWorkingHoursChange = (day: string, field: string, value: any) => {
+    setWorkingHours(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day as keyof typeof prev],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSaveChanges = () => {
+    toast({
+      title: "Configurações Salvas",
+      description: "As configurações da quadra foram atualizadas com sucesso"
+    });
+  };
+
   return (
     <div className="space-y-6">
-      {/* Status da Quadra */}
+      {/* Informações Gerais da Quadra */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building className="w-5 h-5" />
-            Status da Quadra
+            <Building className="w-5 h-5 text-[#F35410]" />
+            Informações da Quadra
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-medium">{managerCourt.name}</h3>
-              <p className="text-sm text-gray-600">
-                {isActive ? 'Ativa e disponível para reservas' : 'Inativa - não aparece para clientes'}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Badge variant={isActive ? "default" : "secondary"} className={isActive ? "bg-green-600" : "bg-red-600"}>
-                {isActive ? 'Ativa' : 'Inativa'}
-              </Badge>
-              <Switch checked={isActive} onCheckedChange={handleStatusToggle} />
-            </div>
-          </div>
-
-          {!isActive && (
-            <div className="space-y-2">
-              <Label htmlFor="reason">Motivo da Inativação</Label>
-              <Textarea
-                id="reason"
-                placeholder="Ex: Manutenção preventiva, reforma da quadra..."
-                value={inactiveReason}
-                onChange={(e) => setInactiveReason(e.target.value)}
-                className="min-h-20"
+              <Label className="text-gray-700">Nome da Quadra</Label>
+              <Input
+                value={courtInfo.name}
+                onChange={(e) => handleCourtInfoChange('name', e.target.value)}
+                className="bg-white border-gray-300"
               />
             </div>
-          )}
+            <div>
+              <Label className="text-gray-700">Localização</Label>
+              <Input
+                value={courtInfo.location}
+                onChange={(e) => handleCourtInfoChange('location', e.target.value)}
+                className="bg-white border-gray-300"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-gray-700">Descrição</Label>
+            <Input
+              value={courtInfo.description}
+              onChange={(e) => handleCourtInfoChange('description', e.target.value)}
+              className="bg-white border-gray-300"
+              placeholder="Descreva sua quadra..."
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label className="text-gray-700">Capacidade</Label>
+              <Input
+                type="number"
+                value={courtInfo.capacity}
+                onChange={(e) => handleCourtInfoChange('capacity', parseInt(e.target.value))}
+                className="bg-white border-gray-300"
+              />
+            </div>
+            <div>
+              <Label className="text-gray-700">Preço por Hora (R$)</Label>
+              <Input
+                type="number"
+                value={courtInfo.hourlyRate}
+                onChange={(e) => handleCourtInfoChange('hourlyRate', parseFloat(e.target.value))}
+                className="bg-white border-gray-300"
+              />
+            </div>
+            <div className="flex items-center gap-2 pt-6">
+              <Switch
+                checked={courtInfo.isActive}
+                onCheckedChange={(checked) => handleCourtInfoChange('isActive', checked)}
+              />
+              <Label className="text-gray-700">Quadra Ativa</Label>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Informações Básicas */}
+      {/* Horários de Funcionamento */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5" />
-            Informações e Preços
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome da Quadra</Label>
-            <Input
-              id="name"
-              value={courtData.name}
-              onChange={(e) => setCourtData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="Nome da sua quadra"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
-            <Textarea
-              id="description"
-              value={courtData.description}
-              onChange={(e) => setCourtData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Descreva sua quadra, comodidades, diferenciais..."
-              className="min-h-20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="price">Preço por Hora (R$)</Label>
-            <Input
-              id="price"
-              type="number"
-              value={courtData.hourlyRate}
-              onChange={(e) => setCourtData(prev => ({ ...prev, hourlyRate: Number(e.target.value) }))}
-              placeholder="120"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Horários de Funcionamento Melhorados */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5" />
+            <Clock className="w-5 h-5 text-[#F35410]" />
             Horários de Funcionamento
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {Object.entries(courtData.workingHours).map(([day, schedule]) => (
-              <div key={day} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-4">
-                  <span className="font-medium w-28">{dayNames[day as keyof typeof dayNames]}</span>
-                  <Switch 
-                    checked={schedule.isOpen}
-                    onCheckedChange={(checked) => handleWorkingHourChange(day, 'isOpen', checked)}
-                  />
+            {Object.entries(workingHours).map(([day, hours]) => (
+              <div key={day} className="flex items-center gap-4 p-4 border rounded-lg">
+                <div className="w-32">
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={hours.isOpen}
+                      onCheckedChange={(checked) => handleWorkingHoursChange(day, 'isOpen', checked)}
+                    />
+                    <span className="font-medium text-gray-700">
+                      {dayNames[day as keyof typeof dayNames]}
+                    </span>
+                  </div>
                 </div>
-                
-                {schedule.isOpen ? (
-                  <div className="flex items-center gap-3">
+
+                {hours.isOpen ? (
+                  <div className="flex items-center gap-2 flex-1">
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">Abre:</Label>
+                      <Label className="text-gray-600">De:</Label>
                       <Input
                         type="time"
-                        value={schedule.openTime}
-                        onChange={(e) => handleWorkingHourChange(day, 'openTime', e.target.value)}
-                        className="w-24"
+                        value={hours.openTime}
+                        onChange={(e) => handleWorkingHoursChange(day, 'openTime', e.target.value)}
+                        className="w-24 bg-white border-gray-300"
                       />
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">Fecha:</Label>
+                      <Label className="text-gray-600">Até:</Label>
                       <Input
                         type="time"
-                        value={schedule.closeTime}
-                        onChange={(e) => handleWorkingHourChange(day, 'closeTime', e.target.value)}
-                        className="w-24"
+                        value={hours.closeTime}
+                        onChange={(e) => handleWorkingHoursChange(day, 'closeTime', e.target.value)}
+                        className="w-24 bg-white border-gray-300"
                       />
                     </div>
                   </div>
                 ) : (
-                  <span className="text-red-600 font-medium">Fechado</span>
+                  <div className="flex-1">
+                    <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                      Fechado
+                    </Badge>
+                  </div>
                 )}
               </div>
             ))}
           </div>
-          
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>Dica:</strong> Os horários definidos aqui serão os disponíveis para agendamento pelos clientes.
-            </p>
-          </div>
         </CardContent>
       </Card>
 
-      {/* Upload de Imagens */}
+      {/* Status e Ações */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Upload className="w-5 h-5" />
-            Imagens da Quadra
+            <Settings className="w-5 h-5 text-[#F35410]" />
+            Status da Quadra
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            {managerCourt.images.map((image, index) => (
-              <div key={index} className="relative">
-                <img 
-                  src={image} 
-                  alt={`Quadra ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg"
-                />
+          <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div>
+                <p className="font-medium text-green-800">Quadra Aprovada</p>
+                <p className="text-sm text-green-600">Disponível para reservas</p>
               </div>
-            ))}
+            </div>
+            <Badge className="bg-green-600 text-white">
+              Ativa
+            </Badge>
           </div>
-          <Button variant="outline" className="w-full">
-            <Upload className="w-4 h-4 mr-2" />
-            Adicionar Novas Fotos
+
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <Calendar className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+              <p className="font-bold text-blue-800">28</p>
+              <p className="text-sm text-blue-600">Reservas este mês</p>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <DollarSign className="w-8 h-8 mx-auto mb-2 text-green-600" />
+              <p className="font-bold text-green-800">R$ 2.240</p>
+              <p className="text-sm text-green-600">Receita mensal</p>
+            </div>
+          </div>
+
+          <Button 
+            onClick={handleSaveChanges}
+            className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            Salvar Configurações
           </Button>
         </CardContent>
       </Card>
-
-      {/* Botão de Salvar */}
-      <Button onClick={handleSave} className="w-full bg-[#F35410] hover:bg-[#BA2D0B]">
-        <Save className="w-4 h-4 mr-2" />
-        Salvar Todas as Alterações
-      </Button>
-
-      {!isActive && (
-        <Card className="border-yellow-200 bg-yellow-50">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-yellow-600" />
-              <div>
-                <p className="font-medium text-yellow-800">Quadra Inativa</p>
-                <p className="text-sm text-yellow-700">
-                  Sua quadra não está aparecendo para os clientes. Ative novamente quando estiver disponível.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };

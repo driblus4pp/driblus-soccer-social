@@ -8,12 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import ManagerCourtManager from "@/components/manager/ManagerCourtManager";
 import ManagerSchedule from "@/components/manager/ManagerSchedule";
-import FirstLoginModal from "@/components/auth/FirstLoginModal";
 
 const ManagerDashboard = () => {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
-  const [showFirstLoginModal, setShowFirstLoginModal] = useState(false);
 
   // Simulando dados do gestor
   const managerId = 'manager-1';
@@ -41,11 +39,6 @@ const ManagerDashboard = () => {
         status: 'confirmed'
       }
     ]
-  };
-
-  const handlePasswordChanged = (newPassword: string) => {
-    console.log('Nova senha definida:', newPassword);
-    setShowFirstLoginModal(false);
   };
 
   const handleLogout = () => {
@@ -192,13 +185,6 @@ const ManagerDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-
-      {/* Modal de primeiro login */}
-      <FirstLoginModal
-        isOpen={showFirstLoginModal}
-        userEmail={user?.email || 'gestor@email.com'}
-        onPasswordChanged={handlePasswordChanged}
-      />
 
       <BottomNavigation userType="manager" />
     </div>

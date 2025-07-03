@@ -1,199 +1,185 @@
 
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 import { 
   User, 
-  Mail, 
   Phone, 
+  Mail, 
   Calendar, 
-  Star, 
-  Trophy,
-  CheckCircle,
   Clock,
-  Users,
-  Sparkles
+  Star,
+  TrendingUp,
+  X
 } from "lucide-react";
-import { useUsers } from "@/hooks/useUsers";
-import { useBookings } from "@/hooks/useBookings";
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface ClientProfileSimplifiedProps {
   userId: string;
-  courtId: string;
   isOpen: boolean;
   onClose: () => void;
+  courtId: string;
 }
 
-const ClientProfileSimplified = ({ userId, courtId, isOpen, onClose }: ClientProfileSimplifiedProps) => {
-  const { getUserById } = useUsers();
-  const { bookings } = useBookings();
-  const user = getUserById(userId);
+interface ClientStats {
+  totalBookings: number;
+  courtBookings: number;
+  isNewClient: boolean;
+  attendanceRate: number;
+  lastBooking: string;
+}
 
-  if (!user) {
+const ClientProfileSimplified = ({ userId, isOpen, onClose, courtId }: ClientProfileSimplifiedProps) => {
+  const [clientData, setClientData] = useState<any>(null);
+  const [clientStats, setClientStats] = useState<ClientStats | null>(null);
+
+  useEffect(() => {
+    if (isOpen && userId) {
+      // Simular busca de dados do cliente
+      const mockClientData = {
+        id: userId,
+        name: 'João Silva Santos',
+        email: 'joao.silva@email.com',
+        phone: '+55 85 99999-8888',
+        avatar: null,
+        registeredAt: '2024-10-15'
+      };
+
+      const mockStats: ClientStats = {
+        totalBookings: userId === 'user-1' ? 0 : 15,
+        courtBookings: userId === 'user-1' ? 0 : 8,
+        isNewClient: userId === 'user-1',
+        attendanceRate: userId === 'user-1' ? 0 : 92,
+        lastBooking: userId === 'user-1' ? '' : '2024-12-20'
+      };
+
+      setClientData(mockClientData);
+      setClientStats(mockStats);
+    }
+  }, [userId, isOpen]);
+
+  if (!clientData || !clientStats) {
     return null;
   }
 
-  // Estatísticas específicas para esta quadra
-  const courtBookings = bookings.filter(b => b.userId === userId && b.courtId === courtId);
-  const completedBookings = courtBookings.filter(b => b.status === 'completed').length;
-  const totalBookings = courtBookings.length;
-  const isNewClient = totalBookings === 0;
-  const lastBooking = courtBookings
-    .filter(b => b.status === 'completed')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-
-  // Taxa de comparecimento
-  const attendanceRate = totalBookings > 0 ? Math.round((completedBookings / totalBookings) * 100) : 0;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-white">
+      <DialogContent className="max-w-md bg-white">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-gray-800 flex items-center gap-3">
-            <User className="w-5 h-5 text-[#F35410]" />
-            Perfil do Cliente
+          <DialogTitle className="flex items-center justify-between">
+            <span className="text-gray-800">Perfil do Cliente</span>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Informações de Contato */}
-          <Card className="bg-white border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-gray-800 flex items-center gap-2">
-                <User className="w-4 h-4 text-[#F35410]" />
-                Dados de Contato
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-4">
-                <Avatar className="w-12 h-12">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="bg-[#F35410] text-white">
-                    {user.name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+        <div className="space-y-4">
+          {/* Dados do Cliente */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-[#F35410] rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-white" />
+                </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
-                    {isNewClient && (
-                      <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                        <Sparkles className="w-3 h-3 mr-1" />
-                        Cliente Novo
-                      </Badge>
-                    )}
-                  </div>
+                  <h3 className="font-semibold text-gray-800">{clientData.name}</h3>
+                  {clientStats.isNewClient && (
+                    <Badge className="bg-green-100 text-green-800 text-xs">
+                      Cliente Novo
+                    </Badge>
+                  )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-3">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
                   <Mail className="w-4 h-4 text-gray-500" />
-                  <span className="text-gray-800">{user.email}</span>
+                  <span className="text-gray-700">{clientData.email}</span>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 text-sm">
                   <Phone className="w-4 h-4 text-gray-500" />
-                  <span className="text-gray-800">{user.phone}</span>
+                  <span className="text-gray-700">{clientData.phone}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Estatísticas Essenciais */}
-          <Card className="bg-white border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-gray-800 flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-[#F35410]" />
-                Histórico na Quadra
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isNewClient ? (
-                <div className="text-center py-6">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-blue-500" />
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Primeiro Agendamento</h3>
-                  <p className="text-gray-600">Este é o primeiro agendamento deste cliente na sua quadra</p>
-                  <Badge className="mt-3 bg-blue-100 text-blue-800">
-                    Bem-vindo!
-                  </Badge>
+          <Card>
+            <CardContent className="p-4">
+              <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                Estatísticas
+              </h4>
+
+              {clientStats.isNewClient ? (
+                <div className="text-center py-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Star className="w-8 h-8 text-green-600" />
+                  </div>
+                  <p className="text-green-800 font-semibold">Novo Cliente!</p>
+                  <p className="text-sm text-gray-600">Este será seu primeiro agendamento</p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-3 bg-[#F35410]/10 rounded-lg">
-                      <div className="text-2xl font-bold text-[#F35410]">{totalBookings}</div>
-                      <div className="text-sm text-gray-600">Total de Reservas</div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#F35410]">
+                      {clientStats.courtBookings}
                     </div>
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">{completedBookings}</div>
-                      <div className="text-sm text-gray-600">Jogos Realizados</div>
-                    </div>
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">{attendanceRate}%</div>
-                      <div className="text-sm text-gray-600">Taxa de Comparecimento</div>
+                    <div className="text-xs text-gray-600">
+                      Reservas nesta quadra
                     </div>
                   </div>
-
-                  {lastBooking && (
-                    <>
-                      <Separator />
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <h4 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          Última Visita
-                        </h4>
-                        <div className="text-sm text-gray-600">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Calendar className="w-3 h-3" />
-                            <span>{format(new Date(lastBooking.date), "dd/MM/yyyy", { locale: ptBR })}</span>
-                          </div>
-                          {lastBooking.rating && (
-                            <div className="flex items-center gap-1">
-                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                              <span>Avaliou com {lastBooking.rating.stars} estrelas</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {/* Classificação do Cliente */}
-                  <div className="p-3 bg-gradient-to-r from-[#F35410]/10 to-[#BA2D0B]/10 rounded-lg">
-                    <h4 className="font-semibold text-gray-700 mb-2">Classificação</h4>
-                    <div className="flex items-center gap-2">
-                      {attendanceRate >= 90 ? (
-                        <>
-                          <Badge className="bg-green-100 text-green-800">
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Cliente Confiável
-                          </Badge>
-                          <span className="text-sm text-gray-600">Excelente histórico de comparecimento</span>
-                        </>
-                      ) : attendanceRate >= 70 ? (
-                        <>
-                          <Badge className="bg-blue-100 text-blue-800">
-                            Cliente Regular
-                          </Badge>
-                          <span className="text-sm text-gray-600">Bom histórico de comparecimento</span>
-                        </>
-                      ) : (
-                        <>
-                          <Badge className="bg-yellow-100 text-yellow-800">
-                            Cliente em Avaliação
-                          </Badge>
-                          <span className="text-sm text-gray-600">Poucos agendamentos realizados</span>
-                        </>
-                      )}
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {clientStats.totalBookings}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      Total de reservas
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">
+                      {clientStats.attendanceRate}%
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      Taxa de comparecimento
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm font-bold text-gray-800">
+                      {new Date(clientStats.lastBooking).toLocaleDateString('pt-BR')}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      Última reserva
                     </div>
                   </div>
                 </div>
               )}
             </CardContent>
           </Card>
+
+          {/* Ações */}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => window.open(`tel:${clientData.phone}`)}
+            >
+              <Phone className="w-4 h-4 mr-2" />
+              Ligar
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => window.open(`mailto:${clientData.email}`)}
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Email
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
