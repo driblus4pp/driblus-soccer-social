@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,29 +5,23 @@ import { Badge } from "@/components/ui/badge";
 import { User, Building2, Calendar, Settings, Edit, LogOut, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
-
 const ManagerProfile = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
+  const {
+    user,
+    logout
+  } = useAuth();
   const managerStats = {
     courtName: 'No Alvo Society',
     totalBookings: 156,
     monthlyRevenue: 15400,
     customerRating: 4.8
   };
-
-  return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+  return <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#F35410] to-[#BA2D0B] text-white p-6">
         <div className="flex items-center gap-4 mb-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => navigate('/gestor/dashboard')}
-            className="text-white hover:bg-white/20"
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate('/gestor/dashboard')} className="text-white hover:bg-white/20">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-semibold">Meu Perfil</h1>
@@ -50,11 +43,7 @@ const ManagerProfile = () => {
                   Gestor Aprovado
                 </Badge>
               </div>
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={() => navigate('/gestor/perfil/editar')}
-              >
+              <Button variant="outline" size="icon" onClick={() => navigate('/gestor/perfil/editar')}>
                 <Edit className="w-4 h-4" />
               </Button>
             </div>
@@ -118,35 +107,16 @@ const ManagerProfile = () => {
         {/* Configurações */}
         <Card>
           <CardContent className="p-4 space-y-3">
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start"
-              onClick={() => navigate('/gestor/perfil/editar')}
-            >
+            <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/gestor/perfil/editar')}>
               <User className="w-4 h-4 mr-3" />
               Editar Perfil
             </Button>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start"
-              onClick={() => navigate('/gestor/quadra/configuracoes')}
-            >
-              <Building2 className="w-4 h-4 mr-3" />
-              Configurações da Quadra
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start"
-              onClick={() => navigate('/gestor/preferencias')}
-            >
+            
+            <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/gestor/preferencias')}>
               <Settings className="w-4 h-4 mr-3" />
               Preferências
             </Button>
-            <Button 
-              variant="ghost" 
-              onClick={logout}
-              className="w-full justify-start text-red-600 hover:bg-red-50"
-            >
+            <Button variant="ghost" onClick={logout} className="w-full justify-start text-red-600 hover:bg-red-50">
               <LogOut className="w-4 h-4 mr-3" />
               Sair da Conta
             </Button>
@@ -155,8 +125,6 @@ const ManagerProfile = () => {
       </div>
 
       <BottomNavigation userType="manager" />
-    </div>
-  );
+    </div>;
 };
-
 export default ManagerProfile;
