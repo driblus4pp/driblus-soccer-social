@@ -45,14 +45,7 @@ const ClientLogin = () => {
 
       {/* Test Button - Temporary */}
       <div className="absolute top-6 right-6 z-10">
-        <Button variant="outline" size="sm" onClick={() => {
-        console.log('Botão teste clicado');
-        setForceShowBalloon(!forceShowBalloon);
-        // Clear localStorage for testing
-        localStorage.removeItem('pwa-install-rejected');
-      }} className="border-white/20 text-xs text-zinc-950 bg-orange-700 hover:bg-orange-600">
-          {forceShowBalloon ? 'Ocultar' : 'Testar'} PWA
-        </Button>
+        
       </div>
 
       {/* Main Content */}
