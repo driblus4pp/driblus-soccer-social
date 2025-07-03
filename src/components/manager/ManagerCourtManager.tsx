@@ -64,6 +64,19 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
     }
   };
 
+  const handleWorkingHourChange = (day: string, field: string, value: string | boolean) => {
+    setCourtData(prev => ({
+      ...prev,
+      workingHours: {
+        ...prev.workingHours,
+        [day]: {
+          ...prev.workingHours[day as keyof typeof prev.workingHours],
+          [field]: value
+        }
+      }
+    }));
+  };
+
   if (!managerCourt) {
     return (
       <Card>
@@ -75,6 +88,16 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
       </Card>
     );
   }
+
+  const dayNames = {
+    monday: 'Segunda-feira',
+    tuesday: 'Terça-feira', 
+    wednesday: 'Quarta-feira',
+    thursday: 'Quinta-feira',
+    friday: 'Sexta-feira',
+    saturday: 'Sábado',
+    sunday: 'Domingo'
+  };
 
   return (
     <div className="space-y-6">
@@ -157,11 +180,62 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
               placeholder="120"
             />
           </div>
+        </CardContent>
+      </Card>
 
-          <Button onClick={handleSave} className="w-full bg-[#F35410] hover:bg-[#BA2D0B]">
-            <Save className="w-4 h-4 mr-2" />
-            Salvar Alterações
-          </Button>
+      {/* Horários de Funcionamento Melhorados */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="w-5 h-5" />
+            Horários de Funcionamento
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {Object.entries(courtData.workingHours).map(([day, schedule]) => (
+              <div key={day} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-4">
+                  <span className="font-medium w-28">{dayNames[day as keyof typeof dayNames]}</span>
+                  <Switch 
+                    checked={schedule.isOpen}
+                    onCheckedChange={(checked) => handleWorkingHourChange(day, 'isOpen', checked)}
+                  />
+                </div>
+                
+                {schedule.isOpen ? (
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-sm">Abre:</Label>
+                      <Input
+                        type="time"
+                        value={schedule.openTime}
+                        onChange={(e) => handleWorkingHourChange(day, 'openTime', e.target.value)}
+                        className="w-24"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Label className="text-sm">Fecha:</Label>
+                      <Input
+                        type="time"
+                        value={schedule.closeTime}
+                        onChange={(e) => handleWorkingHourChange(day, 'closeTime', e.target.value)}
+                        className="w-24"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-red-600 font-medium">Fechado</span>
+                )}
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Dica:</strong> Os horários definidos aqui serão os disponíveis para agendamento pelos clientes.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
@@ -192,57 +266,11 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
         </CardContent>
       </Card>
 
-      {/* Horários de Funcionamento */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5" />
-            Horários de Funcionamento
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {Object.entries(courtData.workingHours).map(([day, schedule]) => {
-              const dayNames = {
-                monday: 'Segunda-feira',
-                tuesday: 'Terça-feira', 
-                wednesday: 'Quarta-feira',
-                thursday: 'Quinta-feira',
-                friday: 'Sexta-feira',
-                saturday: 'Sábado',
-                sunday: 'Domingo'
-              };
-
-              return (
-                <div key={day} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="font-medium">{dayNames[day as keyof typeof dayNames]}</span>
-                  <div className="flex items-center gap-3">
-                    {schedule.isOpen ? (
-                      <span className="text-sm text-gray-600">
-                        {schedule.openTime} às {schedule.closeTime}
-                      </span>
-                    ) : (
-                      <span className="text-sm text-red-600">Fechado</span>
-                    )}
-                    <Switch 
-                      checked={schedule.isOpen}
-                      onCheckedChange={(checked) => {
-                        setCourtData(prev => ({
-                          ...prev,
-                          workingHours: {
-                            ...prev.workingHours,
-                            [day]: { ...schedule, isOpen: checked }
-                          }
-                        }));
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Botão de Salvar */}
+      <Button onClick={handleSave} className="w-full bg-[#F35410] hover:bg-[#BA2D0B]">
+        <Save className="w-4 h-4 mr-2" />
+        Salvar Todas as Alterações
+      </Button>
 
       {!isActive && (
         <Card className="border-yellow-200 bg-yellow-50">

@@ -3,16 +3,17 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, DollarSign, Users, Clock, MapPin, Settings, Building } from "lucide-react";
+import { Calendar, DollarSign, Users, Clock, Building, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import ManagerCourtManager from "@/components/manager/ManagerCourtManager";
+import ManagerSchedule from "@/components/manager/ManagerSchedule";
 import FirstLoginModal from "@/components/auth/FirstLoginModal";
 
 const ManagerDashboard = () => {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
-  const [showFirstLoginModal, setShowFirstLoginModal] = useState(false); // Simular primeiro acesso
+  const [showFirstLoginModal, setShowFirstLoginModal] = useState(false);
 
   // Simulando dados do gestor
   const managerId = 'manager-1';
@@ -47,6 +48,12 @@ const ManagerDashboard = () => {
     setShowFirstLoginModal(false);
   };
 
+  const handleLogout = () => {
+    if (window.confirm('Tem certeza que deseja sair?')) {
+      logout();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
@@ -58,7 +65,8 @@ const ManagerDashboard = () => {
             </h1>
             <p className="text-white/90 mt-1">Como está sua quadra hoje?</p>
           </div>
-          <Button variant="ghost" onClick={logout} className="text-white hover:bg-white/20">
+          <Button variant="ghost" onClick={handleLogout} className="text-white hover:bg-white/20">
+            <LogOut className="w-4 h-4 mr-2" />
             Sair
           </Button>
         </div>
@@ -66,18 +74,15 @@ const ManagerDashboard = () => {
 
       <div className="p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+          <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
             <TabsTrigger value="overview" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Início
             </TabsTrigger>
             <TabsTrigger value="court" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Quadra  
             </TabsTrigger>
-            <TabsTrigger value="bookings" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+            <TabsTrigger value="schedule" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Agenda
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
-              Perfil
             </TabsTrigger>
           </TabsList>
 
@@ -168,6 +173,12 @@ const ManagerDashboard = () => {
                     </div>
                   ))}
                 </div>
+                <Button 
+                  className="w-full mt-4 bg-[#F35410] hover:bg-[#BA2D0B]"
+                  onClick={() => setActiveTab('schedule')}
+                >
+                  Ver Todos os Agendamentos
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -176,44 +187,8 @@ const ManagerDashboard = () => {
             <ManagerCourtManager managerId={managerId} />
           </TabsContent>
 
-          <TabsContent value="bookings" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Todos os Agendamentos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-600">Lista completa de agendamentos</p>
-                  <Button className="mt-4 bg-[#F35410] hover:bg-[#BA2D0B]">
-                    Ver Agenda Completa
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="profile" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Meu Perfil
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <div className="w-20 h-20 bg-[#F35410] rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{user?.name || 'Gestor'}</h3>
-                  <p className="text-gray-600 mb-4">{user?.email || 'gestor@email.com'}</p>
-                  <Button variant="outline" className="w-full">
-                    Editar Perfil
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="schedule" className="space-y-6">
+            <ManagerSchedule managerId={managerId} />
           </TabsContent>
         </Tabs>
       </div>
