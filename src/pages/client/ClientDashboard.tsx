@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Search, Navigation, Filter } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
+
 const mockCourts = [{
   id: '1',
   name: 'No Alvo Society',
@@ -52,12 +53,12 @@ const mockCourts = [{
   isRecommended: false,
   amenities: ['Vestiário', 'Chuveiro']
 }];
+
 const ClientDashboard = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     
@@ -69,12 +70,16 @@ const ClientDashboard = () => {
       return 'Boa noite';
     }
   };
+
   const filteredCourts = mockCourts.filter(court => court.name.toLowerCase().includes(searchTerm.toLowerCase()) || court.location.toLowerCase().includes(searchTerm.toLowerCase()));
   const recommendedCourts = filteredCourts.filter(court => court.isRecommended);
+
   const getStatusBadge = (status: string) => {
     return status === 'available' ? <Badge className="bg-green-500 text-white text-xs">Disponível</Badge> : <Badge className="bg-red-500 text-white text-xs">Indisponível</Badge>;
   };
-  return <div className="min-h-screen bg-[#093758] pb-20">
+
+  return (
+    <div className="min-h-screen bg-[#093758] pb-20">
       {/* Header com localização */}
       <div className="px-4 py-6 shadow-sm bg-[#093758]">
         <div className="flex items-center justify-between mb-4">
@@ -109,7 +114,8 @@ const ClientDashboard = () => {
         <div>
           <h2 className="text-xl font-bold mb-4 text-white">Recomendados para você</h2>
           <div className="space-y-4">
-            {recommendedCourts.map(court => <Card key={court.id} className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow bg-white border-0 rounded-2xl" onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
+            {recommendedCourts.map(court => (
+              <Card key={court.id} className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow bg-white border-0 rounded-2xl" onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
                 <div className="relative">
                   <img src={court.image} alt={court.name} className="w-full h-56 object-cover" />
                   
@@ -136,9 +142,11 @@ const ClientDashboard = () => {
                       
                       {/* Amenities tags */}
                       <div className="flex gap-2 mb-3">
-                        {court.amenities.map((amenity, index) => <span key={index} className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                        {court.amenities.map((amenity, index) => (
+                          <span key={index} className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
                             {amenity}
-                          </span>)}
+                          </span>
+                        ))}
                       </div>
                       
                       {/* Preço e botão */}
@@ -154,18 +162,29 @@ const ClientDashboard = () => {
                     </div>
                   </div>
                 </div>
-              </Card>)}
+              </Card>
+            ))}
           </div>
         </div>
 
         {/* Outras quadras */}
-        {filteredCourts.filter(court => !court.isRecommended).length > 0 && <div>
+        {filteredCourts.filter(court => !court.isRecommended).length > 0 && (
+          <div>
             <h2 className="text-xl font-bold text-white mb-4">Outras opções</h2>
             <div className="space-y-3">
-              {filteredCourts.filter(court => !court.isRecommended).map(court => <Card key={court.id} className="cursor-pointer hover:shadow-md transition-shadow bg-white/10 border-white/20" onClick={() => navigate(`/cliente/quadra/${court.id}`)}>
+              {filteredCourts.filter(court => !court.isRecommended).map(court => (
+                <Card 
+                  key={court.id} 
+                  className="cursor-pointer hover:shadow-md transition-all hover:bg-white/20 bg-white/10 border-white/20" 
+                  onClick={() => navigate(`/cliente/quadra/${court.id}`)}
+                >
                   <CardContent className="p-0">
-                    <div className="flex gap-3">
-                      <img src={court.image} alt={court.name} className="w-20 h-20 object-cover rounded-l-lg" />
+                    <div className="flex gap-4">
+                      <img 
+                        src={court.image} 
+                        alt={court.name} 
+                        className="w-28 h-28 object-cover rounded-2xl shadow-md ring-2 ring-white/10 hover:scale-105 transition-all duration-300 m-3" 
+                      />
                       <div className="flex-1 p-3">
                         <div className="flex items-start justify-between mb-1">
                           <h3 className="font-semibold text-white">{court.name}</h3>
@@ -188,13 +207,17 @@ const ClientDashboard = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>)}
+                </Card>
+              ))}
             </div>
-          </div>}
+          </div>
+        )}
       </div>
 
       {/* Navegação inferior */}
       <BottomNavigation userType="client" />
-    </div>;
+    </div>
+  );
 };
+
 export default ClientDashboard;
