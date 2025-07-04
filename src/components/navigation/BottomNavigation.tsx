@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Calendar, Bell, User, BarChart3, Building2, Users, Settings } from 'lucide-react';
@@ -43,19 +42,45 @@ const BottomNavigation = ({ userType }: BottomNavigationProps) => {
   const navigationItems = getNavigationItems();
 
   const isItemActive = (itemPath: string) => {
-    // Para o caso específico da agenda do gestor
     if (itemPath === '/gestor/dashboard?tab=schedule') {
       return location.pathname === '/gestor/dashboard' && 
              (location.search.includes('tab=schedule') || 
               new URLSearchParams(location.search).get('tab') === 'schedule');
     }
     
-    // Para outros casos, comparação direta
     return location.pathname === itemPath;
   };
 
+  const getContainerClasses = () => {
+    const baseClasses = "fixed bottom-0 left-0 right-0 border-t px-4 py-2 z-50";
+    
+    if (userType === 'client') {
+      return `${baseClasses} bg-[#093758] border-[#093758]`;
+    }
+    
+    return `${baseClasses} bg-white border-gray-200`;
+  };
+
+  const getButtonClasses = (isActive: boolean) => {
+    const baseClasses = "flex flex-col items-center py-2 px-3 rounded-lg transition-colors";
+    
+    if (userType === 'client') {
+      return `${baseClasses} ${
+        isActive 
+          ? 'text-[#F35410] bg-orange-100/20' 
+          : 'text-white/80 hover:text-white hover:bg-white/10'
+      }`;
+    }
+    
+    return `${baseClasses} ${
+      isActive 
+        ? 'text-[#F35410] bg-orange-50' 
+        : 'text-gray-600 hover:text-[#F35410] hover:bg-gray-50'
+    }`;
+  };
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-50">
+    <div className={getContainerClasses()}>
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navigationItems.map((item) => {
           const Icon = item.icon;
@@ -65,11 +90,7 @@ const BottomNavigation = ({ userType }: BottomNavigationProps) => {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
-                isActive 
-                  ? 'text-[#F35410] bg-orange-50' 
-                  : 'text-gray-600 hover:text-[#F35410] hover:bg-gray-50'
-              }`}
+              className={getButtonClasses(isActive)}
             >
               <Icon className="w-5 h-5 mb-1" />
               <span className="text-xs font-medium">{item.label}</span>
