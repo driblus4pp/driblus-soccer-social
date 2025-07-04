@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +12,7 @@ import ManagerSchedule from "@/components/manager/ManagerSchedule";
 const ManagerDashboard = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
 
   // Ler parâmetro da URL para definir aba ativa
@@ -27,6 +28,16 @@ const ManagerDashboard = () => {
       setActiveTab('overview');
     }
   }, [location.search]);
+
+  // Atualizar URL quando aba muda
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === 'overview') {
+      navigate('/gestor/dashboard');
+    } else {
+      navigate(`/gestor/dashboard?tab=${value}`);
+    }
+  };
 
   // Simulando dados do gestor
   const managerId = 'manager-1';
@@ -81,7 +92,7 @@ const ManagerDashboard = () => {
       </div>
 
       <div className="p-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
             <TabsTrigger value="overview" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Início
@@ -143,7 +154,7 @@ const ManagerDashboard = () => {
                       <p className="text-sm text-green-600">Disponível para reservas</p>
                     </div>
                   </div>
-                  <Button size="sm" variant="outline" onClick={() => setActiveTab('court')}>
+                  <Button size="sm" variant="outline" onClick={() => handleTabChange('court')}>
                     Gerenciar
                   </Button>
                 </div>
@@ -183,7 +194,7 @@ const ManagerDashboard = () => {
                 </div>
                 <Button 
                   className="w-full mt-4 bg-[#F35410] hover:bg-[#BA2D0B]"
-                  onClick={() => setActiveTab('schedule')}
+                  onClick={() => handleTabChange('schedule')}
                 >
                   Ver Todos os Agendamentos
                 </Button>

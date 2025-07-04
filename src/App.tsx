@@ -26,7 +26,6 @@ import BookingSuccessPage from "./pages/client/BookingSuccessPage";
 import ManagerLogin from "./pages/manager/ManagerLogin";
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ConfigureCourt from "./pages/manager/ConfigureCourt";
-import ManagerBookings from "./pages/manager/ManagerBookings";
 import ManagerReports from "./pages/manager/ManagerReports";
 import ManagerProfile from "./pages/manager/ManagerProfile";
 import ManagerEditProfile from "./pages/manager/ManagerEditProfile";
@@ -76,7 +75,6 @@ const App = () => (
             {/* Manager Routes - Simplificadas */}
             <Route path="/gestor/login" element={<ManagerLogin />} />
             <Route path="/gestor/dashboard" element={<ManagerDashboard />} />
-            <Route path="/gestor/agendamentos" element={<ManagerBookings />} />
             <Route path="/gestor/notificacoes" element={<ManagerNotifications />} />
             <Route path="/gestor/perfil" element={<ManagerProfile />} />
             <Route path="/gestor/perfil/editar" element={<ManagerEditProfile />} />
