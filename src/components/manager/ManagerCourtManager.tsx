@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import {
   Calendar
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ManagerCourtManagerProps {
   managerId: string;
@@ -25,6 +25,7 @@ interface ManagerCourtManagerProps {
 
 const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const [courtInfo, setCourtInfo] = useState({
     name: 'Arena Central',
@@ -158,46 +159,51 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className={isMobile ? "space-y-3" : "space-y-4"}>
             {Object.entries(workingHours).map(([day, hours]) => (
-              <div key={day} className="flex items-center gap-4 p-4 border rounded-lg">
-                <div className="w-32">
+              <div key={day} className="border rounded-lg p-4 bg-gray-50/50">
+                {/* Nome do dia e switch - sempre no topo */}
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-medium text-gray-700">
+                    {dayNames[day as keyof typeof dayNames]}
+                  </span>
                   <div className="flex items-center gap-2">
                     <Switch
                       checked={hours.isOpen}
                       onCheckedChange={(checked) => handleWorkingHoursChange(day, 'isOpen', checked)}
                     />
-                    <span className="font-medium text-gray-700">
-                      {dayNames[day as keyof typeof dayNames]}
+                    <span className={`text-sm ${hours.isOpen ? 'text-green-600' : 'text-gray-500'}`}>
+                      {hours.isOpen ? 'Aberto' : 'Fechado'}
                     </span>
                   </div>
                 </div>
 
+                {/* Horários quando aberto */}
                 {hours.isOpen ? (
-                  <div className="flex items-center gap-2 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Label className="text-gray-600">De:</Label>
+                  <div className={isMobile ? "grid grid-cols-2 gap-3" : "flex items-center gap-4"}>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-gray-600 block">Abertura</Label>
                       <Input
                         type="time"
                         value={hours.openTime}
                         onChange={(e) => handleWorkingHoursChange(day, 'openTime', e.target.value)}
-                        className="w-24 bg-white border-gray-300"
+                        className="w-full bg-white border-gray-300"
                       />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Label className="text-gray-600">Até:</Label>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-gray-600 block">Fechamento</Label>
                       <Input
                         type="time"
                         value={hours.closeTime}
                         onChange={(e) => handleWorkingHoursChange(day, 'closeTime', e.target.value)}
-                        className="w-24 bg-white border-gray-300"
+                        className="w-full bg-white border-gray-300"
                       />
                     </div>
                   </div>
                 ) : (
-                  <div className="flex-1">
+                  <div className="pt-1">
                     <Badge variant="secondary" className="bg-gray-100 text-gray-600">
-                      Fechado
+                      Fechado neste dia
                     </Badge>
                   </div>
                 )}
