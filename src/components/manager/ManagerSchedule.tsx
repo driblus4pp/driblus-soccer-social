@@ -3,41 +3,34 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  Phone, 
-  Mail, 
-  CheckCircle, 
-  XCircle,
-  CalendarCheck,
-  Bell,
-  MapPin
-} from "lucide-react";
+import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, CalendarCheck, Bell, MapPin } from "lucide-react";
 import { useBookings } from "@/hooks/useBookings";
 import { useManagerNotifications } from "@/hooks/useManagerNotifications";
 import ClientProfileSimplified from "@/components/manager/ClientProfileSimplified";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface ManagerScheduleProps {
   managerId: string;
 }
-
-const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
-  const { getPendingBookingsByManager, approveBooking, rejectBooking } = useBookings();
-  const { addNotification } = useManagerNotifications();
+const ManagerSchedule = ({
+  managerId
+}: ManagerScheduleProps) => {
+  const {
+    getPendingBookingsByManager,
+    approveBooking,
+    rejectBooking
+  } = useBookings();
+  const {
+    addNotification
+  } = useManagerNotifications();
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [activeScheduleTab, setActiveScheduleTab] = useState('pending');
   const isMobile = useIsMobile();
-
   const pendingBookings = getPendingBookingsByManager(managerId);
-
   const handleApproveBooking = (bookingId: string, booking: any) => {
     approveBooking(bookingId);
-    
+
     // Adicionar notificação de sucesso
     addNotification({
       type: 'booking_confirmed',
@@ -52,20 +45,21 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
 
     // Simular notificação personalizada para o cliente
     console.log(`📱 Notificação enviada para ${booking.userName}:`);
-    console.log(`🎉 Tudo certo com sua reserva! Seu pedido foi confirmado pelo gestor e nos veremos em campo no dia ${format(new Date(booking.date), "dd/MM/yyyy", { locale: ptBR })} às ${booking.startTime}. Prepare-se para o jogo! ⚽`);
+    console.log(`🎉 Tudo certo com sua reserva! Seu pedido foi confirmado pelo gestor e nos veremos em campo no dia ${format(new Date(booking.date), "dd/MM/yyyy", {
+      locale: ptBR
+    })} às ${booking.startTime}. Prepare-se para o jogo! ⚽`);
   };
-
   const handleRejectBooking = (bookingId: string, booking: any) => {
     const reason = prompt('Motivo da rejeição (opcional):') || 'Não informado';
     rejectBooking(bookingId, reason);
-    
+
     // Simular notificação para o cliente
     console.log(`📱 Notificação enviada para ${booking.userName}:`);
-    console.log(`❌ Sua reserva para ${format(new Date(booking.date), "dd/MM/yyyy", { locale: ptBR })} às ${booking.startTime} foi recusada. Motivo: ${reason}`);
+    console.log(`❌ Sua reserva para ${format(new Date(booking.date), "dd/MM/yyyy", {
+      locale: ptBR
+    })} às ${booking.startTime} foi recusada. Motivo: ${reason}`);
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -78,29 +72,23 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="pending">
                 Pendentes
-                {pendingBookings.length > 0 && (
-                  <Badge className="ml-2 bg-[#F35410] text-white">
+                {pendingBookings.length > 0 && <Badge className="ml-2 bg-[#F35410] text-white">
                     {pendingBookings.length}
-                  </Badge>
-                )}
+                  </Badge>}
               </TabsTrigger>
               <TabsTrigger value="calendar">Calendário</TabsTrigger>
               <TabsTrigger value="integration">Integração</TabsTrigger>
             </TabsList>
 
             <TabsContent value="pending" className="space-y-4 mt-6">
-              {pendingBookings.length === 0 ? (
-                <div className="text-center py-8">
+              {pendingBookings.length === 0 ? <div className="text-center py-8">
                   <CalendarCheck className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                   <p className="text-gray-600">Nenhum agendamento pendente</p>
-                </div>
-              ) : (
-                pendingBookings.map((booking) => (
-                  <Card key={booking.id} className="border-l-4 border-l-yellow-500">
+                </div> : pendingBookings.map(booking => <Card key={booking.id} className="border-l-4 border-l-yellow-500">
                     <CardContent className={isMobile ? "p-4" : "p-4"}>
-                      {isMobile ? (
-                        // Layout Mobile - Vertical e organizado
-                        <div className="space-y-4">
+                      {isMobile ?
+                // Layout Mobile - Vertical e organizado
+                <div className="space-y-4">
                           {/* Badge e tempo - linhas separadas */}
                           <div className="space-y-2">
                             <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
@@ -118,12 +106,7 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
                                 <User className="w-4 h-4 text-gray-500" />
                                 <span className="font-semibold">{booking.userName}</span>
                               </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setSelectedClientId(booking.userId)}
-                                className="text-[#F35410] hover:bg-[#F35410]/10 px-3 py-1"
-                              >
+                              <Button variant="ghost" size="sm" onClick={() => setSelectedClientId(booking.userId)} className="px-3 py-1 bg-blue-950 hover:bg-blue-800 text-[fafafafafa] text-slate-50">
                                 Ver Perfil
                               </Button>
                             </div>
@@ -142,7 +125,9 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
                             <div className="flex items-center gap-2">
                               <Calendar className="w-4 h-4 text-gray-500" />
                               <span className="font-semibold">
-                                {format(new Date(booking.date), "dd/MM/yyyy (EEEE)", { locale: ptBR })}
+                                {format(new Date(booking.date), "dd/MM/yyyy (EEEE)", {
+                          locale: ptBR
+                        })}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -160,26 +145,18 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
                           
                           {/* Botões de ação - empilhados e maiores */}
                           <div className="grid grid-cols-1 gap-3 pt-2">
-                            <Button
-                              onClick={() => handleApproveBooking(booking.id, booking)}
-                              className="h-12 bg-green-600 hover:bg-green-700 text-white"
-                            >
+                            <Button onClick={() => handleApproveBooking(booking.id, booking)} className="h-12 bg-green-600 hover:bg-green-700 text-white">
                               <CheckCircle className="w-4 h-4 mr-2" />
                               Confirmar Reserva
                             </Button>
-                            <Button
-                              onClick={() => handleRejectBooking(booking.id, booking)}
-                              variant="outline"
-                              className="h-12 border-red-300 text-red-600 hover:bg-red-50"
-                            >
+                            <Button onClick={() => handleRejectBooking(booking.id, booking)} variant="outline" className="h-12 border-red-300 text-red-600 hover:bg-red-50">
                               <XCircle className="w-4 h-4 mr-2" />
                               Recusar
                             </Button>
                           </div>
-                        </div>
-                      ) : (
-                        // Layout Desktop - mantém original
-                        <div className="flex items-start justify-between">
+                        </div> :
+                // Layout Desktop - mantém original
+                <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
@@ -195,12 +172,7 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
                                 <div className="flex items-center gap-2">
                                   <User className="w-4 h-4 text-gray-500" />
                                   <span className="font-semibold">{booking.userName}</span>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setSelectedClientId(booking.userId)}
-                                    className="text-[#F35410] hover:bg-[#F35410]/10"
-                                  >
+                                  <Button variant="ghost" size="sm" onClick={() => setSelectedClientId(booking.userId)} className="text-[#F35410] hover:bg-[#F35410]/10">
                                     Ver Perfil
                                   </Button>
                                 </div>
@@ -218,7 +190,9 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
                                 <div className="flex items-center gap-2">
                                   <Calendar className="w-4 h-4 text-gray-500" />
                                   <span className="font-semibold">
-                                    {format(new Date(booking.date), "dd/MM/yyyy (EEEE)", { locale: ptBR })}
+                                    {format(new Date(booking.date), "dd/MM/yyyy (EEEE)", {
+                              locale: ptBR
+                            })}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -236,29 +210,19 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
                             </div>
                             
                             <div className="flex gap-3 mt-4 pt-4 border-t">
-                              <Button
-                                onClick={() => handleApproveBooking(booking.id, booking)}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                              >
+                              <Button onClick={() => handleApproveBooking(booking.id, booking)} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
                                 <CheckCircle className="w-4 h-4 mr-2" />
                                 Confirmar Reserva
                               </Button>
-                              <Button
-                                onClick={() => handleRejectBooking(booking.id, booking)}
-                                variant="outline"
-                                className="flex-1 border-red-300 text-red-600 hover:bg-red-50"
-                              >
+                              <Button onClick={() => handleRejectBooking(booking.id, booking)} variant="outline" className="flex-1 border-red-300 text-red-600 hover:bg-red-50">
                                 <XCircle className="w-4 h-4 mr-2" />
                                 Recusar
                               </Button>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        </div>}
                     </CardContent>
-                  </Card>
-                ))
-              )}
+                  </Card>)}
             </TabsContent>
 
             <TabsContent value="calendar" className="mt-6">
@@ -310,16 +274,8 @@ const ManagerSchedule = ({ managerId }: ManagerScheduleProps) => {
       </Card>
 
       {/* Modal do perfil simplificado do cliente */}
-      {selectedClientId && (
-        <ClientProfileSimplified
-          userId={selectedClientId}
-          isOpen={!!selectedClientId}
-          onClose={() => setSelectedClientId(null)}
-          courtId="1" // ID da quadra do gestor
-        />
-      )}
-    </div>
-  );
+      {selectedClientId && <ClientProfileSimplified userId={selectedClientId} isOpen={!!selectedClientId} onClose={() => setSelectedClientId(null)} courtId="1" // ID da quadra do gestor
+    />}
+    </div>;
 };
-
 export default ManagerSchedule;
