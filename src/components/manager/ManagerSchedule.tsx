@@ -94,9 +94,7 @@ const ManagerSchedule = ({
                             <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
                               Aguardando Confirmação
                             </Badge>
-                            <span className="text-xs text-gray-500 block">
-                              Há {Math.floor((new Date().getTime() - booking.createdAt.getTime()) / (1000 * 60 * 60))} horas
-                            </span>
+                            
                           </div>
                           
                           {/* Informações do cliente */}
