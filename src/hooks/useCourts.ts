@@ -226,6 +226,12 @@ export const useCourts = () => {
     );
   };
 
+  const rejectCourt = (courtId: string, reason: string) => {
+    setCourts(prev =>
+      prev.filter(court => court.id !== courtId)
+    );
+  };
+
   const getCourtsByManager = (managerId: string) => {
     return courts.filter(court => court.ownerId === managerId);
   };
@@ -241,6 +247,7 @@ export const useCourts = () => {
     updateCourtPricing,
     updateCourtWorkingHours,
     updateCourtAmenities,
-    approveCourt
+    approveCourt,
+    rejectCourt
   };
 };

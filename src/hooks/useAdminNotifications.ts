@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useManagers } from './useManagers';
 import { useCourts } from './useCourts';
@@ -42,12 +41,12 @@ export const useAdminNotifications = () => {
       }));
 
     const pendingCourts: PendingApproval[] = courts
-      .filter(court => court.status === 'pending')
+      .filter(court => court.status === 'pending_approval')
       .map(court => ({
         id: court.id,
         type: 'court' as const,
         name: court.name,
-        owner: court.managerId,
+        owner: court.ownerId,
         location: `${court.location.city}, ${court.location.state}`,
         date: court.createdAt?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0],
         status: 'pending' as const

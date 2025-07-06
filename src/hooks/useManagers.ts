@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { User, UserRole } from '@/types';
 import { useCourts } from './useCourts';
@@ -69,7 +68,7 @@ const mockManagers: Manager[] = [
 ];
 
 export const useManagers = () => {
-  const [managers] = useState<Manager[]>(mockManagers);
+  const [managers, setManagers] = useState<Manager[]>(mockManagers);
   const { courts } = useCourts();
 
   const getManagerById = (managerId: string) => {
@@ -108,11 +107,30 @@ export const useManagers = () => {
     };
   };
 
+  const approveManager = async (managerId: string) => {
+    setManagers(prev =>
+      prev.map(manager =>
+        manager.id === managerId
+          ? { ...manager, isVerified: true }
+          : manager
+      )
+    );
+  };
+
+  const rejectManager = async (managerId: string, reason: string) => {
+    // In a real app, you might want to store the rejection reason
+    setManagers(prev =>
+      prev.filter(manager => manager.id !== managerId)
+    );
+  };
+
   return {
     managers,
     getManagerById,
     getManagerCourts,
     getManagerStats,
-    getAllManagersStats
+    getAllManagersStats,
+    approveManager,
+    rejectManager
   };
 };
