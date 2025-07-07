@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,8 +11,10 @@ import {
   Building,
   Users,
   BarChart3,
-  Download
+  Download,
+  LogOut
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRevenue } from "@/hooks/useRevenue";
 import { useManagers } from "@/hooks/useManagers";
 import { useCourts } from "@/hooks/useCourts";
@@ -21,10 +22,20 @@ import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const AdminReports = () => {
   const navigate = useNavigate();
+  const { user, logout, isLoading } = useAuth();
   const { getPlatformRevenue } = useRevenue();
   const { getAllManagersStats } = useManagers();
   const { courts } = useCourts();
   const [selectedPeriod, setSelectedPeriod] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
+
+  // Verificação de autenticação
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate('/admin/login');
+    } else if (user && user.role !== 'admin') {
+      navigate('/');
+    }
+  }, [user, isLoading, navigate]);
 
   const platformRevenue = getPlatformRevenue();
   const managersStats = getAllManagersStats();
@@ -35,23 +46,40 @@ const AdminReports = () => {
     { key: 'yearly', label: 'Anual' }
   ];
 
+  const handleLogout = () => {
+    if (window.confirm('Tem certeza que deseja sair?')) {
+      logout();
+    }
+  };
+
+  // Não renderizar se não estiver autenticado
+  if (!user && !isLoading) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header Padronizado */}
       <div className="bg-gradient-to-r from-[#062B4B] to-[#0A3B5C] text-white p-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/admin/dashboard')}
-            className="text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-white">Relatórios Financeiros</h1>
-            <p className="text-white/80 text-sm mt-1">Acompanhe o desempenho da plataforma</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/admin/dashboard')}
+              className="text-white hover:bg-white/20"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Relatórios Financeiros</h1>
+              <p className="text-white/80 text-sm mt-1">Acompanhe o desempenho da plataforma</p>
+            </div>
           </div>
+          <Button variant="ghost" onClick={handleLogout} className="text-white hover:bg-white/20">
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
+          </Button>
         </div>
       </div>
 

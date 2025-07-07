@@ -10,10 +10,17 @@ import ManagerCourtManager from "@/components/manager/ManagerCourtManager";
 import ManagerSchedule from "@/components/manager/ManagerSchedule";
 
 const ManagerDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Verificação de autenticação
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate('/gestor/login');
+    }
+  }, [user, isLoading, navigate]);
 
   // Ler parâmetro da URL para definir aba ativa
   useEffect(() => {
@@ -72,6 +79,11 @@ const ManagerDashboard = () => {
       logout();
     }
   };
+
+  // Não renderizar se não estiver autenticado
+  if (!user && !isLoading) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">

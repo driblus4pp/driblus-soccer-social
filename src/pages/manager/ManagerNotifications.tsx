@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,11 +14,13 @@ import {
   X,
   User
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useManagerNotifications } from "@/hooks/useManagerNotifications";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const ManagerNotifications = () => {
   const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
   const { 
     notifications, 
     unreadCount, 
@@ -28,6 +29,13 @@ const ManagerNotifications = () => {
     markAllAsRead 
   } = useManagerNotifications();
   const [filter, setFilter] = useState<'all' | 'unread' | 'action'>('all');
+
+  // Verificação de autenticação
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate('/gestor/login');
+    }
+  }, [user, isLoading, navigate]);
 
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'unread') return !notification.read;
@@ -49,6 +57,11 @@ const ManagerNotifications = () => {
         return <Bell className="w-4 h-4 text-gray-500" />;
     }
   };
+
+  // Não renderizar se não estiver autenticado
+  if (!user && !isLoading) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">

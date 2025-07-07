@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,8 +11,15 @@ import { useAuth } from "@/contexts/AuthContext";
 const ManagerEditProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   
+  // Verificação de autenticação
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate('/gestor/login');
+    }
+  }, [user, isLoading, navigate]);
+
   const [formData, setFormData] = useState({
     name: user?.name || 'Carlos Silva',
     email: user?.email || 'carlos@email.com',
@@ -69,6 +75,11 @@ const ManagerEditProfile = () => {
       [field]: !prev[field]
     }));
   };
+
+  // Não renderizar se não estiver autenticado
+  if (!user && !isLoading) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

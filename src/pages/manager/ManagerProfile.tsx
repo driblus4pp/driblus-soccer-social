@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,8 +14,15 @@ import LoyalCustomersModal from "@/components/manager/LoyalCustomersModal";
 
 const ManagerProfile = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   
+  // Verificação de autenticação
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate('/gestor/login');
+    }
+  }, [user, isLoading, navigate]);
+
   // Simulando ID do gestor logado (seria vindo do contexto de autenticação)
   const currentManagerId = 'manager-1';
   const analytics = useManagerAnalytics(currentManagerId);
@@ -42,6 +48,17 @@ const ManagerProfile = () => {
     }
     return acc;
   }, [] as any[]);
+
+  const handleLogout = () => {
+    if (window.confirm('Tem certeza que deseja sair da conta?')) {
+      logout();
+    }
+  };
+
+  // Não renderizar se não estiver autenticado
+  if (!user && !isLoading) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -171,7 +188,7 @@ const ManagerProfile = () => {
               Preferências
             </Button>
             
-            <Button variant="ghost" onClick={logout} className="w-full justify-start text-red-600 hover:bg-red-50">
+            <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-red-600 hover:bg-red-50">
               <LogOut className="w-4 h-4 mr-3" />
               Sair da Conta
             </Button>

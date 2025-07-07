@@ -1,242 +1,210 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   ArrowLeft, 
   Search, 
   Filter, 
+  Building, 
   MapPin, 
-  Star, 
+  Star,
   Eye,
-  CheckCircle,
-  Clock,
-  Building,
-  Plus
+  Edit,
+  Trash2,
+  Plus,
+  LogOut
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useCourts } from "@/hooks/useCourts";
-import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
-import CourtApprovalModal from "@/components/CourtApprovalModal";
-import { Court } from '@/types';
 
 const AdminCourts = () => {
   const navigate = useNavigate();
+  const { user, logout, isLoading } = useAuth();
   const { courts } = useCourts();
-  const { toast } = useToast();
-  
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending_approval' | 'inactive'>('all');
-  const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
-  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending' | 'inactive'>('all');
+
+  // Verificação de autenticação
+  useEffect(() => {
+    if (!user && !isLoading) {
+      navigate('/admin/login');
+    } else if (user && user.role !== 'admin') {
+      navigate('/');
+    }
+  }, [user, isLoading, navigate]);
 
   const filteredCourts = courts.filter(court => {
-    const matchesSearch = court.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         court.location.city.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchRegex = new RegExp(searchTerm, 'i');
+    const matchesSearch = searchRegex.test(court.name) || searchRegex.test(court.location.city);
+
     const matchesStatus = statusFilter === 'all' || court.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
-  const stats = {
-    total: courts.length,
-    active: courts.filter(c => c.status === 'active').length,
-    pending: courts.filter(c => c.status === 'pending_approval').length,
-    inactive: courts.filter(c => c.status === 'inactive').length
-  };
-
-  const handleApprovalClick = (court: Court) => {
-    setSelectedCourt(court);
-    setIsApprovalModalOpen(true);
-  };
-
-  const handleApproveCourt = (courtId: string, comment?: string) => {
-    // Aqui seria feita a chamada para o backend
-    toast({
-      title: "Quadra Aprovada",
-      description: "A quadra foi aprovada e está agora ativa na plataforma.",
-    });
-    
-    console.log('Aprovando quadra:', courtId, 'Comentário:', comment);
-  };
-
-  const handleRejectCourt = (courtId: string, comment: string) => {
-    // Aqui seria feita a chamada para o backend
-    toast({
-      title: "Quadra Reprovada",
-      description: "A quadra foi reprovada e o gestor foi notificado.",
-      variant: "destructive"
-    });
-    
-    console.log('Reprovando quadra:', courtId, 'Motivo:', comment);
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800">Ativa</Badge>;
-      case 'pending_approval':
-        return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
-      case 'inactive':
-        return <Badge className="bg-red-100 text-red-800">Inativa</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
+  const handleLogout = () => {
+    if (window.confirm('Tem certeza que deseja sair?')) {
+      logout();
     }
   };
+
+  // Não renderizar se não estiver autenticado
+  if (!user && !isLoading) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#062B4B] to-[#0A3B5C] text-white p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate('/admin/dashboard')} 
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/admin/dashboard')}
               className="text-white hover:bg-white/20"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-semibold">Gerenciar Quadras</h1>
-              <p className="text-white/80 text-sm">
-                {stats.pending} quadras aguardando aprovação
-              </p>
+              <h1 className="text-2xl font-bold">Gerenciar Quadras</h1>
+              <p className="text-white/80 text-sm mt-1">Administre todas as quadras da plataforma</p>
             </div>
           </div>
-          <Button 
-            onClick={() => navigate('/admin/quadras/nova')}
-            className="bg-[#F35410] hover:bg-[#BA2D0B] text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Quadra
+          <Button variant="ghost" onClick={handleLogout} className="text-white hover:bg-white/20">
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
           </Button>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-3">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold">{stats.total}</div>
-            <div className="text-xs text-white/80">Total</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-green-300">{stats.active}</div>
-            <div className="text-xs text-white/80">Ativas</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-yellow-300">{stats.pending}</div>
-            <div className="text-xs text-white/80">Pendentes</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-red-300">{stats.inactive}</div>
-            <div className="text-xs text-white/80">Inativas</div>
-          </div>
         </div>
       </div>
 
+      {/* Search and Filters */}
       <div className="p-4 space-y-4">
-        {/* Search and Filter */}
-        <div className="flex gap-3">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1">
             <Input
+              type="search"
               placeholder="Buscar quadras..."
+              className="bg-white border-gray-300 text-gray-800 pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
             />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           </div>
-          <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              <SelectItem value="active">Ativas</SelectItem>
-              <SelectItem value="pending_approval">Pendentes</SelectItem>
-              <SelectItem value="inactive">Inativas</SelectItem>
-            </SelectContent>
-          </Select>
+          <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+            <Filter className="w-4 h-4 mr-2" />
+            Filtrar
+          </Button>
         </div>
 
-        {/* Courts List */}
-        <div className="space-y-3">
+        {/* Status Filter Buttons */}
+        <div className="flex gap-2">
+          <Button
+            variant={statusFilter === 'all' ? 'default' : 'outline'}
+            onClick={() => setStatusFilter('all')}
+            className={statusFilter === 'all' ? 
+              'bg-[#F35410] hover:bg-[#BA2D0B] border-[#F35410]' : 
+              'border-gray-200 text-gray-700 hover:bg-gray-50'
+            }
+            size="sm"
+          >
+            Todas
+          </Button>
+          <Button
+            variant={statusFilter === 'active' ? 'default' : 'outline'}
+            onClick={() => setStatusFilter('active')}
+            className={statusFilter === 'active' ? 
+              'bg-[#F35410] hover:bg-[#BA2D0B] border-[#F35410]' : 
+              'border-gray-200 text-gray-700 hover:bg-gray-50'
+            }
+            size="sm"
+          >
+            Ativas
+          </Button>
+          <Button
+            variant={statusFilter === 'pending' ? 'default' : 'outline'}
+            onClick={() => setStatusFilter('pending')}
+            className={statusFilter === 'pending' ? 
+              'bg-[#F35410] hover:bg-[#BA2D0B] border-[#F35410]' : 
+              'border-gray-200 text-gray-700 hover:bg-gray-50'
+            }
+            size="sm"
+          >
+            Pendentes
+          </Button>
+          <Button
+            variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+            onClick={() => setStatusFilter('inactive')}
+            className={statusFilter === 'inactive' ? 
+              'bg-[#F35410] hover:bg-[#BA2D0B] border-[#F35410]' : 
+              'border-gray-200 text-gray-700 hover:bg-gray-50'
+            }
+            size="sm"
+          >
+            Inativas
+          </Button>
+        </div>
+      </div>
+
+      {/* Courts List */}
+      <div className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCourts.map(court => (
-            <Card key={court.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <img 
-                    src={court.images[0]} 
-                    alt={court.name}
-                    className="w-20 h-20 object-cover rounded-lg"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-gray-800">{court.name}</h3>
-                        <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
-                          <MapPin className="w-3 h-3" />
-                          <span>{court.location.city}</span>
-                          <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                            <span>{court.rating}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          {getStatusBadge(court.status)}
-                          <span className="text-sm font-semibold text-gray-800">
-                            R$ {court.hourlyRate}/hora
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => navigate(`/admin/quadras/${court.id}`)}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        {court.status === 'pending_approval' && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleApprovalClick(court)}
-                            className="bg-[#F35410] hover:bg-[#BA2D0B] text-white"
-                          >
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            Avaliar
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+            <Card key={court.id} className="bg-white border-gray-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-gray-900 flex items-center gap-2">
+                  <Building className="w-4 h-4" />
+                  {court.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <img 
+                  src={court.images[0]} 
+                  alt={court.name} 
+                  className="w-full h-40 object-cover rounded-md" 
+                />
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="text-gray-600">{court.location.city}, {court.location.state}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="w-4 h-4 text-yellow-500" />
+                  <span className="text-gray-600">{court.rating} ({court.reviews} avaliações)</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Badge className={`text-xs ${
+                    court.status === 'active' 
+                      ? 'bg-green-100 text-green-800' 
+                      : court.status === 'inactive'
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {court.status === 'active' ? 'Ativa' : 
+                     court.status === 'inactive' ? 'Inativa' : 'Pendente'}
+                  </Badge>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="icon" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-
-        {filteredCourts.length === 0 && (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Building className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-600">Nenhuma quadra encontrada</p>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
-      <CourtApprovalModal
-        court={selectedCourt}
-        isOpen={isApprovalModalOpen}
-        onClose={() => setIsApprovalModalOpen(false)}
-        onApprove={handleApproveCourt}
-        onReject={handleRejectCourt}
-      />
-      
       <BottomNavigation userType="admin" />
     </div>
   );
