@@ -24,7 +24,9 @@ import {
   Star,
   DollarSign,
   Users,
-  Clock
+  Clock,
+  UserX,
+  Trash2
 } from "lucide-react";
 import { useManagers } from "@/hooks/useManagers";
 
