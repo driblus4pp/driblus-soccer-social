@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, TrendingUp, DollarSign, Users, ArrowLeft, Download, LogOut } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { BarChart3, TrendingUp, DollarSign, Users, ArrowLeft, Download, LogOut, Calendar } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 
@@ -78,7 +79,7 @@ const AdminReports = () => {
                       <p className="text-sm text-gray-600">Receita Total</p>
                       <p className="text-xl font-bold">R$ {mockReports.revenue.total.toLocaleString()}</p>
                       <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                        {mockReports.revenue.growth > 0 ? '+' : ''}{mockReports.revenue.growth * 100}%
+                        {mockReports.revenue.growth > 0 ? '+' : ''}{(mockReports.revenue.growth * 100).toFixed(1)}%
                       </Badge>
                     </div>
                   </div>
@@ -93,7 +94,7 @@ const AdminReports = () => {
                       <p className="text-sm text-gray-600">Total de Reservas</p>
                       <p className="text-xl font-bold">{mockReports.bookings.total}</p>
                       <Badge className="bg-green-100 text-green-800 border-green-200">
-                        {mockReports.bookings.growth > 0 ? '+' : ''}{mockReports.bookings.growth * 100}%
+                        {mockReports.bookings.growth > 0 ? '+' : ''}{(mockReports.bookings.growth * 100).toFixed(1)}%
                       </Badge>
                     </div>
                   </div>
@@ -108,7 +109,7 @@ const AdminReports = () => {
                       <p className="text-sm text-gray-600">Total de Usuários</p>
                       <p className="text-xl font-bold">{mockReports.users.total}</p>
                       <Badge className="bg-orange-100 text-orange-800 border-orange-200">
-                        {mockReports.users.growth > 0 ? '+' : ''}{mockReports.users.growth * 100}%
+                        {mockReports.users.growth > 0 ? '+' : ''}{(mockReports.users.growth * 100).toFixed(1)}%
                       </Badge>
                     </div>
                   </div>
@@ -125,7 +126,6 @@ const AdminReports = () => {
               <CardTitle>Receita Mensal</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Mock Chart - Replace with actual chart component */}
               <div className="h-48 bg-gray-100 rounded-md flex items-center justify-center text-gray-500">
                 Gráfico de Receita Mensal
               </div>
@@ -137,7 +137,6 @@ const AdminReports = () => {
               <CardTitle>Novos Usuários Mensais</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Mock Chart - Replace with actual chart component */}
               <div className="h-48 bg-gray-100 rounded-md flex items-center justify-center text-gray-500">
                 Gráfico de Novos Usuários
               </div>

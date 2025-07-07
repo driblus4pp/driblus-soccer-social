@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,6 @@ const AdminManagers = () => {
   const { logout } = useAuth();
   const { 
     managers, 
-    fetchManagers, 
     activateManager, 
     deactivateManager, 
     suspendManager, 
@@ -27,10 +27,6 @@ const AdminManagers = () => {
   const [selectedManager, setSelectedManager] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
-
-  useEffect(() => {
-    fetchManagers();
-  }, [fetchManagers]);
 
   const filteredManagers = managers.filter(manager => {
     const searchMatch = manager.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -52,7 +48,6 @@ const AdminManagers = () => {
   const handleActivate = async () => {
     if (selectedManager) {
       await activateManager(selectedManager.id);
-      fetchManagers();
       handleCloseModal();
     }
   };
@@ -60,7 +55,6 @@ const AdminManagers = () => {
   const handleDeactivate = async () => {
     if (selectedManager) {
       await deactivateManager(selectedManager.id);
-      fetchManagers();
       handleCloseModal();
     }
   };
@@ -68,7 +62,6 @@ const AdminManagers = () => {
   const handleSuspend = async () => {
     if (selectedManager) {
       await suspendManager(selectedManager.id, 'Suspended by admin');
-      fetchManagers();
       handleCloseModal();
     }
   };
@@ -77,7 +70,6 @@ const AdminManagers = () => {
     if (selectedManager) {
       setIsRemoving(true);
       await removeManager(selectedManager.id);
-      fetchManagers();
       handleCloseModal();
       setIsRemoving(false);
     }
@@ -167,6 +159,13 @@ const AdminManagers = () => {
                 <ManagerQuickActions 
                   manager={manager}
                   onViewDetails={() => handleOpenModal(manager)}
+                  onActivate={() => activateManager(manager.id)}
+                  onDeactivate={() => deactivateManager(manager.id)}
+                  onSuspend={() => suspendManager(manager.id, 'Suspended by admin')}
+                  onViewReports={() => {}}
+                  onManageCourts={() => {}}
+                  onContact={() => {}}
+                  onRemove={() => removeManager(manager.id)}
                 />
               </CardContent>
             </Card>
