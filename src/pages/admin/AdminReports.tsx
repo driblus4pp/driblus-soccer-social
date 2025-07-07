@@ -1,219 +1,190 @@
-
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  ArrowLeft, 
-  TrendingUp, 
-  DollarSign, 
-  Calendar,
-  Building,
-  Users,
-  BarChart3,
-  Download
-} from "lucide-react";
-import { useRevenue } from "@/hooks/useRevenue";
-import { useManagers } from "@/hooks/useManagers";
-import { useCourts } from "@/hooks/useCourts";
+import { BarChart3, TrendingUp, DollarSign, Users, ArrowLeft, Download, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const AdminReports = () => {
   const navigate = useNavigate();
-  const { getPlatformRevenue } = useRevenue();
-  const { getAllManagersStats } = useManagers();
-  const { courts } = useCourts();
-  const [selectedPeriod, setSelectedPeriod] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
+  const { logout } = useAuth();
 
-  const platformRevenue = getPlatformRevenue();
-  const managersStats = getAllManagersStats();
-
-  const periods = [
-    { key: 'monthly', label: 'Mensal' },
-    { key: 'quarterly', label: 'Trimestral' },
-    { key: 'yearly', label: 'Anual' }
-  ];
+  const mockReports = {
+    revenue: {
+      total: 542000,
+      growth: 0.12,
+      monthly: [45000, 48000, 52000, 55000, 58000, 62000, 65000, 68000, 70000, 72000, 73000, 75000]
+    },
+    bookings: {
+      total: 1247,
+      growth: 0.08,
+      monthly: [100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155]
+    },
+    users: {
+      total: 892,
+      growth: 0.05,
+      monthly: [70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92]
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header Padronizado */}
+      {/* Header */}
       <div className="bg-gradient-to-r from-[#062B4B] to-[#0A3B5C] text-white p-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/admin/dashboard')}
-            className="text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-white">Relatórios Financeiros</h1>
-            <p className="text-white/80 text-sm mt-1">Acompanhe o desempenho da plataforma</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate('/admin/dashboard')} 
+              className="text-white hover:bg-white/20"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-xl font-semibold">Relatórios</h1>
+              <p className="text-white/80 text-sm">Análises e métricas da plataforma</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
+              <Download className="w-4 h-4 mr-2" />
+              Exportar
+            </Button>
+            <Button variant="ghost" onClick={logout} className="text-white hover:bg-white/20">
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
           </div>
         </div>
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Period Selection */}
-        <div className="flex gap-2">
-          {periods.map((period) => (
-            <Button
-              key={period.key}
-              variant={selectedPeriod === period.key ? 'default' : 'outline'}
-              onClick={() => setSelectedPeriod(period.key as any)}
-              className={selectedPeriod === period.key ? 
-                'bg-[#F35410] hover:bg-[#BA2D0B] border-[#F35410]' : 
-                'border-gray-200 text-gray-700 hover:bg-gray-50'
-              }
-              size="sm"
-            >
-              {period.label}
-            </Button>
-          ))}
-        </div>
-
-        {/* Revenue Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-gray-500 text-sm font-medium">Receita Total</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    R$ {platformRevenue.totalRevenue.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-gray-500 text-sm font-medium">Receita Mensal</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    R$ {platformRevenue.monthlyRevenue.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-gray-500 text-sm font-medium">Ticket Médio</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    R$ {platformRevenue.averageBookingValue.toFixed(2)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-orange-100 rounded-lg">
-                  <BarChart3 className="w-6 h-6 text-[#F35410]" />
-                </div>
-                <div>
-                  <p className="text-gray-500 text-sm font-medium">Agendamentos</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {platformRevenue.totalBookings}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Top Performing Courts */}
-        <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
+        {/* Visão Geral */}
+        <Card>
           <CardHeader>
-            <CardTitle className="text-gray-900 flex items-center gap-2">
-              <Building className="w-5 h-5" />
-              Top 5 Quadras por Receita
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              Visão Geral
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {platformRevenue.topPerformingCourts.map((court, index) => (
-              <div key={court.courtId} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
-                <div className="flex items-center gap-3">
-                  <Badge className={`${index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-600' : 'bg-blue-500'} text-white`}>
-                    #{index + 1}
-                  </Badge>
-                  <div>
-                    <p className="text-gray-900 font-medium">{court.courtName}</p>
-                    <p className="text-gray-500 text-sm">Gestor: {court.managerName}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="bg-blue-50">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="w-5 h-5 text-blue-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Receita Total</p>
+                      <p className="text-xl font-bold">R$ {mockReports.revenue.total.toLocaleString()}</p>
+                      <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                        {mockReports.revenue.growth > 0 ? '+' : ''}{mockReports.revenue.growth * 100}%
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-gray-900 font-semibold">R$ {court.monthlyRevenue.toLocaleString()}</p>
-                  <p className="text-gray-500 text-sm">{court.totalBookings} agendamentos</p>
-                </div>
-              </div>
-            ))}
+                </CardContent>
+              </Card>
+
+              <Card className="bg-green-50">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-5 h-5 text-green-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Total de Reservas</p>
+                      <p className="text-xl font-bold">{mockReports.bookings.total}</p>
+                      <Badge className="bg-green-100 text-green-800 border-green-200">
+                        {mockReports.bookings.growth > 0 ? '+' : ''}{mockReports.bookings.growth * 100}%
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-orange-50">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-orange-600" />
+                    <div>
+                      <p className="text-sm text-gray-600">Total de Usuários</p>
+                      <p className="text-xl font-bold">{mockReports.users.total}</p>
+                      <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+                        {mockReports.users.growth > 0 ? '+' : ''}{mockReports.users.growth * 100}%
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Revenue by Manager */}
-        <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
+        {/* Gráficos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Receita Mensal</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Mock Chart - Replace with actual chart component */}
+              <div className="h-48 bg-gray-100 rounded-md flex items-center justify-center text-gray-500">
+                Gráfico de Receita Mensal
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Novos Usuários Mensais</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Mock Chart - Replace with actual chart component */}
+              <div className="h-48 bg-gray-100 rounded-md flex items-center justify-center text-gray-500">
+                Gráfico de Novos Usuários
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Métricas Detalhadas */}
+        <Card>
           <CardHeader>
-            <CardTitle className="text-gray-900 flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Receita por Gestor
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5" />
+              Métricas de Receita
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {platformRevenue.revenueByManager.map((manager) => (
-              <div key={manager.managerId} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
-                <div>
-                  <p className="text-gray-900 font-medium">{manager.managerName}</p>
-                  <p className="text-gray-500 text-sm">{manager.courts} quadra(s)</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-gray-900 font-semibold">R$ {manager.revenue.toLocaleString()}</p>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Receita Média por Reserva</p>
+                <p className="text-2xl font-bold text-gray-900">R$ 45,00</p>
               </div>
-            ))}
+              <div>
+                <p className="text-sm font-medium text-gray-500">Taxa de Crescimento Mensal</p>
+                <p className="text-2xl font-bold text-gray-900">+2.5%</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Export Actions */}
-        <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-gray-900 flex items-center gap-2">
-              <Download className="w-5 h-5" />
-              Exportar Relatórios
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Métricas de Usuários
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start border-gray-200 text-gray-700 hover:bg-gray-50">
-              <Download className="w-4 h-4 mr-3" />
-              Relatório Completo (PDF)
-            </Button>
-            <Button variant="outline" className="w-full justify-start border-gray-200 text-gray-700 hover:bg-gray-50">
-              <Download className="w-4 h-4 mr-3" />
-              Dados Financeiros (Excel)
-            </Button>
-            <Button variant="outline" className="w-full justify-start border-gray-200 text-gray-700 hover:bg-gray-50">
-              <Download className="w-4 h-4 mr-3" />
-              Relatório de Gestores (CSV)
-            </Button>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Novos Usuários este Mês</p>
+                <p className="text-2xl font-bold text-gray-900">125</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Taxa de Retenção</p>
+                <p className="text-2xl font-bold text-gray-900">68%</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

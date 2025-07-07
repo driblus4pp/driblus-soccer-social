@@ -1,386 +1,191 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { 
-  ArrowLeft, 
-  Users, 
-  Search, 
-  DollarSign, 
-  Calendar,
-  Star,
-  Shield,
-  Phone,
-  Mail
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Users, ArrowLeft, Search, Filter, Plus, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useManagers } from "@/hooks/useManagers";
-import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import ManagerQuickActions from "@/components/admin/ManagerQuickActions";
 import ManagerDetailsModal from "@/components/admin/ManagerDetailsModal";
 import ManagerStatusToggle from "@/components/admin/ManagerStatusToggle";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 const AdminManagers = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const { 
     managers, 
-    getManagerStats, 
-    getAllManagersStats,
-    activateManager,
-    deactivateManager,
-    suspendManager,
-    removeManager
+    fetchManagers, 
+    activateManager, 
+    deactivateManager, 
+    suspendManager, 
+    removeManager 
   } = useManagers();
-  const { pendingApprovalsCount } = useAdminNotifications();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<'all' | 'active' | 'inactive' | 'suspended'>('all');
-  const [selectedManager, setSelectedManager] = useState<any>(null);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<{
-    type: 'activate' | 'deactivate' | 'suspend' | 'remove';
-    manager: any;
-  } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [selectedManager, setSelectedManager] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
-  const stats = getAllManagersStats();
+  useEffect(() => {
+    fetchManagers();
+  }, [fetchManagers]);
 
   const filteredManagers = managers.filter(manager => {
-    const matchesSearch = manager.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         manager.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = filter === 'all' || manager.status === filter;
-    
-    return matchesSearch && matchesFilter;
+    const searchMatch = manager.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        manager.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const statusMatch = filterStatus === 'all' || manager.status === filterStatus;
+    return searchMatch && statusMatch;
   });
 
-  const handleViewDetails = (manager: any) => {
+  const handleOpenModal = (manager) => {
     setSelectedManager(manager);
-    setIsDetailsModalOpen(true);
+    setIsModalOpen(true);
   };
 
-  const handleQuickAction = (type: 'activate' | 'deactivate' | 'suspend' | 'remove', manager: any) => {
-    setConfirmAction({ type, manager });
+  const handleCloseModal = () => {
+    setSelectedManager(null);
+    setIsModalOpen(false);
   };
 
-  const executeAction = async () => {
-    if (!confirmAction) return;
-
-    const { type, manager } = confirmAction;
-    
-    try {
-      switch (type) {
-        case 'activate':
-          await activateManager(manager.id);
-          break;
-        case 'deactivate':
-          await deactivateManager(manager.id);
-          break;
-        case 'suspend':
-          await suspendManager(manager.id, 'Suspenso pelo administrador');
-          break;
-        case 'remove':
-          await removeManager(manager.id);
-          break;
-      }
-    } catch (error) {
-      console.error('Erro ao executar ação:', error);
-    } finally {
-      setConfirmAction(null);
+  const handleActivate = async () => {
+    if (selectedManager) {
+      await activateManager(selectedManager.id);
+      fetchManagers();
+      handleCloseModal();
     }
   };
 
-  const getActionTitle = () => {
-    if (!confirmAction) return '';
-    const actions = {
-      activate: 'Ativar Gestor',
-      deactivate: 'Desativar Gestor', 
-      suspend: 'Suspender Gestor',
-      remove: 'Remover Gestor'
-    };
-    return actions[confirmAction.type];
+  const handleDeactivate = async () => {
+    if (selectedManager) {
+      await deactivateManager(selectedManager.id);
+      fetchManagers();
+      handleCloseModal();
+    }
   };
 
-  const getActionDescription = () => {
-    if (!confirmAction) return '';
-    const descriptions = {
-      activate: `Tem certeza que deseja ativar o gestor ${confirmAction.manager.name}?`,
-      deactivate: `Tem certeza que deseja desativar o gestor ${confirmAction.manager.name}?`,
-      suspend: `Tem certeza que deseja suspender o gestor ${confirmAction.manager.name}?`,
-      remove: `Tem certeza que deseja remover o gestor ${confirmAction.manager.name}? Esta ação não pode ser desfeita.`
-    };
-    return descriptions[confirmAction.type];
+  const handleSuspend = async () => {
+    if (selectedManager) {
+      await suspendManager(selectedManager.id, 'Suspended by admin');
+      fetchManagers();
+      handleCloseModal();
+    }
+  };
+
+  const handleRemove = async () => {
+    if (selectedManager) {
+      setIsRemoving(true);
+      await removeManager(selectedManager.id);
+      fetchManagers();
+      handleCloseModal();
+      setIsRemoving(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header Padronizado */}
+      {/* Header */}
       <div className="bg-gradient-to-r from-[#062B4B] to-[#0A3B5C] text-white p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/admin/dashboard')}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate('/admin/dashboard')} 
               className="text-white hover:bg-white/20"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-white">Gestores</h1>
-              <p className="text-white/80 text-sm mt-1">Gerencie gestores da plataforma</p>
+              <h1 className="text-xl font-semibold">Gestão de Gestores</h1>
+              <p className="text-white/80 text-sm">Monitore e gerencie todos os gestores</p>
             </div>
           </div>
-          
-          {pendingApprovalsCount > 0 && (
-            <div className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-              {pendingApprovalsCount} pendentes
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <Button 
+              onClick={() => navigate('/admin/gestores/novo')}
+              className="bg-[#F35410] hover:bg-[#BA2D0B]"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Gestor
+            </Button>
+            <Button variant="ghost" onClick={logout} className="text-white hover:bg-white/20">
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-6">
-        {/* Stats Overview Padronizado */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <Users className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-                <p className="text-gray-500 text-xs font-medium">Total</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalManagers}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <Shield className="w-6 h-6 text-green-600 mx-auto mb-2" />
-                <p className="text-gray-500 text-xs font-medium">Ativos</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.activeManagers}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <DollarSign className="w-6 h-6 text-[#F35410] mx-auto mb-2" />
-                <p className="text-gray-500 text-xs font-medium">Receita</p>
-                <p className="text-lg font-bold text-gray-900">R$ {(stats.totalRevenue / 1000).toFixed(0)}k</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <Calendar className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                <p className="text-gray-500 text-xs font-medium">Agendamentos</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalBookings}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Search e Filters Padronizados */}
-        <div className="flex flex-col sm:flex-row gap-3">
+      <div className="p-4 space-y-4">
+        {/* Search and Filter */}
+        <div className="flex items-center justify-between">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Buscar gestores..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white border-gray-200 focus:border-[#F35410] focus:ring-[#F35410]"
+            <input
+              type="text"
+              placeholder="Buscar gestor..."
+              className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
           </div>
-          
-          <div className="flex gap-2">
-            {(['all', 'active', 'inactive', 'suspended'] as const).map((filterType) => (
-              <Button
-                key={filterType}
-                variant={filter === filterType ? 'default' : 'outline'}
-                onClick={() => setFilter(filterType)}
-                className={
-                  filter === filterType 
-                    ? 'bg-[#F35410] hover:bg-[#BA2D0B] text-white border-[#F35410]' 
-                    : 'border-gray-200 text-gray-700 hover:bg-gray-50'
-                }
-                size="sm"
-              >
-                {filterType === 'all' ? 'Todos' : 
-                 filterType === 'active' ? 'Ativos' :
-                 filterType === 'inactive' ? 'Inativos' : 'Suspensos'}
-              </Button>
-            ))}
-          </div>
+          <select
+            className="ml-4 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="all">Todos os Status</option>
+            <option value="active">Ativos</option>
+            <option value="inactive">Inativos</option>
+            <option value="suspended">Suspensos</option>
+          </select>
         </div>
 
-        {/* Lista de Gestores Padronizada */}
-        <div className="space-y-4">
-          {filteredManagers.length === 0 ? (
-            <Card className="bg-white border-gray-200">
-              <CardContent className="p-8 text-center">
-                <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">Nenhum gestor encontrado</p>
+        {/* Managers List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredManagers.map(manager => (
+            <Card key={manager.id} className="bg-white shadow-md rounded-md">
+              <CardHeader className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={manager.avatar}
+                    alt={manager.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <CardTitle className="text-lg font-semibold">{manager.name}</CardTitle>
+                    <p className="text-sm text-gray-500">{manager.email}</p>
+                  </div>
+                </div>
+                <Badge variant={manager.status === 'active' ? 'default' : 'secondary'}>
+                  {manager.status === 'active' ? 'Ativo' : manager.status === 'inactive' ? 'Inativo' : 'Suspenso'}
+                </Badge>
+              </CardHeader>
+              <CardContent>
+                <ManagerQuickActions 
+                  manager={manager}
+                  onViewDetails={() => handleOpenModal(manager)}
+                />
               </CardContent>
             </Card>
-          ) : (
-            filteredManagers.map((manager) => {
-              const managerStats = getManagerStats(manager.id);
-              return (
-                <Card key={manager.id} className="bg-white border-gray-200 hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      {/* Info Principal */}
-                      <div className="flex items-center gap-4 flex-1">
-                        <img
-                          src={manager.avatar}
-                          alt={manager.name}
-                          className="w-14 h-14 rounded-full object-cover border-2 border-gray-200"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="text-gray-900 font-semibold text-lg">{manager.name}</h3>
-                            <ManagerStatusToggle 
-                              status={manager.status} 
-                              isVerified={manager.isVerified}
-                              size="sm"
-                            />
-                          </div>
-                          
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <div className="flex items-center gap-1">
-                              <Mail className="w-4 h-4" />
-                              <span>{manager.email}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Phone className="w-4 h-4" />
-                              <span>{manager.phone}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Stats e Ações */}
-                      <div className="flex items-center gap-6">
-                        {/* Stats Rápidas */}
-                        {managerStats && (
-                          <div className="flex gap-8 text-center">
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium">Quadras</p>
-                              <p className="text-gray-900 font-bold text-lg">{managerStats.totalCourts}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium">Receita</p>
-                              <p className="text-gray-900 font-bold text-lg">R$ {(managerStats.totalRevenue / 1000).toFixed(0)}k</p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium">Avaliação</p>
-                              <div className="flex items-center gap-1 justify-center">
-                                <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                                <p className="text-gray-900 font-bold text-lg">{managerStats.averageRating.toFixed(1)}</p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Ações Rápidas */}
-                        <ManagerQuickActions
-                          manager={manager}
-                          onViewDetails={() => handleViewDetails(manager)}
-                          onActivate={() => handleQuickAction('activate', manager)}
-                          onDeactivate={() => handleQuickAction('deactivate', manager)}
-                          onSuspend={() => handleQuickAction('suspend', manager)}
-                          onViewReports={() => console.log('Ver relatórios', manager.id)}
-                          onManageCourts={() => console.log('Gerenciar quadras', manager.id)}
-                          onContact={() => console.log('Contatar', manager.id)}
-                          onRemove={() => handleQuickAction('remove', manager)}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Data de Cadastro */}
-                    <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500">
-                      Membro desde {manager.createdAt.toLocaleDateString()}
-                      {manager.lastLogin && (
-                        <span className="ml-4">• Último acesso: {manager.lastLogin.toLocaleDateString()}</span>
-                      )}
-                      {manager.status === 'suspended' && manager.suspensionReason && (
-                        <span className="ml-4 text-red-600">• {manager.suspensionReason}</span>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
+          ))}
         </div>
       </div>
 
-      {/* Modal de Detalhes */}
+      {/* Manager Details Modal */}
       <ManagerDetailsModal
-        isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
         manager={selectedManager}
-        onActivate={() => {
-          if (selectedManager) {
-            handleQuickAction('activate', selectedManager);
-            setIsDetailsModalOpen(false);
-          }
-        }}
-        onDeactivate={() => {
-          if (selectedManager) {
-            handleQuickAction('deactivate', selectedManager);
-            setIsDetailsModalOpen(false);
-          }
-        }}
-        onSuspend={() => {
-          if (selectedManager) {
-            handleQuickAction('suspend', selectedManager);
-            setIsDetailsModalOpen(false);
-          }
-        }}
-        onRemove={() => {
-          if (selectedManager) {
-            handleQuickAction('remove', selectedManager);
-            setIsDetailsModalOpen(false);
-          }
-        }}
+        onActivate={handleActivate}
+        onDeactivate={handleDeactivate}
+        onSuspend={handleSuspend}
+        onRemove={handleRemove}
       />
 
-      {/* Dialog de Confirmação */}
-      <AlertDialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{getActionTitle()}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {getActionDescription()}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={executeAction}
-              className={confirmAction?.type === 'remove' ? 'bg-red-600 hover:bg-red-700' : ''}
-            >
-              Confirmar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
+      {/* Navegação inferior */}
       <BottomNavigation userType="admin" />
     </div>
   );
