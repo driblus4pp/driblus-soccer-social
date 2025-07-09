@@ -70,11 +70,7 @@ const ManagerLogin = () => {
           </form>
 
           {/* Warning Message */}
-          <div className="mt-6 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
-            <p className="text-yellow-200 text-sm text-center">
-              ⚠️ Acesso liberado apenas após aprovação do administrador
-            </p>
-          </div>
+          
 
           {/* Register Link */}
           <div className="text-center pt-8">
