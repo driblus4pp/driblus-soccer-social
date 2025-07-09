@@ -19,6 +19,9 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRole } from "@/types";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
+import AdminUsersTab from "@/components/admin/AdminUsersTab";
+import AdminCourtsTab from "@/components/admin/AdminCourtsTab";
+import AdminReportsTab from "@/components/admin/AdminReportsTab";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -208,22 +211,13 @@ const AdminDashboard = () => {
             </div>
           </TabsContent>
           <TabsContent value="users">
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Gerenciar Usuários</h2>
-              <p>Visualize e gerencie os usuários da plataforma.</p>
-            </div>
+            <AdminUsersTab />
           </TabsContent>
           <TabsContent value="courts">
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Gerenciar Quadras</h2>
-              <p>Visualize e gerencie as quadras da plataforma.</p>
-            </div>
+            <AdminCourtsTab />
           </TabsContent>
           <TabsContent value="reports">
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Visualizar Relatórios</h2>
-              <p>Acesse relatórios detalhados sobre a plataforma.</p>
-            </div>
+            <AdminReportsTab />
           </TabsContent>
         </Tabs>
       </div>

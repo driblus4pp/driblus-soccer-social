@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import CourtStatusCard from "./CourtStatusCard";
 
 interface ManagerCourtManagerProps {
   managerId: string;
@@ -82,6 +83,16 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Status da Quadra - PRIMEIRO LUGAR */}
+      <CourtStatusCard 
+        status="active"
+        monthlyBookings={28}
+        monthlyRevenue={2240}
+        averageRating={4.8}
+        totalReviews={47}
+        onConfigureSettings={() => console.log('Configure settings')}
+      />
+
       {/* Informações Gerais da Quadra */}
       <Card>
         <CardHeader>
@@ -213,41 +224,9 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
         </CardContent>
       </Card>
 
-      {/* Status e Ações */}
+      {/* Ações de Salvamento */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="w-5 h-5 text-[#F35410]" />
-            Status da Quadra
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <div>
-                <p className="font-medium text-green-800">Quadra Aprovada</p>
-                <p className="text-sm text-green-600">Disponível para reservas</p>
-              </div>
-            </div>
-            <Badge className="bg-green-600 text-white">
-              Ativa
-            </Badge>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <Calendar className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-              <p className="font-bold text-blue-800">28</p>
-              <p className="text-sm text-blue-600">Reservas este mês</p>
-            </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <DollarSign className="w-8 h-8 mx-auto mb-2 text-green-600" />
-              <p className="font-bold text-green-800">R$ 2.240</p>
-              <p className="text-sm text-green-600">Receita mensal</p>
-            </div>
-          </div>
-
+        <CardContent className="pt-6">
           <Button 
             onClick={handleSaveChanges}
             className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white"
