@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRevenue } from "@/hooks/useRevenue";
 import { useManagers } from "@/hooks/useManagers";
 import { useCourts } from "@/hooks/useCourts";
+import { UserRole } from "@/types";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const AdminReports = () => {
@@ -28,12 +29,23 @@ const AdminReports = () => {
   const { courts } = useCourts();
   const [selectedPeriod, setSelectedPeriod] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
 
-  // Verificação de autenticação
+  // Debug logs
+  console.log('AdminReports - Current user:', user);
+  console.log('AdminReports - User role:', user?.role);
+  console.log('AdminReports - Is loading:', isLoading);
+
+  // Verificação de autenticação corrigida
   useEffect(() => {
+    console.log('AdminReports - useEffect triggered');
+    
     if (!user && !isLoading) {
+      console.log('AdminReports - No user and not loading, redirecting to login');
       navigate('/admin/login');
-    } else if (user && user.role !== 'admin') {
+    } else if (user && user.role !== UserRole.ADMIN) {
+      console.log('AdminReports - User exists but role is not admin:', user.role, 'Expected:', UserRole.ADMIN);
       navigate('/');
+    } else if (user && user.role === UserRole.ADMIN) {
+      console.log('AdminReports - Admin user authenticated successfully');
     }
   }, [user, isLoading, navigate]);
 
@@ -54,6 +66,18 @@ const AdminReports = () => {
 
   // Não renderizar se não estiver autenticado
   if (!user && !isLoading) {
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (user && user.role !== UserRole.ADMIN) {
     return null;
   }
 
@@ -84,7 +108,6 @@ const AdminReports = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Period Selection */}
         <div className="flex gap-2">
           {periods.map((period) => (
             <Button
@@ -102,7 +125,6 @@ const AdminReports = () => {
           ))}
         </div>
 
-        {/* Revenue Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
             <CardContent className="p-6">
@@ -169,7 +191,6 @@ const AdminReports = () => {
           </Card>
         </div>
 
-        {/* Top Performing Courts */}
         <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="text-gray-900 flex items-center gap-2">
@@ -198,7 +219,6 @@ const AdminReports = () => {
           </CardContent>
         </Card>
 
-        {/* Revenue by Manager */}
         <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="text-gray-900 flex items-center gap-2">
@@ -221,7 +241,6 @@ const AdminReports = () => {
           </CardContent>
         </Card>
 
-        {/* Export Actions */}
         <Card className="bg-white border-gray-200 hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle className="text-gray-900 flex items-center gap-2">

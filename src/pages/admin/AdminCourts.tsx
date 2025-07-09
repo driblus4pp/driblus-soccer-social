@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCourts } from "@/hooks/useCourts";
+import { UserRole } from "@/types";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const AdminCourts = () => {
@@ -29,12 +30,23 @@ const AdminCourts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending' | 'inactive'>('all');
 
-  // Verificação de autenticação
+  // Debug logs
+  console.log('AdminCourts - Current user:', user);
+  console.log('AdminCourts - User role:', user?.role);
+  console.log('AdminCourts - Is loading:', isLoading);
+
+  // Verificação de autenticação corrigida
   useEffect(() => {
+    console.log('AdminCourts - useEffect triggered');
+    
     if (!user && !isLoading) {
+      console.log('AdminCourts - No user and not loading, redirecting to login');
       navigate('/admin/login');
-    } else if (user && user.role !== 'admin') {
+    } else if (user && user.role !== UserRole.ADMIN) {
+      console.log('AdminCourts - User exists but role is not admin:', user.role, 'Expected:', UserRole.ADMIN);
       navigate('/');
+    } else if (user && user.role === UserRole.ADMIN) {
+      console.log('AdminCourts - Admin user authenticated successfully');
     }
   }, [user, isLoading, navigate]);
 
@@ -55,6 +67,18 @@ const AdminCourts = () => {
 
   // Não renderizar se não estiver autenticado
   if (!user && !isLoading) {
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (user && user.role !== UserRole.ADMIN) {
     return null;
   }
 
@@ -103,7 +127,6 @@ const AdminCourts = () => {
           </Button>
         </div>
 
-        {/* Status Filter Buttons */}
         <div className="flex gap-2">
           <Button
             variant={statusFilter === 'all' ? 'default' : 'outline'}
@@ -152,7 +175,6 @@ const AdminCourts = () => {
         </div>
       </div>
 
-      {/* Courts List */}
       <div className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCourts.map(court => (

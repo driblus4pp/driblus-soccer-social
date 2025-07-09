@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useManagers } from "@/hooks/useManagers";
+import { UserRole } from "@/types";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import ManagerDetailsModal from "@/components/admin/ManagerDetailsModal";
 import ManagerQuickActions from "@/components/admin/ManagerQuickActions";
@@ -43,11 +43,23 @@ const AdminManagers = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'active' | 'pending' | 'suspended'>('all');
 
+  // Debug logs
+  console.log('AdminManagers - Current user:', user);
+  console.log('AdminManagers - User role:', user?.role);
+  console.log('AdminManagers - Is loading:', isLoading);
+
+  // Verificação de autenticação corrigida
   useEffect(() => {
+    console.log('AdminManagers - useEffect triggered');
+    
     if (!user && !isLoading) {
+      console.log('AdminManagers - No user and not loading, redirecting to login');
       navigate('/admin/login');
-    } else if (user && user.role !== 'admin') {
+    } else if (user && user.role !== UserRole.ADMIN) {
+      console.log('AdminManagers - User exists but role is not admin:', user.role, 'Expected:', UserRole.ADMIN);
       navigate('/');
+    } else if (user && user.role === UserRole.ADMIN) {
+      console.log('AdminManagers - Admin user authenticated successfully');
     }
   }, [user, isLoading, navigate]);
 
@@ -83,7 +95,20 @@ const AdminManagers = () => {
     }
   };
 
+  // Não renderizar se não estiver autenticado
   if (!user && !isLoading) {
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (user && user.role !== UserRole.ADMIN) {
     return null;
   }
 
@@ -113,8 +138,8 @@ const AdminManagers = () => {
         </div>
       </div>
 
+      {/* Search and Filters */}
       <div className="p-4 space-y-4">
-        {/* Search and Filters */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input

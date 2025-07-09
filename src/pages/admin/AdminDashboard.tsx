@@ -17,6 +17,7 @@ import {
   LogOut
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from "@/types";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const AdminDashboard = () => {
@@ -25,12 +26,24 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Verificação de autenticação
+  // Debug logs
+  console.log('AdminDashboard - Current user:', user);
+  console.log('AdminDashboard - User role:', user?.role);
+  console.log('AdminDashboard - Is loading:', isLoading);
+  console.log('AdminDashboard - UserRole.ADMIN:', UserRole.ADMIN);
+
+  // Verificação de autenticação corrigida
   useEffect(() => {
+    console.log('AdminDashboard - useEffect triggered');
+    
     if (!user && !isLoading) {
+      console.log('AdminDashboard - No user and not loading, redirecting to login');
       navigate('/admin/login');
-    } else if (user && user.role !== 'admin') {
+    } else if (user && user.role !== UserRole.ADMIN) {
+      console.log('AdminDashboard - User exists but role is not admin:', user.role, 'Expected:', UserRole.ADMIN);
       navigate('/');
+    } else if (user && user.role === UserRole.ADMIN) {
+      console.log('AdminDashboard - Admin user authenticated successfully');
     }
   }, [user, isLoading, navigate]);
 
@@ -63,8 +76,25 @@ const AdminDashboard = () => {
 
   // Não renderizar se não estiver autenticado
   if (!user && !isLoading) {
+    console.log('AdminDashboard - Rendering null, no user and not loading');
     return null;
   }
+
+  if (isLoading) {
+    console.log('AdminDashboard - Rendering loading state');
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (user && user.role !== UserRole.ADMIN) {
+    console.log('AdminDashboard - User exists but not admin, should redirect');
+    return null;
+  }
+
+  console.log('AdminDashboard - Rendering main dashboard');
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
