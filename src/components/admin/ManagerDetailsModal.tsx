@@ -30,48 +30,55 @@ import {
 } from "lucide-react";
 import { useManagers } from "@/hooks/useManagers";
 
-interface Manager {
+// Use the Manager type from useManagers to avoid conflicts
+type Manager = {
   id: string;
   name: string;
   email: string;
-  phone: string;
-  avatar: string;
+  phone?: string;
+  avatar?: string;
   isVerified: boolean;
-  status: 'active' | 'inactive' | 'suspended';
+  status: 'active' | 'inactive' | 'suspended' | 'pending';
   suspensionReason?: string;
   createdAt: Date;
   lastLogin?: Date;
   lastActivity?: Date;
   totalComplaints: number;
-}
+  managedCourts: string[];
+  totalRevenue: number;
+  monthlyBookings: number;
+};
 
 interface ManagerDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   manager: Manager | null;
-  onActivate: () => void;
-  onDeactivate: () => void;
-  onSuspend: () => void;
-  onRemove: () => void;
+  getManagerCourts: (managerId: string) => any[];
+  getManagerStats: (managerId: string) => any;
+  getManagerFeedback: (managerId: string) => any[];
+  activateManager: (managerId: string) => void;
+  deactivateManager: (managerId: string) => void;
+  suspendManager: (managerId: string, reason: string) => void;
 }
 
 const ManagerDetailsModal = ({
   isOpen,
   onClose,
   manager,
-  onActivate,
-  onDeactivate,
-  onSuspend,
-  onRemove
+  getManagerCourts,
+  getManagerStats,
+  getManagerFeedback,
+  activateManager,
+  deactivateManager,
+  suspendManager
 }: ManagerDetailsModalProps) => {
-  const { getManagerStats, getManagerCourts, getManagerActivity, getManagerFeedback } = useManagers();
+  const { removeManager } = useManagers();
   const [suspensionReason, setSuspensionReason] = useState('');
 
   if (!manager) return null;
 
   const stats = getManagerStats(manager.id);
   const courts = getManagerCourts(manager.id);
-  const activity = getManagerActivity(manager.id);
   const feedback = getManagerFeedback(manager.id);
 
   const getStatusBadge = () => {
@@ -97,6 +104,32 @@ const ManagerDetailsModal = ({
             Suspenso
           </Badge>
         );
+      case 'pending':
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+            <AlertCircle className="w-3 h-3 mr-1" />
+            Pendente
+          </Badge>
+        );
+    }
+  };
+
+  const handleActivate = () => {
+    activateManager(manager.id);
+  };
+
+  const handleDeactivate = () => {
+    deactivateManager(manager.id);
+  };
+
+  const handleSuspend = () => {
+    suspendManager(manager.id, suspensionReason || "Suspensão administrativa");
+  };
+
+  const handleRemove = () => {
+    if (window.confirm('Tem certeza que deseja remover este gestor?')) {
+      removeManager(manager.id);
+      onClose();
     }
   };
 
@@ -106,7 +139,7 @@ const ManagerDetailsModal = ({
         <DialogHeader>
           <div className="flex items-center gap-4">
             <img
-              src={manager.avatar}
+              src={manager.avatar || "https://via.placeholder.com/64"}
               alt={manager.name}
               className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
             />
@@ -155,7 +188,7 @@ const ManagerDetailsModal = ({
                     <p className="text-sm font-medium text-gray-500">Telefone</p>
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-gray-400" />
-                      <p className="text-gray-900">{manager.phone}</p>
+                      <p className="text-gray-900">{manager.phone || 'Não informado'}</p>
                     </div>
                   </div>
                   <div>
@@ -306,21 +339,21 @@ const ManagerDetailsModal = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {manager.status === 'active' && (
                     <>
-                      <Button variant="outline" onClick={onDeactivate} className="w-full">
+                      <Button variant="outline" onClick={handleDeactivate} className="w-full">
                         <UserX className="w-4 h-4 mr-2" />
                         Desativar Gestor
                       </Button>
-                      <Button variant="outline" onClick={onSuspend} className="w-full">
+                      <Button variant="outline" onClick={handleSuspend} className="w-full">
                         <Shield className="w-4 h-4 mr-2" />
                         Suspender Gestor
                       </Button>
                     </>
                   )}
                   
-                  {(manager.status === 'inactive' || manager.status === 'suspended') && (
-                    <Button variant="outline" onClick={onActivate} className="w-full">
+                  {(manager.status === 'inactive' || manager.status === 'suspended' || manager.status === 'pending') && (
+                    <Button variant="outline" onClick={handleActivate} className="w-full">
                       <CheckCircle className="w-4 h-4 mr-2" />
-                      Ativar Gestor
+                      {manager.status === 'pending' ? 'Aprovar Gestor' : 'Ativar Gestor'}
                     </Button>
                   )}
                   
@@ -334,7 +367,7 @@ const ManagerDetailsModal = ({
                     Ver Relatórios
                   </Button>
                   
-                  <Button variant="destructive" onClick={onRemove} className="w-full md:col-span-2">
+                  <Button variant="destructive" onClick={handleRemove} className="w-full md:col-span-2">
                     <Trash2 className="w-4 h-4 mr-2" />
                     Remover Gestor
                   </Button>
