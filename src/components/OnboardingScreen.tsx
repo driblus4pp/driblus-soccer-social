@@ -1,14 +1,17 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, Users, DollarSign, Trophy, Star, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface OnboardingScreenProps {
   step: number;
   onNext: () => void;
   onSkip: () => void;
+  returnTo?: string;
 }
 
-const OnboardingScreen = ({ step, onNext, onSkip }: OnboardingScreenProps) => {
+const OnboardingScreen = ({ step, onNext, onSkip, returnTo }: OnboardingScreenProps) => {
+  const navigate = useNavigate();
   const screens = [
     {
       title: "O que é o Driblus?",
@@ -91,7 +94,13 @@ const OnboardingScreen = ({ step, onNext, onSkip }: OnboardingScreenProps) => {
 
         {/* Next Button */}
         <Button
-          onClick={onNext}
+          onClick={() => {
+            if (step === 2 && returnTo) {
+              navigate(returnTo);
+            } else {
+              onNext();
+            }
+          }}
           className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl transition-all transform hover:scale-105 shadow-lg"
         >
           {step === 2 ? 'Começar' : 'Próximo'}

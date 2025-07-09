@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import PWAInstallBalloon from "@/components/PWAInstallBalloon";
+import OnboardingScreen from "@/components/OnboardingScreen";
 const ClientLogin = () => {
   const navigate = useNavigate();
   const {
@@ -23,6 +24,7 @@ const ClientLogin = () => {
     password: ''
   });
   const [forceShowBalloon, setForceShowBalloon] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login(formData.email, formData.password);
@@ -30,6 +32,26 @@ const ClientLogin = () => {
       navigate('/cliente/dashboard');
     }
   };
+  const [currentStep, setCurrentStep] = useState(1);
+  
+  const handleStartDemo = () => {
+    setShowOnboarding(true);
+  };
+  
+  const handleOnboardingNext = () => {
+    if (currentStep < 2) {
+      setCurrentStep(prev => prev + 1);
+    } else {
+      setShowOnboarding(false);
+      setCurrentStep(1);
+    }
+  };
+  
+  const handleOnboardingSkip = () => {
+    setShowOnboarding(false);
+    setCurrentStep(1);
+  };
+  
   console.log('ClientLogin: PWA Estado =', {
     canInstall,
     showPrompt,
@@ -88,11 +110,34 @@ const ClientLogin = () => {
               </Link>
             </p>
           </div>
+
+          {/* Demo Button */}
+          <div className="text-center pt-4">
+            <Button
+              onClick={handleStartDemo}
+              variant="outline"
+              className="w-48 mx-auto bg-transparent border-[#F35410] text-[#F35410] hover:bg-[#F35410] hover:text-white text-sm rounded-full transition-colors"
+            >
+              Ver Como Funciona
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* PWA Install Balloon */}
       <PWAInstallBalloon show={showPrompt || forceShowBalloon} onInstall={installApp} onDismiss={dismissPrompt} />
+      
+      {/* Onboarding Screen */}
+      {showOnboarding && (
+        <div className="fixed inset-0 bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] z-50">
+          <OnboardingScreen
+            step={currentStep}
+            onNext={handleOnboardingNext}
+            onSkip={handleOnboardingSkip}
+            returnTo="/cliente/login"
+          />
+        </div>
+      )}
     </div>;
 };
 export default ClientLogin;
