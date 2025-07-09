@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole, PlatformStats, SportType } from '@/types';
 
@@ -35,10 +36,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('AuthContext - Initializing...');
     // Check for stored user session
     const storedUser = localStorage.getItem('driblus_user');
+    console.log('AuthContext - Stored user raw:', storedUser);
+    
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        console.log('AuthContext - Parsed stored user:', parsedUser);
+        console.log('AuthContext - Stored user role:', parsedUser.role);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('AuthContext - Error parsing stored user, clearing localStorage:', error);
+        localStorage.removeItem('driblus_user');
+      }
     }
     setIsLoading(false);
 
@@ -55,8 +67,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
+    console.log('AuthContext - Starting login for:', email);
     setIsLoading(true);
+    
     try {
+      // CRITICAL: Clear any existing user data first
+      console.log('AuthContext - Clearing existing user data');
+      localStorage.removeItem('driblus_user');
+      setUser(null);
+      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -64,6 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       let mockUser: User;
       
       if (email === 'admin@driblus.com') {
+        console.log('AuthContext - Creating ADMIN user');
         mockUser = {
           id: 'admin-1',
           name: 'Administrador Driblus',
@@ -75,6 +95,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face',
           googleCalendarConnected: false
         };
+        console.log('AuthContext - Admin user created with role:', mockUser.role);
+        console.log('AuthContext - UserRole.ADMIN constant:', UserRole.ADMIN);
       } else if (email === 'gestor@test.com') {
         mockUser = {
           id: 'manager-1',
@@ -132,11 +154,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
       }
 
+      console.log('AuthContext - Setting user state:', mockUser);
+      console.log('AuthContext - User role being set:', mockUser.role);
+      
       setUser(mockUser);
-      localStorage.setItem('driblus_user', JSON.stringify(mockUser));
+      
+      // Save to localStorage
+      const userToStore = JSON.stringify(mockUser);
+      console.log('AuthContext - Storing user in localStorage:', userToStore);
+      localStorage.setItem('driblus_user', userToStore);
+      
+      // Verify storage
+      const verifyStored = localStorage.getItem('driblus_user');
+      console.log('AuthContext - Verification - stored user:', verifyStored);
+      
+      console.log('AuthContext - Login successful for role:', mockUser.role);
       return true;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('AuthContext - Login error:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -193,6 +228,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    console.log('AuthContext - Logging out, clearing all data');
     setUser(null);
     localStorage.removeItem('driblus_user');
   };
@@ -249,6 +285,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       growthRate: 23.5
     };
   };
+
+  // Debug current state
+  console.log('AuthContext - Current user state:', user);
+  console.log('AuthContext - Current user role:', user?.role);
+  console.log('AuthContext - Is loading:', isLoading);
 
   return (
     <AuthContext.Provider value={{
