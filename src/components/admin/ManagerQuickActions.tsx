@@ -24,7 +24,15 @@ import {
 interface Manager {
   id: string;
   name: string;
-  status: 'active' | 'inactive' | 'suspended';
+  email: string;
+  phone?: string;
+  status: 'active' | 'inactive' | 'suspended' | 'pending';
+  managedCourts: string[];
+  totalRevenue: number;
+  monthlyBookings: number;
+  suspensionReason?: string;
+  lastActivity?: Date;
+  totalComplaints: number;
 }
 
 interface ManagerQuickActionsProps {
@@ -96,10 +104,15 @@ const ManagerQuickActions = ({
             <UserCheck className="mr-2 h-4 w-4 text-green-600" />
             Ativar
           </DropdownMenuItem>
-        ) : (
+        ) : manager.status === 'suspended' ? (
           <DropdownMenuItem onClick={onActivate}>
             <UserCheck className="mr-2 h-4 w-4 text-green-600" />
             Reativar
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem onClick={onActivate}>
+            <UserCheck className="mr-2 h-4 w-4 text-green-600" />
+            Aprovar
           </DropdownMenuItem>
         )}
         
