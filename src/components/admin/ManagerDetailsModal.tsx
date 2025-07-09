@@ -1,33 +1,10 @@
-
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  CheckCircle,
-  AlertCircle,
-  Shield,
-  Building2,
-  BarChart3,
-  MessageSquare,
-  Settings,
-  Phone,
-  Mail,
-  Calendar,
-  Star,
-  DollarSign,
-  Users,
-  Clock,
-  UserX,
-  Trash2
-} from "lucide-react";
+import { CheckCircle, AlertCircle, Shield, Building2, BarChart3, MessageSquare, Settings, Phone, Mail, Calendar, Star, DollarSign, Users, Clock, UserX, Trash2 } from "lucide-react";
 import { useManagers } from "@/hooks/useManagers";
 
 // Use the Manager type from useManagers to avoid conflicts
@@ -48,7 +25,6 @@ type Manager = {
   totalRevenue: number;
   monthlyBookings: number;
 };
-
 interface ManagerDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -60,7 +36,6 @@ interface ManagerDetailsModalProps {
   deactivateManager: (managerId: string) => void;
   suspendManager: (managerId: string, reason: string) => void;
 }
-
 const ManagerDetailsModal = ({
   isOpen,
   onClose,
@@ -72,88 +47,58 @@ const ManagerDetailsModal = ({
   deactivateManager,
   suspendManager
 }: ManagerDetailsModalProps) => {
-  const { removeManager } = useManagers();
+  const {
+    removeManager
+  } = useManagers();
   const [suspensionReason, setSuspensionReason] = useState('');
-
   if (!manager) return null;
-
   const stats = getManagerStats(manager.id);
   const courts = getManagerCourts(manager.id);
   const feedback = getManagerFeedback(manager.id);
-
   const getStatusBadge = () => {
     switch (manager.status) {
       case 'active':
-        return (
-          <Badge className="bg-green-100 text-green-800 border-green-200">
-            <CheckCircle className="w-3 h-3 mr-1" />
-            Ativo
-          </Badge>
-        );
+        return;
       case 'inactive':
-        return (
-          <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+        return <Badge className="bg-gray-100 text-gray-800 border-gray-200">
             <AlertCircle className="w-3 h-3 mr-1" />
             Inativo
-          </Badge>
-        );
+          </Badge>;
       case 'suspended':
-        return (
-          <Badge className="bg-red-100 text-red-800 border-red-200">
+        return <Badge className="bg-red-100 text-red-800 border-red-200">
             <Shield className="w-3 h-3 mr-1" />
             Suspenso
-          </Badge>
-        );
+          </Badge>;
       case 'pending':
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
             <AlertCircle className="w-3 h-3 mr-1" />
             Pendente
-          </Badge>
-        );
+          </Badge>;
     }
   };
-
   const handleActivate = () => {
     activateManager(manager.id);
   };
-
   const handleDeactivate = () => {
     deactivateManager(manager.id);
   };
-
   const handleSuspend = () => {
     suspendManager(manager.id, suspensionReason || "Suspensão administrativa");
   };
-
   const handleRemove = () => {
     if (window.confirm('Tem certeza que deseja remover este gestor?')) {
       removeManager(manager.id);
       onClose();
     }
   };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+  return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-4">
-            <img
-              src={manager.avatar || "https://via.placeholder.com/64"}
-              alt={manager.name}
-              className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
-            />
+            <img src={manager.avatar || "https://via.placeholder.com/64"} alt={manager.name} className="w-16 h-16 rounded-full object-cover border-2 border-gray-200" />
             <div className="flex-1">
               <DialogTitle className="text-2xl font-bold text-gray-900">{manager.name}</DialogTitle>
-              <div className="flex items-center gap-3 mt-2">
-                {getStatusBadge()}
-                {manager.isVerified && (
-                  <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Verificado
-                  </Badge>
-                )}
-              </div>
+              
             </div>
           </div>
         </DialogHeader>
@@ -209,12 +154,10 @@ const ManagerDetailsModal = ({
                   </div>
                 </div>
                 
-                {manager.status === 'suspended' && manager.suspensionReason && (
-                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                {manager.status === 'suspended' && manager.suspensionReason && <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-sm font-medium text-red-800">Motivo da Suspensão:</p>
                     <p className="text-red-700">{manager.suspensionReason}</p>
-                  </div>
-                )}
+                  </div>}
               </CardContent>
             </Card>
           </TabsContent>
@@ -228,12 +171,8 @@ const ManagerDetailsModal = ({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {courts.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">Nenhuma quadra gerenciada</p>
-                ) : (
-                  <div className="space-y-3">
-                    {courts.map((court) => (
-                      <div key={court.id} className="flex items-center justify-between p-3 border rounded-lg">
+                {courts.length === 0 ? <p className="text-gray-500 text-center py-8">Nenhuma quadra gerenciada</p> : <div className="space-y-3">
+                    {courts.map(court => <div key={court.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div>
                           <p className="font-medium text-gray-900">{court.name}</p>
                           <p className="text-sm text-gray-500">{court.location.city}, {court.location.state}</p>
@@ -247,17 +186,14 @@ const ManagerDetailsModal = ({
                             <span className="text-sm">{court.rating}</span>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      </div>)}
+                  </div>}
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-4">
-            {stats && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {stats && <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card>
                   <CardContent className="p-4 text-center">
                     <DollarSign className="w-6 h-6 text-green-600 mx-auto mb-2" />
@@ -286,8 +222,7 @@ const ManagerDetailsModal = ({
                     <p className="text-lg font-bold text-gray-900">{stats.totalComplaints}</p>
                   </CardContent>
                 </Card>
-              </div>
-            )}
+              </div>}
           </TabsContent>
 
           <TabsContent value="feedback" className="space-y-4">
@@ -299,30 +234,17 @@ const ManagerDetailsModal = ({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {feedback.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">Nenhum feedback disponível</p>
-                ) : (
-                  <div className="space-y-3">
-                    {feedback.map((item) => (
-                      <div key={item.id} className="p-3 border rounded-lg">
+                {feedback.length === 0 ? <p className="text-gray-500 text-center py-8">Nenhum feedback disponível</p> : <div className="space-y-3">
+                    {feedback.map(item => <div key={item.id} className="p-3 border rounded-lg">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < item.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'
-                                }`}
-                              />
-                            ))}
+                            {[...Array(5)].map((_, i) => <Star key={i} className={`w-4 h-4 ${i < item.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />)}
                           </div>
                           <span className="text-sm text-gray-500">{item.date.toLocaleDateString()}</span>
                         </div>
                         <p className="text-gray-700">{item.comment}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      </div>)}
+                  </div>}
               </CardContent>
             </Card>
           </TabsContent>
@@ -337,8 +259,7 @@ const ManagerDetailsModal = ({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {manager.status === 'active' && (
-                    <>
+                  {manager.status === 'active' && <>
                       <Button variant="outline" onClick={handleDeactivate} className="w-full">
                         <UserX className="w-4 h-4 mr-2" />
                         Desativar Gestor
@@ -347,15 +268,12 @@ const ManagerDetailsModal = ({
                         <Shield className="w-4 h-4 mr-2" />
                         Suspender Gestor
                       </Button>
-                    </>
-                  )}
+                    </>}
                   
-                  {(manager.status === 'inactive' || manager.status === 'suspended' || manager.status === 'pending') && (
-                    <Button variant="outline" onClick={handleActivate} className="w-full">
+                  {(manager.status === 'inactive' || manager.status === 'suspended' || manager.status === 'pending') && <Button variant="outline" onClick={handleActivate} className="w-full">
                       <CheckCircle className="w-4 h-4 mr-2" />
                       {manager.status === 'pending' ? 'Aprovar Gestor' : 'Ativar Gestor'}
-                    </Button>
-                  )}
+                    </Button>}
                   
                   <Button variant="outline" className="w-full">
                     <Phone className="w-4 h-4 mr-2" />
@@ -377,8 +295,6 @@ const ManagerDetailsModal = ({
           </TabsContent>
         </Tabs>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
-
 export default ManagerDetailsModal;
