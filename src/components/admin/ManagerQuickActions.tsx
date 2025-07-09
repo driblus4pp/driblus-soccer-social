@@ -21,7 +21,8 @@ import {
   AlertTriangle 
 } from "lucide-react";
 
-interface Manager {
+// Import the Manager type from useManagers to avoid conflicts
+type Manager = {
   id: string;
   name: string;
   email: string;
@@ -33,7 +34,7 @@ interface Manager {
   suspensionReason?: string;
   lastActivity?: Date;
   totalComplaints: number;
-}
+};
 
 interface ManagerQuickActionsProps {
   manager: Manager;
