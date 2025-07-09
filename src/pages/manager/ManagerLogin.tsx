@@ -42,7 +42,7 @@ const ManagerLogin = () => {
         {/* Logo/Title */}
         <div className="text-center mb-16">
           <h1 className="text-6xl font-bold mb-2 text-orange-700">Driblus</h1>
-          <p className="text-xl mb-4 text-orange-700">Gestores</p>
+          <p className="text-xl mb-4 text-orange-700">Quadras</p>
           <div className="w-16 h-1 bg-[#F35410] mx-auto rounded"></div>
         </div>
 
