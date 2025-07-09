@@ -37,6 +37,25 @@ const OnboardingScreen = ({ step, onNext, onSkip, returnTo }: OnboardingScreenPr
 
   const currentScreen = screens[step - 1];
 
+  const handleButtonClick = () => {
+    console.log('OnboardingScreen - Button clicked, step:', step, 'returnTo:', returnTo);
+    
+    if (step === 2) {
+      // No último step, verificar se deve retornar para uma página específica
+      if (returnTo) {
+        console.log('OnboardingScreen - Redirecting to:', returnTo);
+        navigate(returnTo);
+      } else {
+        console.log('OnboardingScreen - No returnTo, calling onNext');
+        onNext();
+      }
+    } else {
+      // Não é o último step, continuar para próximo
+      console.log('OnboardingScreen - Continuing to next step');
+      onNext();
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative">
       {/* Skip Button */}
@@ -92,15 +111,9 @@ const OnboardingScreen = ({ step, onNext, onSkip, returnTo }: OnboardingScreenPr
           ))}
         </div>
 
-        {/* Next Button */}
+        {/* Next/Start Button */}
         <Button
-          onClick={() => {
-            if (step === 2 && returnTo) {
-              navigate(returnTo);
-            } else {
-              onNext();
-            }
-          }}
+          onClick={handleButtonClick}
           className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl transition-all transform hover:scale-105 shadow-lg"
         >
           {step === 2 ? 'Começar' : 'Próximo'}
