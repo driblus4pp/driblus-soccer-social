@@ -41,14 +41,9 @@ const OnboardingScreen = ({ step, onNext, onSkip, returnTo }: OnboardingScreenPr
     console.log('OnboardingScreen - Button clicked, step:', step, 'returnTo:', returnTo);
     
     if (step === 2) {
-      // No último step, verificar se deve retornar para uma página específica
-      if (returnTo) {
-        console.log('OnboardingScreen - Redirecting to:', returnTo);
-        navigate(returnTo);
-      } else {
-        console.log('OnboardingScreen - No returnTo, calling onNext');
-        onNext();
-      }
+      // No último step, sempre redirecionar para login do cliente
+      console.log('OnboardingScreen - Final step, redirecting to client login');
+      navigate('/cliente/login');
     } else {
       // Não é o último step, continuar para próximo
       console.log('OnboardingScreen - Continuing to next step');
