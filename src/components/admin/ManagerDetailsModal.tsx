@@ -262,10 +262,7 @@ const ManagerDetailsModal = ({
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {manager.status === 'active' && <>
-                      <Button variant="outline" onClick={handleDeactivate} className="w-full">
-                        <UserX className="w-4 h-4 mr-2" />
-                        Desativar Gestor
-                      </Button>
+                      
                       <Button variant="outline" onClick={handleSuspend} className="w-full">
                         <Shield className="w-4 h-4 mr-2" />
                         Suspender Gestor
@@ -277,11 +274,7 @@ const ManagerDetailsModal = ({
                       {manager.status === 'pending' ? 'Aprovar Gestor' : 'Ativar Gestor'}
                     </Button>}
                   
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => setIsContactModalOpen(true)}
-                  >
+                  <Button variant="outline" className="w-full" onClick={() => setIsContactModalOpen(true)}>
                     <Phone className="w-4 h-4 mr-2" />
                     Contatar Gestor
                   </Button>
@@ -302,11 +295,7 @@ const ManagerDetailsModal = ({
         </Tabs>
       </DialogContent>
       
-      <ManagerContactModal
-        isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
-        manager={manager}
-      />
+      <ManagerContactModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} manager={manager} />
     </Dialog>;
 };
 export default ManagerDetailsModal;
