@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, Users, DollarSign, Trophy, Star, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -41,9 +40,9 @@ const OnboardingScreen = ({ step, onNext, onSkip, returnTo }: OnboardingScreenPr
     console.log('OnboardingScreen - Button clicked, step:', step, 'returnTo:', returnTo);
     
     if (step === 2) {
-      // No último step, sempre redirecionar para login do cliente
-      console.log('OnboardingScreen - Final step, redirecting to client login');
-      navigate('/cliente/login');
+      // No último step, funcionar como o botão "Pular"
+      console.log('OnboardingScreen - Final step, calling onSkip to return to original login');
+      onSkip();
     } else {
       // Não é o último step, continuar para próximo
       console.log('OnboardingScreen - Continuing to next step');
