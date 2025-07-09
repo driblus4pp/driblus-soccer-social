@@ -33,11 +33,9 @@ const ClientLogin = () => {
     }
   };
   const [currentStep, setCurrentStep] = useState(1);
-  
   const handleStartDemo = () => {
     setShowOnboarding(true);
   };
-  
   const handleOnboardingNext = () => {
     if (currentStep < 2) {
       setCurrentStep(prev => prev + 1);
@@ -46,12 +44,10 @@ const ClientLogin = () => {
       setCurrentStep(1);
     }
   };
-  
   const handleOnboardingSkip = () => {
     setShowOnboarding(false);
     setCurrentStep(1);
   };
-  
   console.log('ClientLogin: PWA Estado =', {
     canInstall,
     showPrompt,
@@ -60,9 +56,7 @@ const ClientLogin = () => {
   return <div className="min-h-screen bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] flex flex-col">
       {/* Back Button */}
       <div className="absolute top-6 left-6 z-10">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="text-white hover:bg-white/20 rounded-full">
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
+        
       </div>
 
       {/* Test Button - Temporary */}
@@ -113,11 +107,7 @@ const ClientLogin = () => {
 
           {/* Demo Button */}
           <div className="text-center pt-4">
-            <Button
-              onClick={handleStartDemo}
-              variant="outline"
-              className="w-48 mx-auto bg-transparent border-[#F35410] text-[#F35410] hover:bg-[#F35410] hover:text-white text-sm rounded-full transition-colors"
-            >
+            <Button onClick={handleStartDemo} variant="outline" className="w-48 mx-auto bg-transparent border-[#F35410] text-[#F35410] hover:bg-[#F35410] hover:text-white text-sm rounded-full transition-colors">
               Ver Como Funciona
             </Button>
           </div>
@@ -128,16 +118,9 @@ const ClientLogin = () => {
       <PWAInstallBalloon show={showPrompt || forceShowBalloon} onInstall={installApp} onDismiss={dismissPrompt} />
       
       {/* Onboarding Screen */}
-      {showOnboarding && (
-        <div className="fixed inset-0 bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] z-50">
-          <OnboardingScreen
-            step={currentStep}
-            onNext={handleOnboardingNext}
-            onSkip={handleOnboardingSkip}
-            returnTo="/cliente/login"
-          />
-        </div>
-      )}
+      {showOnboarding && <div className="fixed inset-0 bg-gradient-to-br from-[#1a3c5c] via-[#0f2a3f] to-[#0a1f2e] z-50">
+          <OnboardingScreen step={currentStep} onNext={handleOnboardingNext} onSkip={handleOnboardingSkip} returnTo="/cliente/login" />
+        </div>}
     </div>;
 };
 export default ClientLogin;
