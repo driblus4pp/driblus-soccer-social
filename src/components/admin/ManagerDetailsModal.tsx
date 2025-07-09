@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, AlertCircle, Shield, Building2, BarChart3, MessageSquare, Settings, Phone, Mail, Calendar, Star, DollarSign, Users, Clock, UserX, Trash2 } from "lucide-react";
 import { useManagers } from "@/hooks/useManagers";
+import ManagerContactModal from "./ManagerContactModal";
 
 // Use the Manager type from useManagers to avoid conflicts
 type Manager = {
@@ -51,6 +52,7 @@ const ManagerDetailsModal = ({
     removeManager
   } = useManagers();
   const [suspensionReason, setSuspensionReason] = useState('');
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   if (!manager) return null;
   const stats = getManagerStats(manager.id);
   const courts = getManagerCourts(manager.id);
@@ -275,7 +277,11 @@ const ManagerDetailsModal = ({
                       {manager.status === 'pending' ? 'Aprovar Gestor' : 'Ativar Gestor'}
                     </Button>}
                   
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => setIsContactModalOpen(true)}
+                  >
                     <Phone className="w-4 h-4 mr-2" />
                     Contatar Gestor
                   </Button>
@@ -295,6 +301,12 @@ const ManagerDetailsModal = ({
           </TabsContent>
         </Tabs>
       </DialogContent>
+      
+      <ManagerContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        manager={manager}
+      />
     </Dialog>;
 };
 export default ManagerDetailsModal;

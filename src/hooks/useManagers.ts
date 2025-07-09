@@ -12,6 +12,9 @@ interface Manager extends User {
   suspensionReason?: string;
   lastActivity?: Date;
   totalComplaints: number;
+  whatsapp?: string;
+  contactEmail?: string;
+  businessHours?: string;
 }
 
 const mockManagers: Manager[] = [
@@ -20,6 +23,9 @@ const mockManagers: Manager[] = [
     name: 'João Silva',
     email: 'joao@gestor.com',
     phone: '+55 85 99999-9999',
+    whatsapp: '+55 85 99999-9999',
+    contactEmail: 'joao@gestor.com',
+    businessHours: '08:00 - 22:00',
     role: UserRole.COURT_MANAGER,
     isVerified: true,
     createdAt: new Date('2024-02-01'),
@@ -37,6 +43,9 @@ const mockManagers: Manager[] = [
     name: 'Maria Santos',
     email: 'maria@gestor.com',
     phone: '+55 85 88888-8888',
+    whatsapp: '+55 85 88888-8888',
+    contactEmail: 'maria@gestor.com',
+    businessHours: '07:00 - 21:00',
     role: UserRole.COURT_MANAGER,
     isVerified: true,
     createdAt: new Date('2024-03-15'),
@@ -54,6 +63,9 @@ const mockManagers: Manager[] = [
     name: 'Carlos Oliveira',
     email: 'carlos@gestor.com',
     phone: '+55 85 77777-7777',
+    whatsapp: '+55 85 77777-7777',
+    contactEmail: 'carlos@gestor.com',
+    businessHours: '06:00 - 20:00',
     role: UserRole.COURT_MANAGER,
     isVerified: false,
     createdAt: new Date('2024-06-10'),
@@ -71,6 +83,9 @@ const mockManagers: Manager[] = [
     name: 'Ana Costa',
     email: 'ana@gestor.com',
     phone: '+55 85 66666-6666',
+    whatsapp: '+55 85 66666-6666',
+    contactEmail: 'ana@gestor.com',
+    businessHours: '08:00 - 18:00',
     role: UserRole.COURT_MANAGER,
     isVerified: false,
     createdAt: new Date('2024-06-15'),

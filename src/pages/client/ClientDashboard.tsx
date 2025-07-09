@@ -7,6 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Search, Navigation, Filter } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
+import { useBookings } from "@/hooks/useBookings";
+import { useFeedbackReminder } from "@/hooks/useFeedbackReminder";
+import FeedbackBanner from "@/components/feedback/FeedbackBanner";
+import RatingModal from "@/components/RatingModal";
+import { Booking } from "@/types";
 
 const mockCourts = [{
   id: '1',
@@ -58,6 +63,10 @@ const ClientDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const { bookings, addRating } = useBookings();
+  const { reminderBookings, dismissReminder } = useFeedbackReminder(bookings);
+  const [selectedBookingForRating, setSelectedBookingForRating] = useState<Booking | null>(null);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -76,6 +85,22 @@ const ClientDashboard = () => {
 
   const getStatusBadge = (status: string) => {
     return status === 'available' ? <Badge className="bg-green-500 text-white text-xs">Disponível</Badge> : <Badge className="bg-red-500 text-white text-xs">Indisponível</Badge>;
+  };
+
+  const handleRateBooking = (booking: Booking) => {
+    setSelectedBookingForRating(booking);
+    setIsRatingModalOpen(true);
+  };
+
+  const handleSubmitRating = (bookingId: string, stars: number, comment: string) => {
+    addRating(bookingId, stars, comment);
+    dismissReminder(bookingId);
+    setIsRatingModalOpen(false);
+    setSelectedBookingForRating(null);
+  };
+
+  const handleDismissReminder = (bookingId: string) => {
+    dismissReminder(bookingId);
   };
 
   return (
@@ -98,7 +123,7 @@ const ClientDashboard = () => {
         </div>
 
         {/* Barra de busca */}
-        <div className="relative">
+        <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             placeholder="Buscar quadras, bairros..."
@@ -107,6 +132,23 @@ const ClientDashboard = () => {
             className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/20 rounded-xl"
           />
         </div>
+
+        {/* Feedback Reminders */}
+        {reminderBookings.length > 0 && (
+          <div className="space-y-2">
+            {reminderBookings.map(reminder => {
+              const booking = bookings.find(b => b.id === reminder.bookingId);
+              return booking ? (
+                <FeedbackBanner
+                  key={booking.id}
+                  booking={booking}
+                  onRate={handleRateBooking}
+                  onDismiss={handleDismissReminder}
+                />
+              ) : null;
+            })}
+          </div>
+        )}
       </div>
 
       <div className="px-4 py-6 space-y-6">
@@ -216,6 +258,17 @@ const ClientDashboard = () => {
 
       {/* Navegação inferior */}
       <BottomNavigation userType="client" />
+      
+      {/* Rating Modal */}
+      <RatingModal
+        isOpen={isRatingModalOpen}
+        onClose={() => {
+          setIsRatingModalOpen(false);
+          setSelectedBookingForRating(null);
+        }}
+        booking={selectedBookingForRating}
+        onSubmit={handleSubmitRating}
+      />
     </div>
   );
 };
