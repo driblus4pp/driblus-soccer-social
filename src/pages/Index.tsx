@@ -1,13 +1,16 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { User, Building, Shield, ArrowRight } from "lucide-react";
 import OnboardingScreen from "@/components/OnboardingScreen";
+
 const Index = () => {
   const navigate = useNavigate();
   const [currentScreen, setCurrentScreen] = useState<'home' | 'onboarding'>('home');
   const [onboardingStep, setOnboardingStep] = useState(1);
+
   if (currentScreen === 'onboarding') {
     return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] text-white overflow-hidden">
         <OnboardingScreen step={onboardingStep} onNext={() => {
@@ -19,6 +22,7 @@ const Index = () => {
       }} onSkip={() => setCurrentScreen('home')} />
       </div>;
   }
+
   return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       <div className="p-4 space-y-8">
         {/* Header */}
@@ -91,8 +95,11 @@ const Index = () => {
         </div>
 
         {/* Features Preview */}
-        <div className="mt-8">
-          <Button onClick={() => setCurrentScreen('onboarding')} variant="outline" className="w-full border-white/20 font-bold text-lg -bottom-0.5 hover:bg-orange-600 text-slate-50 rounded-full">
+        <div className="mt-8 flex justify-center">
+          <Button 
+            onClick={() => setCurrentScreen('onboarding')} 
+            className="w-48 bg-[#F35410] text-white text-sm rounded-full hover:bg-[#D54210] transition-colors"
+          >
             Ver Como Funciona
           </Button>
         </div>
@@ -104,4 +111,5 @@ const Index = () => {
       </div>
     </div>;
 };
+
 export default Index;
