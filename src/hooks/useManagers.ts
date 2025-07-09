@@ -1,4 +1,5 @@
 
+
 import { useState } from 'react';
 import { User, UserRole } from '@/types';
 import { useCourts } from './useCourts';
@@ -7,7 +8,7 @@ interface Manager extends User {
   managedCourts: string[];
   totalRevenue: number;
   monthlyBookings: number;
-  status: 'active' | 'inactive' | 'suspended';
+  status: 'active' | 'inactive' | 'suspended' | 'pending';
   suspensionReason?: string;
   lastActivity?: Date;
   totalComplaints: number;
@@ -61,7 +62,7 @@ const mockManagers: Manager[] = [
     managedCourts: ['3'],
     totalRevenue: 12300,
     monthlyBookings: 38,
-    status: 'inactive',
+    status: 'pending',
     lastActivity: new Date('2024-12-15'),
     totalComplaints: 2
   },

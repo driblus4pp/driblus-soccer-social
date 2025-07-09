@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,8 @@ import {
   UserCheck,
   UserX,
   AlertTriangle,
-  LogOut
+  LogOut,
+  Star
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useManagers } from "@/hooks/useManagers";
@@ -235,9 +237,17 @@ const AdminManagers = () => {
                   }`}>
                     {manager.status === 'active' ? 'Ativo' : manager.status === 'pending' ? 'Pendente' : 'Suspenso'}
                   </Badge>
-                  <Button variant="outline" size="icon" onClick={() => handleOpenDetails(manager.id)}>
-                    <Eye className="w-4 h-4" />
-                  </Button>
+                  <ManagerQuickActions
+                    manager={manager}
+                    onViewDetails={() => handleOpenDetails(manager.id)}
+                    onActivate={() => activateManager(manager.id)}
+                    onDeactivate={() => deactivateManager(manager.id)}
+                    onSuspend={() => suspendManager(manager.id, "Suspensão administrativa")}
+                    onViewReports={() => console.log("View reports")}
+                    onManageCourts={() => console.log("Manage courts")}
+                    onContact={() => console.log("Contact manager")}
+                    onRemove={() => console.log("Remove manager")}
+                  />
                 </div>
               </div>
             ))}

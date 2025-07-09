@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -174,7 +175,7 @@ const AdminCourts = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Star className="w-4 h-4 text-yellow-500" />
-                  <span className="text-gray-600">{court.rating} ({court.reviews} avaliações)</span>
+                  <span className="text-gray-600">{court.rating} ({court.totalReviews} avaliações)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <Badge className={`text-xs ${
