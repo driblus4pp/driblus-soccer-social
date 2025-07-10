@@ -114,7 +114,7 @@ const ClientSchedule = () => {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-white/70 text-sm">
                     <Calendar className="w-4 h-4" />
-                    <span>{new Date(booking.date).toLocaleDateString('pt-BR')}</span>
+                    
                   </div>
                   <div className="flex items-center gap-2 text-white/70 text-sm">
                     <Clock className="w-4 h-4" />
