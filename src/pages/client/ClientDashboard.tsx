@@ -1,12 +1,14 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Star, Search, Navigation, Filter } from "lucide-react";
+import { MapPin, Star, Search, Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
+import NotificationModal from "@/components/NotificationModal";
 import { useBookings } from "@/hooks/useBookings";
 import { useFeedbackReminder } from "@/hooks/useFeedbackReminder";
 import FeedbackBanner from "@/components/feedback/FeedbackBanner";
@@ -63,6 +65,7 @@ const ClientDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const { bookings, addRating } = useBookings();
   const { reminderBookings, dismissReminder } = useFeedbackReminder(bookings);
   const [selectedBookingForRating, setSelectedBookingForRating] = useState<Booking | null>(null);
@@ -113,7 +116,23 @@ const ClientDashboard = () => {
               {getGreeting()}, {user?.name?.split(' ')[0] || 'Janderson'}!
             </h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            {/* Notification Bell */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsNotificationModalOpen(true)}
+              className="text-white hover:bg-white/20 relative"
+            >
+              <Bell className="w-5 h-5" />
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+              >
+                2
+              </Badge>
+            </Button>
+            
             <img 
               src="/lovable-uploads/0e6fb8a5-a6de-4b38-955c-58e7bcef94bb.png" 
               alt="Driblus" 
@@ -258,6 +277,12 @@ const ClientDashboard = () => {
 
       {/* Navegação inferior */}
       <BottomNavigation userType="client" />
+      
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+      />
       
       {/* Rating Modal */}
       <RatingModal

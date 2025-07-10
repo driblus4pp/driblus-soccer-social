@@ -1,9 +1,12 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LoadingProvider, useLoading } from "@/contexts/LoadingContext";
+import LoadingScreen from "@/components/LoadingScreen";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -13,7 +16,6 @@ import ClientRegister from "./pages/client/ClientRegister";
 import ClientDashboard from "./pages/client/ClientDashboard";
 import ClientCourts from "./pages/client/ClientCourts";
 import ClientSchedule from "./pages/client/ClientSchedule";
-import ClientNotifications from "./pages/client/ClientNotifications";
 import ClientProfile from "./pages/client/ClientProfile";
 import ClientAppSettings from "./pages/client/ClientAppSettings";
 import ClientEditProfile from "./pages/client/ClientEditProfile";
@@ -47,52 +49,64 @@ import AdminCreateCourt from "./pages/admin/AdminCreateCourt";
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  const { isLoading, loadingMessage } = useLoading();
+
+  return (
+    <>
+      {isLoading && <LoadingScreen message={loadingMessage} />}
+      <Routes>
+        <Route path="/" element={<Index />} />
+        
+        {/* Client Routes */}
+        <Route path="/cliente/login" element={<ClientLogin />} />
+        <Route path="/cliente/cadastro" element={<ClientRegister />} />
+        <Route path="/cliente/dashboard" element={<ClientDashboard />} />
+        <Route path="/cliente/quadras" element={<ClientCourts />} />
+        <Route path="/cliente/agendamentos" element={<ClientSchedule />} />
+        <Route path="/cliente/perfil" element={<ClientProfile />} />
+        <Route path="/cliente/configuracoes" element={<ClientAppSettings />} />
+        <Route path="/cliente/perfil/editar" element={<ClientEditProfile />} />
+        <Route path="/cliente/quadra/:id" element={<CourtDetailsPage />} />
+        <Route path="/cliente/quadra/:id/agendar" element={<BookingPage />} />
+        <Route path="/cliente/quadra/:id/confirmacao" element={<BookingConfirmationPage />} />
+        <Route path="/cliente/agendamento-sucesso" element={<BookingSuccessPage />} />
+        
+        {/* Manager Routes - Simplificadas */}
+        <Route path="/gestor/login" element={<ManagerLogin />} />
+        <Route path="/gestor/dashboard" element={<ManagerDashboard />} />
+        <Route path="/gestor/notificacoes" element={<ManagerNotifications />} />
+        <Route path="/gestor/perfil" element={<ManagerProfile />} />
+        <Route path="/gestor/perfil/editar" element={<ManagerEditProfile />} />
+        
+        {/* Admin Routes - Simplificadas */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/quadras" element={<AdminCourts />} />
+        <Route path="/admin/quadras/nova" element={<AdminCreateCourt />} />
+        <Route path="/admin/quadras/:id" element={<AdminCourtDetails />} />
+        <Route path="/admin/gestores" element={<AdminManagers />} />
+        <Route path="/admin/relatorios" element={<AdminReports />} />
+        <Route path="/admin/configuracoes" element={<AdminSettings />} />
+        
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            
-            {/* Client Routes */}
-            <Route path="/cliente/login" element={<ClientLogin />} />
-            <Route path="/cliente/cadastro" element={<ClientRegister />} />
-            <Route path="/cliente/dashboard" element={<ClientDashboard />} />
-            <Route path="/cliente/quadras" element={<ClientCourts />} />
-            <Route path="/cliente/agendamentos" element={<ClientSchedule />} />
-            <Route path="/cliente/notificacoes" element={<ClientNotifications />} />
-            <Route path="/cliente/perfil" element={<ClientProfile />} />
-            <Route path="/cliente/configuracoes" element={<ClientAppSettings />} />
-            <Route path="/cliente/perfil/editar" element={<ClientEditProfile />} />
-            <Route path="/cliente/quadra/:id" element={<CourtDetailsPage />} />
-            <Route path="/cliente/quadra/:id/agendar" element={<BookingPage />} />
-            <Route path="/cliente/quadra/:id/confirmacao" element={<BookingConfirmationPage />} />
-            <Route path="/cliente/agendamento-sucesso" element={<BookingSuccessPage />} />
-            
-            {/* Manager Routes - Simplificadas */}
-            <Route path="/gestor/login" element={<ManagerLogin />} />
-            <Route path="/gestor/dashboard" element={<ManagerDashboard />} />
-            <Route path="/gestor/notificacoes" element={<ManagerNotifications />} />
-            <Route path="/gestor/perfil" element={<ManagerProfile />} />
-            <Route path="/gestor/perfil/editar" element={<ManagerEditProfile />} />
-            
-            {/* Admin Routes - Simplificadas */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/quadras" element={<AdminCourts />} />
-            <Route path="/admin/quadras/nova" element={<AdminCreateCourt />} />
-            <Route path="/admin/quadras/:id" element={<AdminCourtDetails />} />
-            <Route path="/admin/gestores" element={<AdminManagers />} />
-            <Route path="/admin/relatorios" element={<AdminReports />} />
-            <Route path="/admin/configuracoes" element={<AdminSettings />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <LoadingProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </TooltipProvider>
+      </LoadingProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

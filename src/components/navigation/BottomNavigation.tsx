@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, Bell, User, BarChart3, Building2, Users, Settings } from 'lucide-react';
+import { Home, Calendar, User, BarChart3, Building2, Users, Settings } from 'lucide-react';
 
 interface BottomNavigationProps {
   userType: 'client' | 'manager' | 'admin';
@@ -17,14 +18,13 @@ const BottomNavigation = ({ userType }: BottomNavigationProps) => {
           { path: '/cliente/dashboard', icon: Home, label: 'Início' },
           { path: '/cliente/quadras', icon: Building2, label: 'Radar' },
           { path: '/cliente/agendamentos', icon: Calendar, label: 'Agenda' },
-          { path: '/cliente/notificacoes', icon: Bell, label: 'Avisos' },
           { path: '/cliente/perfil', icon: User, label: 'Perfil' }
         ];
       case 'manager':
         return [
           { path: '/gestor/dashboard', icon: Home, label: 'Início' },
           { path: '/gestor/dashboard?tab=schedule', icon: Calendar, label: 'Agenda' },
-          { path: '/gestor/notificacoes', icon: Bell, label: 'Avisos' },
+          { path: '/gestor/notificacoes', icon: Calendar, label: 'Avisos' },
           { path: '/gestor/perfil', icon: User, label: 'Perfil' }
         ];
       case 'admin':
