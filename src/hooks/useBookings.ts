@@ -4,14 +4,14 @@ import { Booking, BookingStatus } from '@/types';
 const mockBookings: Booking[] = [
   {
     id: 'booking_1',
-    courtId: '1',
-    courtName: 'No Alvo Society',
-    courtImage: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop',
+    courtId: 'alvo-centro-1',
+    courtName: 'No Alvo Centro - Quadra 1',
+    courtImage: '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png',
     userId: 'user_1',
     userName: 'Maria Santos',
     userEmail: 'maria@email.com',
     userPhone: '+55 85 88888-8888',
-    date: '2024-12-20',
+    date: '2025-07-15',
     startTime: '19:00',
     endTime: '20:00',
     duration: 1,
@@ -21,74 +21,74 @@ const mockBookings: Booking[] = [
     paymentStatus: 'pending',
     numberOfPlayers: 10,
     needsEquipment: false,
-    createdAt: new Date('2024-12-18T10:30:00'),
-    managerId: 'manager-1'
+    createdAt: new Date('2025-07-10T10:30:00'),
+    managerId: 'manager-alvo'
   },
   {
     id: 'booking_2',
-    courtId: '3',
-    courtName: 'Arena Pro Sports',
-    courtImage: 'https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=400&h=300&fit=crop',
+    courtId: 'arena-cangaco-1',
+    courtName: 'Arena Cangaço - Futebol Society',
+    courtImage: '/src/assets/arena-cangaco-futebol.png',
     userId: 'user_1',
     userName: 'Maria Santos',
     userEmail: 'maria@email.com',
     userPhone: '+55 85 88888-8888',
-    date: '2024-12-22',
+    date: '2025-07-22',
     startTime: '15:00',
     endTime: '16:00',
     duration: 1,
-    totalPrice: 200,
+    totalPrice: 80,
     serviceFee: 0,
     status: BookingStatus.CANCELLED_BY_MANAGER,
     paymentStatus: 'pending',
     numberOfPlayers: 8,
     needsEquipment: false,
-    createdAt: new Date('2024-12-17T14:20:00'),
-    managerId: 'manager-2',
+    createdAt: new Date('2025-07-09T14:20:00'),
+    managerId: 'manager-arena',
     cancellationReason: 'Manutenção da quadra'
   },
   {
     id: 'booking_3',
-    courtId: '2',
-    courtName: 'Gol de Placa',
-    courtImage: 'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=400&h=300&fit=crop',
+    courtId: 'alvo-sul-1',
+    courtName: 'No Alvo Sul - Quadra 1',
+    courtImage: '/src/assets/no-alvo-sul-1.png',
     userId: 'user_1',
     userName: 'Maria Santos',
     userEmail: 'maria@email.com',
     userPhone: '+55 85 88888-8888',
-    date: '2024-12-15',
+    date: '2025-07-05',
     startTime: '18:00',
     endTime: '19:00',
     duration: 1,
-    totalPrice: 150,
+    totalPrice: 120,
     serviceFee: 0,
     status: BookingStatus.COMPLETED,
     paymentStatus: 'paid',
     numberOfPlayers: 12,
     needsEquipment: false,
-    createdAt: new Date('2024-12-13T09:15:00'),
-    managerId: 'manager-1',
+    createdAt: new Date('2025-07-03T09:15:00'),
+    managerId: 'manager-alvo',
     rating: {
       id: 'rating_1',
       bookingId: 'booking_3',
       userId: 'user_1',
-      courtId: '2',
+      courtId: 'alvo-sul-1',
       stars: 5,
       comment: 'Excelente quadra! Muito bem cuidada e com ótima localização.',
-      createdAt: new Date('2024-12-16T10:00:00'),
+      createdAt: new Date('2025-07-06T10:00:00'),
       helpful: 5
     }
   },
   {
     id: 'booking_4',
-    courtId: '1',
-    courtName: 'No Alvo Society',
-    courtImage: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop',
+    courtId: 'alvo-centro-1',
+    courtName: 'No Alvo Centro - Quadra 1',
+    courtImage: '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png',
     userId: 'user_1',
     userName: 'Maria Santos',
     userEmail: 'maria@email.com',
     userPhone: '+55 85 88888-8888',
-    date: '2024-12-25',
+    date: '2025-07-12',
     startTime: '20:00',
     endTime: '21:00',
     duration: 1,
@@ -98,30 +98,30 @@ const mockBookings: Booking[] = [
     paymentStatus: 'pending',
     numberOfPlayers: 10,
     needsEquipment: false,
-    createdAt: new Date('2024-12-19T16:45:00'),
-    managerId: 'manager-1'
+    createdAt: new Date('2025-07-10T16:45:00'),
+    managerId: 'manager-alvo'
   },
   {
     id: 'booking_5',
-    courtId: '1',
-    courtName: 'No Alvo Society',
-    courtImage: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=400&h=300&fit=crop',
+    courtId: 'arena-cangaco-2',
+    courtName: 'Arena Cangaço - Vôlei de Praia',
+    courtImage: '/src/assets/arena-cangaco-volei.png',
     userId: 'user_2',
     userName: 'João Silva',
     userEmail: 'joao@email.com',
     userPhone: '+55 85 99999-9999',
-    date: '2024-12-26',
+    date: '2025-07-13',
     startTime: '19:00',
     endTime: '20:00',
     duration: 1,
-    totalPrice: 120,
+    totalPrice: 60,
     serviceFee: 0,
     status: BookingStatus.PENDING,
     paymentStatus: 'pending',
-    numberOfPlayers: 8,
+    numberOfPlayers: 4,
     needsEquipment: false,
-    createdAt: new Date('2024-12-20T09:30:00'),
-    managerId: 'manager-1'
+    createdAt: new Date('2025-07-10T09:30:00'),
+    managerId: 'manager-arena'
   }
 ];
 
@@ -153,8 +153,7 @@ export const useBookings = () => {
       )
     );
     
-    // Simular notificação para o cliente
-    console.log(`Agendamento ${bookingId} aprovado - Notificação enviada ao cliente`);
+    console.log(`✅ Agendamento ${bookingId} aprovado - Notificação enviada ao cliente`);
   };
 
   const rejectBooking = (bookingId: string, reason?: string) => {
@@ -170,8 +169,7 @@ export const useBookings = () => {
       )
     );
     
-    // Simular notificação para o cliente
-    console.log(`Agendamento ${bookingId} rejeitado - Notificação enviada ao cliente`);
+    console.log(`❌ Agendamento ${bookingId} rejeitado - Motivo: ${reason} - Notificação enviada ao cliente`);
   };
 
   const createBooking = (bookingData: Partial<Booking>) => {
@@ -179,7 +177,7 @@ export const useBookings = () => {
     
     const newBooking: Booking = {
       id: `booking_${Date.now()}`,
-      status: BookingStatus.CONFIRMED,
+      status: BookingStatus.PENDING,
       paymentStatus: 'pending',
       createdAt: new Date(),
       ...bookingData
@@ -194,9 +192,13 @@ export const useBookings = () => {
     });
     
     // Simular notificação para o gestor sobre nova ordem de agendamento
-    console.log(`Nova ordem de agendamento criada - Notificação enviada ao gestor da quadra`);
-    console.log(`Dados do cliente: ${newBooking.userName} - ${newBooking.userPhone} - ${newBooking.userEmail}`);
-    console.log(`Detalhes: ${newBooking.date} às ${newBooking.startTime} para ${newBooking.numberOfPlayers} pessoas`);
+    console.log(`🔔 Nova solicitação de agendamento criada!`);
+    console.log(`📋 Cliente: ${newBooking.userName} (${newBooking.userPhone})`);
+    console.log(`📅 Data/Hora: ${newBooking.date} às ${newBooking.startTime}`);
+    console.log(`⚽ Quadra: ${newBooking.courtName}`);
+    console.log(`👥 Jogadores: ${newBooking.numberOfPlayers}`);
+    console.log(`💰 Valor: R$ ${newBooking.totalPrice}`);
+    console.log(`📧 Notificação enviada ao gestor da quadra`);
     
     return newBooking;
   };
@@ -208,21 +210,21 @@ export const useBookings = () => {
     console.log('- startTime:', startTime);
     console.log('- endTime:', endTime);
     
-    const confirmedBookings = bookings.filter(booking => {
+    const confirmedOrPendingBookings = bookings.filter(booking => {
       const matches = booking.courtId === courtId && 
         booking.date === date && 
-        booking.status === BookingStatus.CONFIRMED;
+        (booking.status === BookingStatus.CONFIRMED || booking.status === BookingStatus.PENDING);
       
       if (matches) {
-        console.log('useBookings - Found confirmed booking:', booking);
+        console.log('useBookings - Found confirmed/pending booking:', booking);
       }
       
       return matches;
     });
 
-    console.log('useBookings - confirmedBookings for this slot:', confirmedBookings);
+    console.log('useBookings - confirmedOrPendingBookings for this slot:', confirmedOrPendingBookings);
 
-    const hasConflict = confirmedBookings.some(booking => {
+    const hasConflict = confirmedOrPendingBookings.some(booking => {
       const bookingStart = booking.startTime;
       const bookingEnd = booking.endTime;
       

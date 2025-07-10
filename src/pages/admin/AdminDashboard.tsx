@@ -22,6 +22,7 @@ import BottomNavigation from "@/components/navigation/BottomNavigation";
 import AdminUsersTab from "@/components/admin/AdminUsersTab";
 import AdminCourtsTab from "@/components/admin/AdminCourtsTab";
 import AdminReportsTab from "@/components/admin/AdminReportsTab";
+import AdminBookingsOverview from "@/components/admin/AdminBookingsOverview";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -119,6 +120,7 @@ const AdminDashboard = () => {
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)} className="space-y-4">
           <TabsList className="bg-white border border-gray-200 rounded-lg">
             <TabsTrigger value="overview" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Visão Geral</TabsTrigger>
+            <TabsTrigger value="bookings" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Agendamentos</TabsTrigger>
             <TabsTrigger value="users" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Usuários</TabsTrigger>
             <TabsTrigger value="courts" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Quadras</TabsTrigger>
             <TabsTrigger value="reports" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Relatórios</TabsTrigger>
@@ -209,6 +211,9 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+          <TabsContent value="bookings">
+            <AdminBookingsOverview />
           </TabsContent>
           <TabsContent value="users">
             <AdminUsersTab />

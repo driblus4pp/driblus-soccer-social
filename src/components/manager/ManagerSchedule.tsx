@@ -7,6 +7,8 @@ import { Calendar, Clock, User, Phone, Mail, CheckCircle, XCircle, CalendarCheck
 import { useBookings } from "@/hooks/useBookings";
 import { useManagerNotifications } from "@/hooks/useManagerNotifications";
 import ClientProfileSimplified from "@/components/manager/ClientProfileSimplified";
+import PendingBookingsList from "./PendingBookingsList";
+import ManagerBookingCalendar from "./ManagerBookingCalendar";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -81,159 +83,11 @@ const ManagerSchedule = ({
             </TabsList>
 
             <TabsContent value="pending" className="space-y-4 mt-6">
-              {pendingBookings.length === 0 ? <div className="text-center py-8">
-                  <CalendarCheck className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-600">Nenhum agendamento pendente</p>
-                </div> : pendingBookings.map(booking => <Card key={booking.id} className="border-l-4 border-l-yellow-500">
-                    <CardContent className={isMobile ? "p-4" : "p-4"}>
-                      {isMobile ?
-                // Layout Mobile - Vertical e organizado
-                <div className="space-y-4">
-                          {/* Badge e tempo - linhas separadas */}
-                          <div className="space-y-2">
-                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                              Aguardando Confirmação
-                            </Badge>
-                            
-                          </div>
-                          
-                          {/* Informações do cliente */}
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <User className="w-4 h-4 text-gray-500" />
-                                <span className="font-semibold">{booking.userName}</span>
-                              </div>
-                              <Button variant="ghost" size="sm" onClick={() => setSelectedClientId(booking.userId)} className="px-3 py-1 bg-blue-950 hover:bg-blue-800 text-[fafafafafa] text-slate-50">
-                                Ver Perfil
-                              </Button>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Phone className="w-4 h-4" />
-                              <span>{booking.userPhone}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Mail className="w-4 h-4" />
-                              <span>{booking.userEmail}</span>
-                            </div>
-                          </div>
-                          
-                          {/* Informações da reserva - em caixa destacada */}
-                          <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-gray-500" />
-                              <span className="font-semibold">
-                                {format(new Date(booking.date), "dd/MM/yyyy (EEEE)", {
-                          locale: ptBR
-                        })}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Clock className="w-4 h-4" />
-                              <span>{booking.startTime} às {booking.endTime}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <User className="w-4 h-4" />
-                              <span>{booking.numberOfPlayers} pessoas</span>
-                            </div>
-                            <div className="text-xl font-bold text-[#F35410] mt-2">
-                              R$ {booking.totalPrice}
-                            </div>
-                          </div>
-                          
-                          {/* Botões de ação - empilhados e maiores */}
-                          <div className="grid grid-cols-1 gap-3 pt-2">
-                            <Button onClick={() => handleApproveBooking(booking.id, booking)} className="h-12 bg-green-600 hover:bg-green-700 text-white">
-                              <CheckCircle className="w-4 h-4 mr-2" />
-                              Confirmar Reserva
-                            </Button>
-                            <Button onClick={() => handleRejectBooking(booking.id, booking)} variant="outline" className="h-12 border-red-300 text-red-600 hover:bg-red-50">
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Recusar
-                            </Button>
-                          </div>
-                        </div> :
-                // Layout Desktop - mantém original
-                <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                                Aguardando Confirmação
-                              </Badge>
-                              <span className="text-xs text-gray-500">
-                                Há {Math.floor((new Date().getTime() - booking.createdAt.getTime()) / (1000 * 60 * 60))} horas
-                              </span>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <User className="w-4 h-4 text-gray-500" />
-                                  <span className="font-semibold">{booking.userName}</span>
-                                  <Button variant="ghost" size="sm" onClick={() => setSelectedClientId(booking.userId)} className="text-[#F35410] hover:bg-[#F35410]/10">
-                                    Ver Perfil
-                                  </Button>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Phone className="w-4 h-4" />
-                                  <span>{booking.userPhone}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Mail className="w-4 h-4" />
-                                  <span>{booking.userEmail}</span>
-                                </div>
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <Calendar className="w-4 h-4 text-gray-500" />
-                                  <span className="font-semibold">
-                                    {format(new Date(booking.date), "dd/MM/yyyy (EEEE)", {
-                              locale: ptBR
-                            })}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <Clock className="w-4 h-4" />
-                                  <span>{booking.startTime} às {booking.endTime}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <User className="w-4 h-4" />
-                                  <span>{booking.numberOfPlayers} pessoas</span>
-                                </div>
-                                <div className="text-lg font-bold text-[#F35410]">
-                                  R$ {booking.totalPrice}
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="flex gap-3 mt-4 pt-4 border-t">
-                              <Button onClick={() => handleApproveBooking(booking.id, booking)} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                Confirmar Reserva
-                              </Button>
-                              <Button onClick={() => handleRejectBooking(booking.id, booking)} variant="outline" className="flex-1 border-red-300 text-red-600 hover:bg-red-50">
-                                <XCircle className="w-4 h-4 mr-2" />
-                                Recusar
-                              </Button>
-                            </div>
-                          </div>
-                        </div>}
-                    </CardContent>
-                  </Card>)}
+              <PendingBookingsList managerId={managerId} />
             </TabsContent>
 
             <TabsContent value="calendar" className="mt-6">
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">Visualização de Calendário</h3>
-                  <p className="text-gray-600 mb-4">Visualize todos os agendamentos em formato de calendário</p>
-                  <Button className="bg-[#F35410] hover:bg-[#BA2D0B]">
-                    Abrir Calendário Completo
-                  </Button>
-                </CardContent>
-              </Card>
+              <ManagerBookingCalendar managerId={managerId} />
             </TabsContent>
 
             <TabsContent value="integration" className="mt-6">
