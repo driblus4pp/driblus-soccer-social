@@ -96,7 +96,7 @@ const NotificationModal = ({
         <DialogHeader className="pb-4">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-semibold text-gray-50">Notificações</DialogTitle>
-            {unreadCount > 0 && <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-sm text-gray-600 hover:text-gray-900">
+            {unreadCount > 0 && <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-sm text-gray-50 bg-orange-700 hover:bg-orange-600">
                 <Check className="w-4 h-4 mr-1" />
                 Marcar todas como lidas
               </Button>}
