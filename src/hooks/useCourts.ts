@@ -18,9 +18,9 @@ const mockCourts: Court[] = [
     ownerId: 'manager-alvo',
     ownerName: 'No Alvo Society',
     images: [
-      '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png',
-      '/lovable-uploads/e2851d8b-df3a-41af-bd1d-d8810288d44e.png',
-      '/lovable-uploads/6491b5bb-0717-48ce-adff-2d6d9f60566f.png'
+      '/lovable-uploads/844a5c8f-2d19-412b-bf9a-72a8ca229731.png',
+      '/lovable-uploads/948fc8dd-5540-401e-bd96-454de6744259.png',
+      '/lovable-uploads/9e9f18a9-56b6-4ab9-af6f-542bd962c4a5.png'
     ],
     sports: [SportType.FOOTBALL, SportType.FUTSAL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Bar'],
@@ -56,9 +56,9 @@ const mockCourts: Court[] = [
     ownerId: 'manager-alvo',
     ownerName: 'No Alvo Society',
     images: [
-      '/lovable-uploads/e2851d8b-df3a-41af-bd1d-d8810288d44e.png',
-      '/lovable-uploads/6491b5bb-0717-48ce-adff-2d6d9f60566f.png',
-      '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png'
+      '/lovable-uploads/948fc8dd-5540-401e-bd96-454de6744259.png',
+      '/lovable-uploads/9e9f18a9-56b6-4ab9-af6f-542bd962c4a5.png',
+      '/lovable-uploads/844a5c8f-2d19-412b-bf9a-72a8ca229731.png'
     ],
     sports: [SportType.FOOTBALL, SportType.FUTSAL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Bar'],
@@ -95,8 +95,8 @@ const mockCourts: Court[] = [
     ownerId: 'manager-alvo',
     ownerName: 'No Alvo Society',
     images: [
-      '/lovable-uploads/e2851d8b-df3a-41af-bd1d-d8810288d44e.png',
-      '/lovable-uploads/6491b5bb-0717-48ce-adff-2d6d9f60566f.png'
+      '/lovable-uploads/9e9f18a9-56b6-4ab9-af6f-542bd962c4a5.png',
+      '/lovable-uploads/844a5c8f-2d19-412b-bf9a-72a8ca229731.png'
     ],
     sports: [SportType.FOOTBALL, SportType.FUTSAL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
@@ -132,8 +132,8 @@ const mockCourts: Court[] = [
     ownerId: 'manager-alvo',
     ownerName: 'No Alvo Society',
     images: [
-      '/lovable-uploads/6491b5bb-0717-48ce-adff-2d6d9f60566f.png',
-      '/lovable-uploads/e2851d8b-df3a-41af-bd1d-d8810288d44e.png'
+      '/lovable-uploads/948fc8dd-5540-401e-bd96-454de6744259.png',
+      '/lovable-uploads/844a5c8f-2d19-412b-bf9a-72a8ca229731.png'
     ],
     sports: [SportType.FUTSAL, SportType.BASKETBALL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
@@ -170,8 +170,8 @@ const mockCourts: Court[] = [
     ownerId: 'manager-alvo',
     ownerName: 'No Alvo Society',
     images: [
-      '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png',
-      '/lovable-uploads/0e6fb8a5-a6de-4b38-955c-58e7bcef94bb.png'
+      '/lovable-uploads/844a5c8f-2d19-412b-bf9a-72a8ca229731.png',
+      '/lovable-uploads/948fc8dd-5540-401e-bd96-454de6744259.png'
     ],
     sports: [SportType.TENNIS],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Loja de Equipamentos'],
@@ -207,8 +207,8 @@ const mockCourts: Court[] = [
     ownerId: 'manager-alvo',
     ownerName: 'No Alvo Society',
     images: [
-      '/lovable-uploads/0e6fb8a5-a6de-4b38-955c-58e7bcef94bb.png',
-      '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png'
+      '/lovable-uploads/9e9f18a9-56b6-4ab9-af6f-542bd962c4a5.png',
+      '/lovable-uploads/948fc8dd-5540-401e-bd96-454de6744259.png'
     ],
     sports: [SportType.BASKETBALL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
@@ -245,7 +245,8 @@ const mockCourts: Court[] = [
     ownerId: 'manager-arena',
     ownerName: 'Arena Cangaço',
     images: [
-      '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png'
+      '/lovable-uploads/844a5c8f-2d19-412b-bf9a-72a8ca229731.png',
+      '/lovable-uploads/948fc8dd-5540-401e-bd96-454de6744259.png'
     ],
     sports: [SportType.FOOTBALL, SportType.FUTSAL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Bar'],
@@ -281,7 +282,8 @@ const mockCourts: Court[] = [
     ownerId: 'manager-arena',
     ownerName: 'Arena Cangaço',
     images: [
-      '/lovable-uploads/6491b5bb-0717-48ce-adff-2d6d9f60566f.png'
+      '/lovable-uploads/a9b4f323-9c73-4fa1-9684-514b7ff7aff2.png',
+      '/lovable-uploads/23e0408a-0795-41f0-a4be-e0b16f52f7ff.png'
     ],
     sports: [SportType.VOLLEYBALL],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Bar', 'Deck'],
@@ -317,7 +319,8 @@ const mockCourts: Court[] = [
     ownerId: 'manager-arena',
     ownerName: 'Arena Cangaço',
     images: [
-      '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png'
+      '/lovable-uploads/23e0408a-0795-41f0-a4be-e0b16f52f7ff.png',
+      '/lovable-uploads/a9b4f323-9c73-4fa1-9684-514b7ff7aff2.png'
     ],
     sports: [SportType.TENNIS],
     amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Bar', 'Deck'],
