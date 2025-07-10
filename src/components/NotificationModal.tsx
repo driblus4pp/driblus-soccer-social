@@ -18,6 +18,10 @@ const NotificationModal = ({
 }: NotificationModalProps) => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
+  };
+
   const getNotificationIcon = (type: string) => {
     const icons = {
       booking_confirmed: Calendar,
@@ -66,7 +70,7 @@ const NotificationModal = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={markAllAsRead}
+                onClick={handleMarkAllAsRead}
                 className="text-sm text-gray-50 bg-orange-700 hover:bg-orange-600"
               >
                 <Check className="w-4 h-4 mr-1" />

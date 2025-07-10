@@ -4,44 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Clock, MapPin, Info, X } from "lucide-react";
+import { Calendar, Clock, MapPin, Info, X, Star } from "lucide-react";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import BottomNavigation from "@/components/navigation/BottomNavigation";
-const mockBookings = [{
-  id: '1',
-  courtName: 'No Alvo Society',
-  date: '2024-06-22',
-  time: '19:00',
-  duration: '1h',
-  status: 'confirmed',
-  price: 'R$ 120',
-  location: 'Aldeota, Fortaleza'
-}, {
-  id: '2',
-  courtName: 'Gol de Placa',
-  date: '2024-06-25',
-  time: '20:00',
-  duration: '1h',
-  status: 'pending',
-  price: 'R$ 150',
-  location: 'Meireles, Fortaleza'
-}, {
-  id: '3',
-  courtName: 'Arena Pro Sports',
-  date: '2024-06-20',
-  time: '18:00',
-  duration: '1h',
-  status: 'completed',
-  price: 'R$ 200',
-  location: 'Cocó, Fortaleza'
-}];
+import { useBookings } from "@/hooks/useBookings";
+import { useAuth } from "@/contexts/AuthContext";
+import { BookingStatus } from "@/types";
+import RatingModal from "@/components/RatingModal";
 const ClientSchedule = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('upcoming');
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [showStatusDialog, setShowStatusDialog] = useState(false);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [selectedBookingForRating, setSelectedBookingForRating] = useState<any>(null);
+  
+  const { user } = useAuth();
+  const { bookings, addRating } = useBookings();
+  
+  // Filter bookings for current user only
+  const userBookings = bookings.filter(booking => booking.userId === user?.id || booking.userId === 'user_1');
 
   // Check for tab parameter in URL
   useEffect(() => {
@@ -50,30 +34,35 @@ const ClientSchedule = () => {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
-  const getStatusConfig = (status: string) => {
+  const getStatusConfig = (status: BookingStatus) => {
     const statusConfig = {
-      confirmed: {
+      [BookingStatus.CONFIRMED]: {
         text: 'Confirmado',
         color: 'bg-green-500',
         message: 'Seu agendamento foi confirmado pela gestão da quadra. Você pode comparecer no horário marcado.'
       },
-      pending: {
+      [BookingStatus.PENDING]: {
         text: 'Pendente',
         color: 'bg-yellow-500',
         message: 'Aguardando confirmação da gestão da quadra. Você receberá uma notificação quando for aprovado.'
       },
-      completed: {
+      [BookingStatus.COMPLETED]: {
         text: 'Concluído',
         color: 'bg-blue-500',
         message: 'Agendamento realizado com sucesso. Obrigado por usar nossos serviços!'
       },
-      cancelled: {
+      [BookingStatus.CANCELLED_BY_USER]: {
         text: 'Cancelado',
         color: 'bg-red-500',
-        message: 'Este agendamento foi cancelado. Entre em contato conosco se precisar de mais informações.'
+        message: 'Você cancelou este agendamento.'
+      },
+      [BookingStatus.CANCELLED_BY_MANAGER]: {
+        text: 'Cancelado',
+        color: 'bg-red-500',
+        message: 'Este agendamento foi cancelado pela gestão da quadra.'
       }
     };
-    return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    return statusConfig[status] || statusConfig[BookingStatus.PENDING];
   };
   const handleCardClick = (booking: any) => {
     setSelectedBooking(booking);
@@ -89,11 +78,27 @@ const ClientSchedule = () => {
     }
   };
   const filterBookings = (status: string) => {
-    if (status === 'upcoming') return mockBookings.filter(b => b.status === 'confirmed' || b.status === 'pending');
-    if (status === 'completed') return mockBookings.filter(b => b.status === 'completed');
-    return mockBookings.filter(b => b.status === 'pending');
+    if (status === 'upcoming') return userBookings.filter(b => 
+      b.status === BookingStatus.CONFIRMED || b.status === BookingStatus.PENDING
+    );
+    if (status === 'completed') return userBookings.filter(b => 
+      b.status === BookingStatus.COMPLETED
+    );
+    return userBookings.filter(b => b.status === BookingStatus.PENDING);
   };
+  
   const filteredBookings = filterBookings(activeTab);
+  
+  const handleRateBooking = (booking: any) => {
+    setSelectedBookingForRating(booking);
+    setIsRatingModalOpen(true);
+  };
+
+  const handleSubmitRating = (bookingId: string, stars: number, comment: string) => {
+    addRating(bookingId, stars, comment);
+    setIsRatingModalOpen(false);
+    setSelectedBookingForRating(null);
+  };
   return <div className="min-h-screen bg-[#093758] pb-20">
       {/* Header */}
       <div className="px-4 py-6 bg-[#093758]">
@@ -145,17 +150,51 @@ const ClientSchedule = () => {
                 </div>
                 <div className="flex items-center gap-2 text-white/70 text-sm">
                   <Clock className="w-4 h-4" />
-                  <span>{booking.time} • {booking.duration}</span>
+                  <span>{booking.startTime} - {booking.endTime}</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/70 text-sm">
                   <MapPin className="w-4 h-4" />
-                  <span>{booking.location}</span>
+                  <span>{booking.courtName}</span>
                 </div>
               </div>
 
+              {/* Rating Display */}
+              {booking.rating && (
+                <div className="mb-3 p-3 bg-white/5 rounded-lg border border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${
+                            star <= booking.rating!.stars
+                              ? 'text-yellow-400 fill-current'
+                              : 'text-white/30'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-white/70 text-sm">Sua avaliação</span>
+                  </div>
+                  <p className="text-white/80 text-sm">{booking.rating.comment}</p>
+                </div>
+              )}
+
               <div className="flex justify-between items-center">
-                <span className="font-bold text-[#F35410] text-lg">{booking.price}</span>
-                {booking.status === 'pending'}
+                <span className="font-bold text-[#F35410] text-lg">R$ {booking.totalPrice}</span>
+                {booking.status === BookingStatus.COMPLETED && !booking.rating && (
+                  <Button
+                    size="sm"
+                    className="bg-[#F35410] hover:bg-[#BA2D0B] text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRateBooking(booking);
+                    }}
+                  >
+                    <Star className="w-4 h-4 mr-1" />
+                    Avaliar
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>)}
@@ -201,7 +240,7 @@ const ClientSchedule = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  <span>{selectedBooking.time} • {selectedBooking.duration}</span>
+                  <span>{selectedBooking.startTime} - {selectedBooking.endTime}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
@@ -210,11 +249,21 @@ const ClientSchedule = () => {
               </div>
 
               <div className="pt-2 border-t border-white/10">
-                <span className="font-bold text-[#F35410] text-lg">{selectedBooking.price}</span>
+                <span className="font-bold text-[#F35410] text-lg">R$ {selectedBooking.totalPrice}</span>
               </div>
             </div>}
         </DialogContent>
       </Dialog>
+
+      <RatingModal
+        isOpen={isRatingModalOpen}
+        onClose={() => {
+          setIsRatingModalOpen(false);
+          setSelectedBookingForRating(null);
+        }}
+        booking={selectedBookingForRating}
+        onSubmit={handleSubmitRating}
+      />
 
       <BottomNavigation userType="client" />
     </div>;
