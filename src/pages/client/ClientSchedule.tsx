@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Calendar, Clock, MapPin, Info } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Calendar, Clock, MapPin, Info, X } from "lucide-react";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import BottomNavigation from "@/components/navigation/BottomNavigation";
@@ -43,6 +42,8 @@ const ClientSchedule = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('upcoming');
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [showStatusDialog, setShowStatusDialog] = useState(false);
 
   // Check for tab parameter in URL
   useEffect(() => {
@@ -78,23 +79,9 @@ const ClientSchedule = () => {
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
   };
 
-  const getStatusBadge = (status: string) => {
-    const config = getStatusConfig(status);
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="cursor-help">
-            <Badge className={`${config.color} text-white text-xs flex items-center gap-1`}>
-              {config.text}
-              <Info className="w-3 h-3" />
-            </Badge>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs">
-          <p className="text-sm">{config.message}</p>
-        </TooltipContent>
-      </Tooltip>
-    );
+  const handleCardClick = (booking: any) => {
+    setSelectedBooking(booking);
+    setShowStatusDialog(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -114,17 +101,16 @@ const ClientSchedule = () => {
   const filteredBookings = filterBookings(activeTab);
 
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-[#093758] pb-20">
-        {/* Header */}
-        <div className="px-4 py-6 bg-[#093758]">
-          <div className="flex items-center gap-4 mb-6">
-            <h1 className="text-xl font-semibold text-white">Meus Agendamentos</h1>
-          </div>
+    <div className="min-h-screen bg-[#093758] pb-20">
+      {/* Header */}
+      <div className="px-4 py-6 bg-[#093758]">
+        <div className="flex items-center gap-4 mb-6">
+          <h1 className="text-xl font-semibold text-white">Meus Agendamentos</h1>
+        </div>
 
-          {/* Tabs */}
-          <div className="flex gap-1 bg-white/10 rounded-lg p-1">
-            {[{
+        {/* Tabs */}
+        <div className="flex gap-1 bg-white/10 rounded-lg p-1">
+          {[{
             id: 'upcoming',
             label: 'Próximas'
           }, {
@@ -136,55 +122,120 @@ const ClientSchedule = () => {
           }].map(tab => <Button key={tab.id} variant={activeTab === tab.id ? "default" : "ghost"} size="sm" onClick={() => setActiveTab(tab.id)} className={`flex-1 ${activeTab === tab.id ? 'bg-[#F35410] text-white hover:bg-[#BA2D0B]' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
                 {tab.label}
               </Button>)}
-          </div>
         </div>
-
-        <div className="px-4 space-y-4">
-          {filteredBookings.length === 0 ? <div className="text-center py-12">
-              <Calendar className="w-16 h-16 text-white/30 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {activeTab === 'upcoming' && 'Nenhum agendamento próximo'}
-                {activeTab === 'pending' && 'Nenhum agendamento pendente'}
-                {activeTab === 'completed' && 'Nenhum histórico ainda'}
-              </h3>
-              <p className="text-white/60 text-sm">
-                Suas reservas aparecerão aqui
-              </p>
-            </div> : filteredBookings.map(booking => <Card key={booking.id} className="bg-white/10 border-white/20">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-semibold text-white">{booking.courtName}</h3>
-                    {getStatusBadge(booking.status)}
-                  </div>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-white/70 text-sm">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(booking.date)}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-white/70 text-sm">
-                      <Clock className="w-4 h-4" />
-                      <span>{booking.time} • {booking.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-white/70 text-sm">
-                      <MapPin className="w-4 h-4" />
-                      <span>{booking.location}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-[#F35410] text-lg">{booking.price}</span>
-                    {booking.status === 'pending' && <Button size="sm" className="bg-[#F35410] hover:bg-[#BA2D0B] text-white">
-                        Confirmar
-                      </Button>}
-                  </div>
-                </CardContent>
-              </Card>)}
-        </div>
-
-        <BottomNavigation userType="client" />
       </div>
-    </TooltipProvider>
+
+      <div className="px-4 space-y-4">
+        {filteredBookings.length === 0 ? <div className="text-center py-12">
+            <Calendar className="w-16 h-16 text-white/30 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {activeTab === 'upcoming' && 'Nenhum agendamento próximo'}
+              {activeTab === 'pending' && 'Nenhum agendamento pendente'}
+              {activeTab === 'completed' && 'Nenhum histórico ainda'}
+            </h3>
+            <p className="text-white/60 text-sm">
+              Suas reservas aparecerão aqui
+            </p>
+          </div> : filteredBookings.map(booking => <Card key={booking.id} className="bg-white/10 border-white/20 cursor-pointer hover:bg-white/15 transition-colors" onClick={() => handleCardClick(booking)}>
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="font-semibold text-white">{booking.courtName}</h3>
+                <Badge className={`${getStatusConfig(booking.status).color} text-white text-xs`}>
+                  {getStatusConfig(booking.status).text}
+                </Badge>
+              </div>
+              
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatDate(booking.date)}</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <Clock className="w-4 h-4" />
+                  <span>{booking.time} • {booking.duration}</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <MapPin className="w-4 h-4" />
+                  <span>{booking.location}</span>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="font-bold text-[#F35410] text-lg">{booking.price}</span>
+                {booking.status === 'pending' && (
+                  <Button size="sm" className="bg-[#F35410] hover:bg-[#BA2D0B] text-white">
+                    Confirmar
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>)}
+      </div>
+
+      {/* Status Information Dialog */}
+      <Dialog open={showStatusDialog} onOpenChange={setShowStatusDialog}>
+        <DialogContent className="bg-[#093758] border-white/20 text-white max-w-sm mx-4">
+          <DialogHeader className="space-y-4">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-lg font-semibold">
+                Detalhes do Agendamento
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowStatusDialog(false)}
+                className="text-white/70 hover:text-white h-6 w-6 p-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </DialogHeader>
+          
+          {selectedBooking && (
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-white mb-2">{selectedBooking.courtName}</h3>
+                <div className="flex items-center gap-2 mb-3">
+                  <Badge className={`${getStatusConfig(selectedBooking.status).color} text-white text-sm`}>
+                    {getStatusConfig(selectedBooking.status).text}
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="bg-white/5 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <Info className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-white/80 leading-relaxed">
+                    {getStatusConfig(selectedBooking.status).message}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2 text-sm text-white/70">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatDate(selectedBooking.date)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{selectedBooking.time} • {selectedBooking.duration}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  <span>{selectedBooking.location}</span>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-white/10">
+                <span className="font-bold text-[#F35410] text-lg">{selectedBooking.price}</span>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <BottomNavigation userType="client" />
+    </div>
   );
 };
 
