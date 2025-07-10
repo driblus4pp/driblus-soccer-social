@@ -8,7 +8,6 @@ import { Calendar, Clock, MapPin, Info, X } from "lucide-react";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import BottomNavigation from "@/components/navigation/BottomNavigation";
-
 const mockBookings = [{
   id: '1',
   courtName: 'No Alvo Society',
@@ -37,7 +36,6 @@ const mockBookings = [{
   price: 'R$ 200',
   location: 'Cocó, Fortaleza'
 }];
-
 const ClientSchedule = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -52,7 +50,6 @@ const ClientSchedule = () => {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
-
   const getStatusConfig = (status: string) => {
     const statusConfig = {
       confirmed: {
@@ -78,30 +75,26 @@ const ClientSchedule = () => {
     };
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
   };
-
   const handleCardClick = (booking: any) => {
     setSelectedBooking(booking);
     setShowStatusDialog(true);
   };
-
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "dd 'de' MMMM", { locale: ptBR });
+      return format(new Date(dateString), "dd 'de' MMMM", {
+        locale: ptBR
+      });
     } catch {
       return dateString;
     }
   };
-
   const filterBookings = (status: string) => {
     if (status === 'upcoming') return mockBookings.filter(b => b.status === 'confirmed' || b.status === 'pending');
     if (status === 'completed') return mockBookings.filter(b => b.status === 'completed');
     return mockBookings.filter(b => b.status === 'pending');
   };
-
   const filteredBookings = filterBookings(activeTab);
-
-  return (
-    <div className="min-h-screen bg-[#093758] pb-20">
+  return <div className="min-h-screen bg-[#093758] pb-20">
       {/* Header */}
       <div className="px-4 py-6 bg-[#093758]">
         <div className="flex items-center gap-4 mb-6">
@@ -111,15 +104,15 @@ const ClientSchedule = () => {
         {/* Tabs */}
         <div className="flex gap-1 bg-white/10 rounded-lg p-1">
           {[{
-            id: 'upcoming',
-            label: 'Próximas'
-          }, {
-            id: 'pending',
-            label: 'Pendentes'
-          }, {
-            id: 'completed',
-            label: 'Histórico'
-          }].map(tab => <Button key={tab.id} variant={activeTab === tab.id ? "default" : "ghost"} size="sm" onClick={() => setActiveTab(tab.id)} className={`flex-1 ${activeTab === tab.id ? 'bg-[#F35410] text-white hover:bg-[#BA2D0B]' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
+          id: 'upcoming',
+          label: 'Próximas'
+        }, {
+          id: 'pending',
+          label: 'Pendentes'
+        }, {
+          id: 'completed',
+          label: 'Histórico'
+        }].map(tab => <Button key={tab.id} variant={activeTab === tab.id ? "default" : "ghost"} size="sm" onClick={() => setActiveTab(tab.id)} className={`flex-1 ${activeTab === tab.id ? 'bg-[#F35410] text-white hover:bg-[#BA2D0B]' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>
                 {tab.label}
               </Button>)}
         </div>
@@ -162,11 +155,7 @@ const ClientSchedule = () => {
 
               <div className="flex justify-between items-center">
                 <span className="font-bold text-[#F35410] text-lg">{booking.price}</span>
-                {booking.status === 'pending' && (
-                  <Button size="sm" className="bg-[#F35410] hover:bg-[#BA2D0B] text-white">
-                    Confirmar
-                  </Button>
-                )}
+                {booking.status === 'pending'}
               </div>
             </CardContent>
           </Card>)}
@@ -180,19 +169,13 @@ const ClientSchedule = () => {
               <DialogTitle className="text-lg font-semibold">
                 Detalhes do Agendamento
               </DialogTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowStatusDialog(false)}
-                className="text-white/70 hover:text-white h-6 w-6 p-0"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setShowStatusDialog(false)} className="text-white/70 hover:text-white h-6 w-6 p-0">
                 <X className="w-4 h-4" />
               </Button>
             </div>
           </DialogHeader>
           
-          {selectedBooking && (
-            <div className="space-y-4">
+          {selectedBooking && <div className="space-y-4">
               <div>
                 <h3 className="font-semibold text-white mb-2">{selectedBooking.courtName}</h3>
                 <div className="flex items-center gap-2 mb-3">
@@ -229,14 +212,11 @@ const ClientSchedule = () => {
               <div className="pt-2 border-t border-white/10">
                 <span className="font-bold text-[#F35410] text-lg">{selectedBooking.price}</span>
               </div>
-            </div>
-          )}
+            </div>}
         </DialogContent>
       </Dialog>
 
       <BottomNavigation userType="client" />
-    </div>
-  );
+    </div>;
 };
-
 export default ClientSchedule;
