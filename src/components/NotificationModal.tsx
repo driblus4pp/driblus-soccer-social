@@ -95,7 +95,7 @@ const NotificationModal = ({
       <DialogContent className="max-w-md mx-4 max-h-[80vh] overflow-hidden bg-sky-950">
         <DialogHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold">Notificações</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-gray-50">Notificações</DialogTitle>
             {unreadCount > 0 && <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-sm text-gray-600 hover:text-gray-900">
                 <Check className="w-4 h-4 mr-1" />
                 Marcar todas como lidas
