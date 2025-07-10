@@ -7,7 +7,7 @@ export const mockCourts = [{
   price: 'R$ 120',
   rating: 4.8,
   status: 'available',
-  image: '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png',
+  image: '/lovable-uploads/844a5c8f-2d19-412b-bf9a-72a8ca229731.png',
   isRecommended: true,
   amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Bar']
 }, {
@@ -18,7 +18,7 @@ export const mockCourts = [{
   price: 'R$ 110',
   rating: 4.6,
   status: 'available',
-  image: '/src/assets/no-alvo-sul-1.png',
+  image: '/lovable-uploads/948fc8dd-5540-401e-bd96-454de6744259.png',
   isRecommended: true,
   amenities: ['Vestiário', 'Estacionamento', 'Chuveiro']
 }, {
@@ -29,7 +29,7 @@ export const mockCourts = [{
   price: 'R$ 80',
   rating: 4.4,
   status: 'available',
-  image: '/src/assets/no-alvo-norte-1.png',
+  image: '/lovable-uploads/9e9f18a9-56b6-4ab9-af6f-542bd962c4a5.png',
   isRecommended: true,
   amenities: ['Vestiário', 'Estacionamento', 'Iluminação']
 }, {
@@ -40,7 +40,7 @@ export const mockCourts = [{
   price: 'R$ 140',
   rating: 4.7,
   status: 'available',
-  image: '/src/assets/arena-cangaco-futebol.png',
+  image: '/lovable-uploads/a9b4f323-9c73-4fa1-9684-514b7ff7aff2.png',
   isRecommended: true,
   amenities: ['Vestiário', 'Bar', 'Deck', 'Areia']
 }, {
@@ -51,7 +51,7 @@ export const mockCourts = [{
   price: 'R$ 100',
   rating: 4.8,
   status: 'available',
-  image: '/src/assets/arena-cangaco-volei.png',
+  image: '/lovable-uploads/23e0408a-0795-41f0-a4be-e0b16f52f7ff.png',
   isRecommended: false,
   amenities: ['Vestiário', 'Bar', 'Deck', 'Areia']
 }, {
@@ -62,7 +62,7 @@ export const mockCourts = [{
   price: 'R$ 80',
   rating: 4.6,
   status: 'available',
-  image: '/src/assets/arena-cangaco-tennis.png',
+  image: '/lovable-uploads/23e0408a-0795-41f0-a4be-e0b16f52f7ff.png',
   isRecommended: false,
   amenities: ['Vestiário', 'Bar', 'Deck', 'Areia']
 }];
