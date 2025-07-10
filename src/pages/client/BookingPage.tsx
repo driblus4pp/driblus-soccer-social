@@ -10,6 +10,7 @@ import { useUsers } from "@/hooks/useUsers";
 import DateSelectionCard from "@/components/booking/DateSelectionCard";
 import TimeSlotCard from "@/components/booking/TimeSlotCard";
 import PeopleSelectionCard from "@/components/booking/PeopleSelectionCard";
+import HoursSelectionCard from "@/components/booking/HoursSelectionCard";
 import UserDataCard from "@/components/booking/UserDataCard";
 import BookingSummaryCard from "@/components/booking/BookingSummaryCard";
 
@@ -27,6 +28,7 @@ const BookingPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
   const [numberOfPeople, setNumberOfPeople] = useState('');
+  const [selectedHours, setSelectedHours] = useState('1');
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   console.log('BookingPage - Court ID:', id);
@@ -44,21 +46,34 @@ const BookingPage = () => {
 
   console.log('BookingPage - User data:', userData);
 
-  const getEndTime = (startTime: string) => {
+  const getEndTime = (startTime: string, hours: number = 1) => {
     const [hour] = startTime.split(':');
-    return `${parseInt(hour) + 1}:00`;
+    return `${parseInt(hour) + hours}:00`;
+  };
+
+  const isConsecutiveHoursAvailable = (courtId: string, dateStr: string, startTime: string, hours: number) => {
+    for (let i = 0; i < hours; i++) {
+      const currentHour = parseInt(startTime.split(':')[0]) + i;
+      const currentStartTime = `${currentHour}:00`;
+      const currentEndTime = `${currentHour + 1}:00`;
+      
+      if (!isTimeSlotAvailable(courtId, dateStr, currentStartTime, currentEndTime)) {
+        return false;
+      }
+    }
+    return true;
   };
 
   const getAvailableTimeSlots = () => {
     if (!selectedDate || !court) return timeSlots;
     
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    console.log('BookingPage - Checking availability for date:', dateStr);
+    const hours = parseInt(selectedHours);
+    console.log('BookingPage - Checking availability for date:', dateStr, 'hours:', hours);
     
     return timeSlots.filter(time => {
-      const endTime = getEndTime(time);
-      const isAvailable = isTimeSlotAvailable(court.id, dateStr, time, endTime);
-      console.log(`BookingPage - Time ${time}-${endTime} available:`, isAvailable);
+      const isAvailable = isConsecutiveHoursAvailable(court.id, dateStr, time, hours);
+      console.log(`BookingPage - Time ${time} for ${hours} hours available:`, isAvailable);
       return isAvailable;
     });
   };
@@ -78,6 +93,10 @@ const BookingPage = () => {
       newErrors.people = 'Por favor, informe quantas pessoas participarão';
     }
 
+    if (!selectedHours || selectedHours === '0') {
+      newErrors.hours = 'Por favor, selecione a duração da reserva';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -87,6 +106,7 @@ const BookingPage = () => {
     console.log('selectedDate:', selectedDate);
     console.log('selectedTime:', selectedTime);
     console.log('numberOfPeople:', numberOfPeople);
+    console.log('selectedHours:', selectedHours);
     console.log('court:', court);
     
     // Validar formulário
@@ -103,27 +123,30 @@ const BookingPage = () => {
 
     console.log('✓ Todos os campos obrigatórios estão preenchidos');
 
-    const endTime = getEndTime(selectedTime);
+    const hours = parseInt(selectedHours);
+    const endTime = getEndTime(selectedTime, hours);
     const dateStr = format(selectedDate!, 'yyyy-MM-dd');
 
     console.log('Dados calculados:');
+    console.log('- hours:', hours);
     console.log('- endTime:', endTime);
     console.log('- dateStr:', dateStr);
 
-    // Verificação de disponibilidade do horário
-    console.log('Verificando disponibilidade...');
-    const isAvailable = isTimeSlotAvailable(court.id, dateStr, selectedTime, endTime);
-    console.log('isTimeSlotAvailable result:', isAvailable);
+    // Verificação de disponibilidade das horas consecutivas
+    console.log('Verificando disponibilidade das horas consecutivas...');
+    const isAvailable = isConsecutiveHoursAvailable(court.id, dateStr, selectedTime, hours);
+    console.log('isConsecutiveHoursAvailable result:', isAvailable);
     
     if (!isAvailable) {
-      console.log('ERROR: Horário não está mais disponível');
-      alert('Este horário não está mais disponível. Por favor, escolha outro horário.');
+      console.log('ERROR: Nem todas as horas consecutivas estão disponíveis');
+      alert('Nem todos os horários consecutivos estão disponíveis. Por favor, escolha outro horário ou reduza a duração.');
       return;
     }
 
-    console.log('✓ Horário está disponível');
+    console.log('✓ Todas as horas consecutivas estão disponíveis');
 
     // Criação dos dados do booking
+    const totalPrice = court.hourlyRate * hours;
     const bookingData = {
       courtId: court.id,
       courtName: court.name,
@@ -135,8 +158,8 @@ const BookingPage = () => {
       date: dateStr,
       startTime: selectedTime,
       endTime,
-      duration: 1,
-      totalPrice: court.hourlyRate,
+      duration: hours,
+      totalPrice,
       serviceFee: 0,
       numberOfPlayers: parseInt(numberOfPeople),
       needsEquipment: false,
@@ -190,6 +213,16 @@ const BookingPage = () => {
     }
   };
 
+  const handleHoursChange = (hours: string) => {
+    console.log('Hours selected:', hours);
+    setSelectedHours(hours);
+    // Reset selected time when hours change to revalidate availability
+    setSelectedTime('');
+    if (errors.hours) {
+      setErrors(prev => ({ ...prev, hours: '' }));
+    }
+  };
+
   const availableSlots = getAvailableTimeSlots();
   console.log('BookingPage - Available slots:', availableSlots);
 
@@ -231,8 +264,17 @@ const BookingPage = () => {
           error={errors.date}
         />
 
-        {/* Time Selection */}
+        {/* Hours Selection */}
         {selectedDate && (
+          <HoursSelectionCard
+            selectedHours={selectedHours}
+            onHoursChange={handleHoursChange}
+            error={errors.hours}
+          />
+        )}
+
+        {/* Time Selection */}
+        {selectedDate && selectedHours && (
           <TimeSlotCard
             selectedTime={selectedTime}
             onTimeChange={handleTimeChange}
@@ -242,7 +284,7 @@ const BookingPage = () => {
         )}
 
         {/* Number of People Selection */}
-        {selectedDate && selectedTime && (
+        {selectedDate && selectedHours && selectedTime && (
           <PeopleSelectionCard
             numberOfPeople={numberOfPeople}
             onPeopleChange={handlePeopleChange}
@@ -251,15 +293,16 @@ const BookingPage = () => {
         )}
 
         {/* User Data Display - Automatically loaded */}
-        {selectedDate && selectedTime && numberOfPeople && (
+        {selectedDate && selectedHours && selectedTime && numberOfPeople && (
           <UserDataCard userData={userData} />
         )}
 
         {/* Booking Summary & Proceed */}
-        {selectedDate && selectedTime && numberOfPeople && (
+        {selectedDate && selectedHours && selectedTime && numberOfPeople && (
           <BookingSummaryCard
             selectedDate={selectedDate}
             selectedTime={selectedTime}
+            selectedHours={selectedHours}
             numberOfPeople={numberOfPeople}
             courtPrice={court?.hourlyRate || 120}
             onProceed={handleProceedToConfirmation}
