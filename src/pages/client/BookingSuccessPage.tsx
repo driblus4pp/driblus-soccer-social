@@ -1,29 +1,26 @@
-
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Calendar, Clock, User, Phone, Mail, MapPin, Users } from "lucide-react";
-
 const BookingSuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { booking, court } = location.state || {};
-
+  const {
+    booking,
+    court
+  } = location.state || {};
   console.log('BookingSuccessPage - booking:', booking);
   console.log('BookingSuccessPage - court:', court);
-
   if (!booking || !court) {
     console.log('BookingSuccessPage - Missing data, redirecting to dashboard');
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B] flex items-center justify-center">
         <div className="text-white text-center">
           <p>Informações do agendamento não encontradas</p>
           <Button onClick={() => navigate('/cliente/dashboard')} className="mt-4">
             Voltar ao Dashboard
           </Button>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // Corrigir a renderização do court.location
@@ -36,16 +33,15 @@ const BookingSuccessPage = () => {
     }
     return 'Localização não informada';
   };
-
   const totalPrice = booking.totalPrice; // Sem taxa de serviço
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
+  return <div className="min-h-screen bg-gradient-to-br from-[#062B4B] via-[#0A3B5C] to-[#062B4B]">
       <div className="p-4 space-y-6">
         {/* Success Header */}
         <div className="text-center py-8">
           <CheckCircle className="w-20 h-20 text-green-400 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-white mb-2">Agendamento Confirmado!</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Agendamento 
+Realizado!</h1>
           <p className="text-white/70">Ordem de agendamento enviada com sucesso ao gestor</p>
         </div>
 
@@ -135,9 +131,7 @@ const BookingSuccessPage = () => {
             <p className="text-green-200 text-sm">
               ✅ Ordem de agendamento enviada ao gestor da quadra
             </p>
-            <p className="text-green-200 text-sm">
-              ✅ Seus dados foram compartilhados automaticamente
-            </p>
+            
             <p className="text-green-200 text-sm">
               ✅ Horário reservado com sucesso
             </p>
@@ -158,8 +152,6 @@ const BookingSuccessPage = () => {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BookingSuccessPage;
