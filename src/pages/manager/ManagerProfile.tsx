@@ -30,7 +30,7 @@ const ManagerProfile = () => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const managerStats = {
-    courtName: 'No Alvo Society',
+    courtName: 'Arena Cangaço',
     totalBookings: analytics.monthlyBookings.length,
     monthlyRevenue: analytics.revenueHistory[analytics.revenueHistory.length - 1]?.revenue || 0,
     customerRating: 4.8
