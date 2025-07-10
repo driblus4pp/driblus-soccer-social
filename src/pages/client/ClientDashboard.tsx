@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import { useBookings } from "@/hooks/useBookings";
 import { useFeedbackReminder } from "@/hooks/useFeedbackReminder";
 import FeedbackBanner from "@/components/feedback/FeedbackBanner";
 import RatingModal from "@/components/RatingModal";
+import { useNotifications } from "@/hooks/useNotifications";
 import { Booking } from "@/types";
 
 const mockCourts = [{
@@ -70,6 +70,7 @@ const ClientDashboard = () => {
   const { reminderBookings, dismissReminder } = useFeedbackReminder(bookings);
   const [selectedBookingForRating, setSelectedBookingForRating] = useState<Booking | null>(null);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const { unreadCount } = useNotifications();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -125,12 +126,14 @@ const ClientDashboard = () => {
               className="text-white hover:bg-white/20 relative"
             >
               <Bell className="w-5 h-5" />
-              <Badge 
-                variant="destructive" 
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-              >
-                2
-              </Badge>
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                >
+                  {unreadCount}
+                </Badge>
+              )}
             </Button>
             
             <img 
