@@ -15,7 +15,7 @@ const BottomNavigation = ({ userType }: BottomNavigationProps) => {
       case 'client':
         return [
           { path: '/cliente/dashboard', icon: Home, label: 'Início' },
-          { path: '/cliente/quadras', icon: Building2, label: 'Quadras' },
+          { path: '/cliente/quadras', icon: Building2, label: 'Radar' },
           { path: '/cliente/agendamentos', icon: Calendar, label: 'Agenda' },
           { path: '/cliente/notificacoes', icon: Bell, label: 'Avisos' },
           { path: '/cliente/perfil', icon: User, label: 'Perfil' }
