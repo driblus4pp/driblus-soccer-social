@@ -97,24 +97,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         console.log('AuthContext - Admin user created with role:', mockUser.role);
         console.log('AuthContext - UserRole.ADMIN constant:', UserRole.ADMIN);
-      } else if (email === 'gestor@test.com') {
+      } else if (email === 'gestor.alvo@driblus.com' && password === 'dida') {
+        console.log('AuthContext - Creating No Alvo Society manager user');
         mockUser = {
-          id: 'manager-1',
-          name: 'João Silva',
+          id: 'manager-alvo',
+          name: 'No Alvo Society',
           email,
           phone: '+55 85 99999-9999',
           role: UserRole.COURT_MANAGER,
           isVerified: true,
-          createdAt: new Date('2024-02-01'),
+          createdAt: new Date('2024-01-15'),
           lastLogin: new Date(),
           avatar: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face',
           googleCalendarConnected: false,
           stats: {
-            totalBookings: 87,
-            completedGames: 82,
-            cancelledGames: 5,
-            averageRating: 4.8,
-            totalSpent: 15420,
+            totalBookings: 234,
+            completedGames: 220,
+            cancelledGames: 14,
+            averageRating: 4.7,
+            totalSpent: 45780,
+          }
+        };
+      } else if (email === 'gestor.arena@driblus.com' && password === 'dida') {
+        console.log('AuthContext - Creating Arena Cangaço manager user');
+        mockUser = {
+          id: 'manager-arena',
+          name: 'Arena Cangaço',
+          email,
+          phone: '+55 85 88888-8888',
+          role: UserRole.COURT_MANAGER,
+          isVerified: true,
+          createdAt: new Date('2024-02-10'),
+          lastLogin: new Date(),
+          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=face',
+          googleCalendarConnected: false,
+          stats: {
+            totalBookings: 156,
+            completedGames: 148,
+            cancelledGames: 8,
+            averageRating: 4.7,
+            totalSpent: 32150,
           }
         };
       } else {

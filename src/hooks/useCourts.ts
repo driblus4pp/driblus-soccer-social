@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Court, WorkingHours, SportType } from '@/types';
 
 const mockCourts: Court[] = [
+  // No Alvo Centro - 2 quadras
   {
-    id: '1',
-    name: 'No Alvo Society',
-    description: 'Quadra society com grama sintética de alta qualidade, vestiários completos e estacionamento gratuito para todos os clientes.',
+    id: 'alvo-centro-1',
+    name: 'No Alvo Centro - Quadra 1',
+    description: 'Quadra society com grama sintética de alta qualidade, vestiários completos e estacionamento gratuito. Localizada no coração da cidade.',
     location: {
       address: 'Rua Major Facundo, 123',
       city: 'Fortaleza',
@@ -14,129 +15,170 @@ const mockCourts: Court[] = [
       lat: -3.731862,
       lng: -38.526669
     },
-    ownerId: 'manager-1',
-    ownerName: 'João Silva',
+    ownerId: 'manager-alvo',
+    ownerName: 'No Alvo Society',
     images: [
-      'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop'
+      '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png',
+      '/lovable-uploads/e2851d8b-df3a-41af-bd1d-d8810288d44e.png',
+      '/lovable-uploads/6491b5bb-0717-48ce-adff-2d6d9f60566f.png'
     ],
     sports: [SportType.FOOTBALL, SportType.FUTSAL],
-    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Bar'],
     hourlyRate: 120,
     status: 'active',
     rating: 4.8,
     totalReviews: 47,
-    workingHours: {
-      monday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      tuesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      wednesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      thursday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      friday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      saturday: { isOpen: true, openTime: '07:00', closeTime: '20:00' },
-      sunday: { isOpen: false, openTime: '07:00', closeTime: '20:00' }
-    },
-    isVerified: true,
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-06-19')
-  },
-  {
-    id: '2',
-    name: 'Gol de Placa',
-    description: 'Quadra profissional de futebol society com iluminação LED e bar completo para confraternizações.',
-    location: {
-      address: 'Avenida Beira Mar, 456',
-      city: 'Fortaleza',
-      state: 'CE',
-      zipCode: '60165-000',
-      lat: -3.731862,
-      lng: -38.526669
-    },
-    ownerId: 'manager-2',
-    ownerName: 'Maria Santos',
-    images: [
-      'https://images.unsplash.com/photo-1452378174528-3090a4bba7b2?w=600&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=400&fit=crop'
-    ],
-    sports: [SportType.FOOTBALL, SportType.FUTSAL],
-    amenities: ['Vestiário', 'Bar', 'Iluminação', 'Estacionamento'],
-    hourlyRate: 150,
-    status: 'active',
-    rating: 4.9,
-    totalReviews: 63,
     workingHours: {
       monday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
       tuesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
       wednesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
       thursday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
       friday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
-      saturday: { isOpen: true, openTime: '08:00', closeTime: '22:00' },
-      sunday: { isOpen: true, openTime: '08:00', closeTime: '20:00' }
+      saturday: { isOpen: true, openTime: '07:00', closeTime: '23:00' },
+      sunday: { isOpen: true, openTime: '07:00', closeTime: '22:00' }
     },
     isVerified: true,
-    createdAt: new Date('2024-02-10'),
-    updatedAt: new Date('2024-06-20')
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-12-20')
   },
   {
-    id: '3',
-    name: 'Arena Pro Sports',
-    description: 'Complexo esportivo com quadra de basquete profissional, academia e área de convivência.',
+    id: 'alvo-centro-2',
+    name: 'No Alvo Centro - Quadra 2',
+    description: 'Segunda quadra society do complexo central, com mesmo padrão de qualidade e infraestrutura completa.',
     location: {
-      address: 'Rua das Palmeiras, 789',
+      address: 'Rua Major Facundo, 123',
       city: 'Fortaleza',
       state: 'CE',
-      zipCode: '60175-000',
+      zipCode: '60120-000',
       lat: -3.731862,
       lng: -38.526669
     },
-    ownerId: 'manager-3',
-    ownerName: 'Carlos Oliveira',
+    ownerId: 'manager-alvo',
+    ownerName: 'No Alvo Society',
     images: [
-      'https://images.unsplash.com/photo-1544989164-44a5ba64d0c6?w=600&h=400&fit=crop'
+      '/lovable-uploads/e2851d8b-df3a-41af-bd1d-d8810288d44e.png',
+      '/lovable-uploads/6491b5bb-0717-48ce-adff-2d6d9f60566f.png',
+      '/lovable-uploads/e7f67107-cd13-4104-8fe2-fed9dc5f571a.png'
     ],
-    sports: [SportType.BASKETBALL, SportType.VOLLEYBALL],
-    amenities: ['Vestiário', 'Academia', 'Estacionamento', 'Chuveiro'],
-    hourlyRate: 200,
-    status: 'inactive',
+    sports: [SportType.FOOTBALL, SportType.FUTSAL],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Bar'],
+    hourlyRate: 120,
+    status: 'active',
     rating: 4.7,
     totalReviews: 38,
-    unavailabilityReason: 'Manutenção preventiva da quadra - Previsão de retorno: 02/01/2025',
     workingHours: {
-      monday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      tuesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      wednesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      thursday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      friday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
-      saturday: { isOpen: true, openTime: '08:00', closeTime: '20:00' },
-      sunday: { isOpen: false, openTime: '08:00', closeTime: '20:00' }
+      monday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      tuesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      wednesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      thursday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      friday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      saturday: { isOpen: true, openTime: '07:00', closeTime: '23:00' },
+      sunday: { isOpen: true, openTime: '07:00', closeTime: '22:00' }
     },
     isVerified: true,
-    createdAt: new Date('2024-03-05'),
-    updatedAt: new Date('2024-06-18')
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-12-20')
   },
+  // No Alvo Sul - 2 quadras
   {
-    id: '4',
-    name: 'Sport Center Elite',
-    description: 'Centro esportivo completo com múltiplas modalidades e infraestrutura premium.',
+    id: 'alvo-sul-1',
+    name: 'No Alvo Sul - Quadra 1',
+    description: 'Quadra society localizada na zona sul de Fortaleza, com grama sintética e excelente infraestrutura.',
     location: {
-      address: 'Avenida Santos Dumont, 321',
+      address: 'Avenida Washington Soares, 456',
       city: 'Fortaleza',
       state: 'CE',
-      zipCode: '60150-000',
-      lat: -3.731862,
-      lng: -38.526669
+      zipCode: '60811-000',
+      lat: -3.774010,
+      lng: -38.480500
     },
-    ownerId: 'manager-4',
-    ownerName: 'Ana Costa',
+    ownerId: 'manager-alvo',
+    ownerName: 'No Alvo Society',
     images: [
-      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1556909191-f6e405073de9?w=600&h=400&fit=crop'
+      '/src/assets/no-alvo-sul-1.png',
+      '/src/assets/no-alvo-sul-2.png'
     ],
-    sports: [SportType.TENNIS, SportType.VOLLEYBALL, SportType.BASKETBALL],
-    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Bar', 'Loja de Equipamentos'],
-    hourlyRate: 180,
-    status: 'pending_approval',
+    sports: [SportType.FOOTBALL, SportType.FUTSAL],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
+    hourlyRate: 110,
+    status: 'active',
     rating: 4.6,
-    totalReviews: 25,
+    totalReviews: 32,
+    workingHours: {
+      monday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      tuesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      wednesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      thursday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      friday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      saturday: { isOpen: true, openTime: '07:00', closeTime: '23:00' },
+      sunday: { isOpen: true, openTime: '07:00', closeTime: '22:00' }
+    },
+    isVerified: true,
+    createdAt: new Date('2024-02-01'),
+    updatedAt: new Date('2024-12-20')
+  },
+  {
+    id: 'alvo-sul-2',
+    name: 'No Alvo Sul - Quadra 2',
+    description: 'Quadra poliesportiva com piso adaptado para futsal e outras modalidades esportivas.',
+    location: {
+      address: 'Avenida Washington Soares, 456',
+      city: 'Fortaleza',
+      state: 'CE',
+      zipCode: '60811-000',
+      lat: -3.774010,
+      lng: -38.480500
+    },
+    ownerId: 'manager-alvo',
+    ownerName: 'No Alvo Society',
+    images: [
+      '/src/assets/no-alvo-sul-2.png',
+      '/src/assets/no-alvo-sul-1.png'
+    ],
+    sports: [SportType.FUTSAL, SportType.BASKETBALL],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
+    hourlyRate: 100,
+    status: 'active',
+    rating: 4.5,
+    totalReviews: 28,
+    workingHours: {
+      monday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      tuesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      wednesday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      thursday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      friday: { isOpen: true, openTime: '06:00', closeTime: '23:00' },
+      saturday: { isOpen: true, openTime: '07:00', closeTime: '23:00' },
+      sunday: { isOpen: true, openTime: '07:00', closeTime: '22:00' }
+    },
+    isVerified: true,
+    createdAt: new Date('2024-02-15'),
+    updatedAt: new Date('2024-12-20')
+  },
+  // No Alvo Norte - 2 quadras
+  {
+    id: 'alvo-norte-1',
+    name: 'No Alvo Norte - Quadra 1',
+    description: 'Quadra de tênis profissional com piso adaptado e rede oficial, localizada na zona norte.',
+    location: {
+      address: 'Rua José Jatahy, 789',
+      city: 'Fortaleza',
+      state: 'CE',
+      zipCode: '60040-000',
+      lat: -3.710000,
+      lng: -38.540000
+    },
+    ownerId: 'manager-alvo',
+    ownerName: 'No Alvo Society',
+    images: [
+      '/src/assets/no-alvo-norte-1.png',
+      '/src/assets/no-alvo-norte-2.png'
+    ],
+    sports: [SportType.TENNIS],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Loja de Equipamentos'],
+    hourlyRate: 80,
+    status: 'active',
+    rating: 4.4,
+    totalReviews: 19,
     workingHours: {
       monday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
       tuesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
@@ -146,9 +188,155 @@ const mockCourts: Court[] = [
       saturday: { isOpen: true, openTime: '07:00', closeTime: '20:00' },
       sunday: { isOpen: true, openTime: '08:00', closeTime: '18:00' }
     },
-    isVerified: false,
-    createdAt: new Date('2024-06-15'),
-    updatedAt: new Date('2024-06-21')
+    isVerified: true,
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-12-20')
+  },
+  {
+    id: 'alvo-norte-2',
+    name: 'No Alvo Norte - Quadra 2',
+    description: 'Quadra de basquete coberta com piso oficial e cestas profissionais para competições.',
+    location: {
+      address: 'Rua José Jatahy, 789',
+      city: 'Fortaleza',
+      state: 'CE',
+      zipCode: '60040-000',
+      lat: -3.710000,
+      lng: -38.540000
+    },
+    ownerId: 'manager-alvo',
+    ownerName: 'No Alvo Society',
+    images: [
+      '/src/assets/no-alvo-norte-2.png',
+      '/src/assets/no-alvo-norte-1.png'
+    ],
+    sports: [SportType.BASKETBALL],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação'],
+    hourlyRate: 90,
+    status: 'active',
+    rating: 4.3,
+    totalReviews: 24,
+    workingHours: {
+      monday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+      tuesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+      wednesday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+      thursday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+      friday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
+      saturday: { isOpen: true, openTime: '07:00', closeTime: '20:00' },
+      sunday: { isOpen: true, openTime: '08:00', closeTime: '18:00' }
+    },
+    isVerified: true,
+    createdAt: new Date('2024-03-15'),
+    updatedAt: new Date('2024-12-20')
+  },
+  // Arena Cangaço - 3 quadras
+  {
+    id: 'arena-futebol',
+    name: 'Arena Cangaço - Futebol Society',
+    description: 'Quadra de futebol society com grama sintética de última geração e iluminação LED profissional.',
+    location: {
+      address: 'Rua do Cangaço, 500',
+      city: 'Fortaleza',
+      state: 'CE',
+      zipCode: '60356-000',
+      lat: -3.745000,
+      lng: -38.505000
+    },
+    ownerId: 'manager-arena',
+    ownerName: 'Arena Cangaço',
+    images: [
+      '/src/assets/arena-cangaco-futebol.png'
+    ],
+    sports: [SportType.FOOTBALL, SportType.FUTSAL],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Iluminação', 'Bar'],
+    hourlyRate: 140,
+    status: 'active',
+    rating: 4.7,
+    totalReviews: 55,
+    workingHours: {
+      monday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      tuesday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      wednesday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      thursday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      friday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      saturday: { isOpen: true, openTime: '08:00', closeTime: '22:00' },
+      sunday: { isOpen: true, openTime: '08:00', closeTime: '20:00' }
+    },
+    isVerified: true,
+    createdAt: new Date('2024-02-10'),
+    updatedAt: new Date('2024-12-20')
+  },
+  {
+    id: 'arena-volei',
+    name: 'Arena Cangaço - Vôlei de Praia',
+    description: 'Quadra de vôlei de praia com areia oficial e rede profissional. Ambiente beach club completo.',
+    location: {
+      address: 'Rua do Cangaço, 500',
+      city: 'Fortaleza',
+      state: 'CE',
+      zipCode: '60356-000',
+      lat: -3.745000,
+      lng: -38.505000
+    },
+    ownerId: 'manager-arena',
+    ownerName: 'Arena Cangaço',
+    images: [
+      '/src/assets/arena-cangaco-volei.png'
+    ],
+    sports: [SportType.VOLLEYBALL],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Bar', 'Deck'],
+    hourlyRate: 100,
+    status: 'active',
+    rating: 4.8,
+    totalReviews: 42,
+    workingHours: {
+      monday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      tuesday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      wednesday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      thursday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      friday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      saturday: { isOpen: true, openTime: '08:00', closeTime: '22:00' },
+      sunday: { isOpen: true, openTime: '08:00', closeTime: '20:00' }
+    },
+    isVerified: true,
+    createdAt: new Date('2024-02-20'),
+    updatedAt: new Date('2024-12-20')
+  },
+  {
+    id: 'arena-tennis',
+    name: 'Arena Cangaço - Beach Tennis',
+    description: 'Quadra de beach tennis com areia especial e rede oficial. Perfeita para treinos e competições.',
+    location: {
+      address: 'Rua do Cangaço, 500',
+      city: 'Fortaleza',
+      state: 'CE',
+      zipCode: '60356-000',
+      lat: -3.745000,
+      lng: -38.505000
+    },
+    ownerId: 'manager-arena',
+    ownerName: 'Arena Cangaço',
+    images: [
+      '/src/assets/arena-cangaco-tennis.png'
+    ],
+    sports: [SportType.TENNIS],
+    amenities: ['Vestiário', 'Estacionamento', 'Chuveiro', 'Bar', 'Deck'],
+    hourlyRate: 80,
+    status: 'active',
+    rating: 4.6,
+    totalReviews: 31,
+    workingHours: {
+      monday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      tuesday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      wednesday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      thursday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      friday: { isOpen: true, openTime: '07:00', closeTime: '22:00' },
+      saturday: { isOpen: true, openTime: '08:00', closeTime: '22:00' },
+      sunday: { isOpen: true, openTime: '08:00', closeTime: '20:00' }
+    },
+    isVerified: true,
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-12-20')
   }
 ];
 

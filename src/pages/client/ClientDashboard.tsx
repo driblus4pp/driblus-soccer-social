@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useBookings } from "@/hooks/useBookings";
 import { useFeedbackReminder } from "@/hooks/useFeedbackReminder";
+import { useDataSync } from "@/hooks/useDataSync";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import NotificationModal from "@/components/NotificationModal";
 import RatingModal from "@/components/RatingModal";
@@ -18,6 +19,7 @@ const ClientDashboard = () => {
   
   const { bookings, addRating } = useBookings();
   const { dismissReminder } = useFeedbackReminder(bookings);
+  const { lastSync, notifyManagers } = useDataSync();
 
   // Filter courts based on search term
   const filteredCourts = mockCourts.filter(court => 

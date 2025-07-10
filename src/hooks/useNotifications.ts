@@ -56,10 +56,15 @@ export const useNotifications = () => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const addNotification = (notification: Notification) => {
+    setNotifications(prev => [notification, ...prev]);
+  };
+
   return {
     notifications,
     unreadCount,
     markAsRead,
-    markAllAsRead
+    markAllAsRead,
+    addNotification
   };
 };
