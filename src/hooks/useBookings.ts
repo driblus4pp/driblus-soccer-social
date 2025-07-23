@@ -282,6 +282,33 @@ export const useBookings = () => {
     );
   };
 
+  const getRatings = () => {
+    return bookings
+      .filter(booking => booking.rating)
+      .map(booking => ({
+        ...booking.rating!,
+        courtName: booking.courtName,
+        userName: booking.userName,
+        userEmail: booking.userEmail,
+        date: booking.date,
+        startTime: booking.startTime,
+        managerId: booking.managerId
+      }));
+  };
+
+  const getRatingsByManager = (managerId: string) => {
+    return bookings
+      .filter(booking => booking.managerId === managerId && booking.rating)
+      .map(booking => ({
+        ...booking.rating!,
+        courtName: booking.courtName,
+        userName: booking.userName,
+        userEmail: booking.userEmail,
+        date: booking.date,
+        startTime: booking.startTime
+      }));
+  };
+
   return {
     bookings,
     getBookingsByStatus,
@@ -292,6 +319,8 @@ export const useBookings = () => {
     createBooking,
     isTimeSlotAvailable,
     addRating,
-    cancelBooking
+    cancelBooking,
+    getRatings,
+    getRatingsByManager
   };
 };

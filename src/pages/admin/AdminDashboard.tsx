@@ -14,7 +14,8 @@ import {
   CheckCircle,
   Clock,
   Settings,
-  LogOut
+  LogOut,
+  MessageSquare
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRole } from "@/types";
@@ -23,6 +24,7 @@ import AdminUsersTab from "@/components/admin/AdminUsersTab";
 import AdminCourtsTab from "@/components/admin/AdminCourtsTab";
 import AdminReportsTab from "@/components/admin/AdminReportsTab";
 import AdminBookingsOverview from "@/components/admin/AdminBookingsOverview";
+import FeedbackDashboard from "@/components/admin/FeedbackDashboard";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -118,12 +120,13 @@ const AdminDashboard = () => {
 
       <div className="p-4">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)} className="space-y-4">
-          <TabsList className="bg-white border border-gray-200 rounded-lg">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Visão Geral</TabsTrigger>
-            <TabsTrigger value="bookings" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Agendamentos</TabsTrigger>
-            <TabsTrigger value="users" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Usuários</TabsTrigger>
-            <TabsTrigger value="courts" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Quadras</TabsTrigger>
-            <TabsTrigger value="reports" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900">Relatórios</TabsTrigger>
+          <TabsList className="bg-white border border-gray-200 rounded-lg grid grid-cols-6 w-full">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-xs">Visão Geral</TabsTrigger>
+            <TabsTrigger value="bookings" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-xs">Agendamentos</TabsTrigger>
+            <TabsTrigger value="users" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-xs">Usuários</TabsTrigger>
+            <TabsTrigger value="courts" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-xs">Quadras</TabsTrigger>
+            <TabsTrigger value="feedbacks" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-xs">Feedbacks</TabsTrigger>
+            <TabsTrigger value="reports" className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-xs">Relatórios</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -220,6 +223,9 @@ const AdminDashboard = () => {
           </TabsContent>
           <TabsContent value="courts">
             <AdminCourtsTab />
+          </TabsContent>
+          <TabsContent value="feedbacks">
+            <FeedbackDashboard />
           </TabsContent>
           <TabsContent value="reports">
             <AdminReportsTab />

@@ -3,11 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, DollarSign, Users, Clock, Building, LogOut } from "lucide-react";
+import { Calendar, DollarSign, Users, Clock, Building, LogOut, MessageSquare } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 import ManagerCourtManager from "@/components/manager/ManagerCourtManager";
 import ManagerSchedule from "@/components/manager/ManagerSchedule";
+import ManagerFeedbackSection from "@/components/manager/ManagerFeedbackSection";
 
 const ManagerDashboard = () => {
   const { user, logout, isLoading } = useAuth();
@@ -31,6 +32,8 @@ const ManagerDashboard = () => {
       setActiveTab('schedule');
     } else if (tabParam === 'court') {
       setActiveTab('court');
+    } else if (tabParam === 'feedbacks') {
+      setActiveTab('feedbacks');
     } else {
       setActiveTab('overview');
     }
@@ -105,15 +108,18 @@ const ManagerDashboard = () => {
 
       <div className="p-4">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
-            <TabsTrigger value="overview" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+          <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+            <TabsTrigger value="overview" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white text-xs">
               Início
             </TabsTrigger>
-            <TabsTrigger value="court" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+            <TabsTrigger value="court" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white text-xs">
               Quadra  
             </TabsTrigger>
-            <TabsTrigger value="schedule" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
+            <TabsTrigger value="schedule" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white text-xs">
               Agenda
+            </TabsTrigger>
+            <TabsTrigger value="feedbacks" className="text-gray-700 data-[state=active]:bg-[#F35410] data-[state=active]:text-white text-xs">
+              Feedbacks
             </TabsTrigger>
           </TabsList>
 
@@ -220,6 +226,10 @@ const ManagerDashboard = () => {
 
           <TabsContent value="schedule" className="space-y-6">
             <ManagerSchedule managerId={managerId} />
+          </TabsContent>
+
+          <TabsContent value="feedbacks" className="space-y-6">
+            <ManagerFeedbackSection managerId={managerId} />
           </TabsContent>
         </Tabs>
       </div>

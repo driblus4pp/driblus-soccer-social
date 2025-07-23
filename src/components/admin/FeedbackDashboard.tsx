@@ -5,87 +5,37 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star, Search, TrendingUp, TrendingDown, MessageSquare, Filter } from "lucide-react";
-
-interface FeedbackItem {
-  id: string;
-  courtId: string;
-  courtName: string;
-  userName: string;
-  userEmail: string;
-  rating: number;
-  comment: string;
-  date: Date;
-  managerId: string;
-  managerName: string;
-  bookingId: string;
-}
-
-const mockFeedbacks: FeedbackItem[] = [
-  {
-    id: '1',
-    courtId: '1',
-    courtName: 'Quadra Arena Sports',
-    userName: 'João Silva',
-    userEmail: 'joao@email.com',
-    rating: 5,
-    comment: 'Excelente quadra! Muito bem mantida e com ótima localização.',
-    date: new Date('2024-12-20'),
-    managerId: 'manager-1',
-    managerName: 'João Silva',
-    bookingId: 'booking-1'
-  },
-  {
-    id: '2',
-    courtId: '2',
-    courtName: 'Complexo Esportivo Central',
-    userName: 'Maria Santos',
-    userEmail: 'maria@email.com',
-    rating: 4,
-    comment: 'Boa estrutura, mas poderia melhorar a iluminação.',
-    date: new Date('2024-12-19'),
-    managerId: 'manager-2',
-    managerName: 'Maria Santos',
-    bookingId: 'booking-2'
-  },
-  {
-    id: '3',
-    courtId: '3',
-    courtName: 'Quadra do Parque',
-    userName: 'Carlos Oliveira',
-    userEmail: 'carlos@email.com',
-    rating: 2,
-    comment: 'Quadra em mal estado, precisa de manutenção urgente.',
-    date: new Date('2024-12-18'),
-    managerId: 'manager-3',
-    managerName: 'Carlos Oliveira',
-    bookingId: 'booking-3'
-  }
-];
+import { useBookings } from "@/hooks/useBookings";
 
 const FeedbackDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [ratingFilter, setRatingFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'rating'>('date');
+  const { getRatings } = useBookings();
 
-  const filteredFeedbacks = mockFeedbacks.filter(feedback => {
+  const allFeedbacks = getRatings();
+
+  const filteredFeedbacks = allFeedbacks.filter(feedback => {
     const matchesSearch = feedback.courtName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          feedback.userName.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesRating = ratingFilter === 'all' || 
-                         (ratingFilter === 'high' && feedback.rating >= 4) ||
-                         (ratingFilter === 'low' && feedback.rating <= 2);
+                         (ratingFilter === 'high' && feedback.stars >= 4) ||
+                         (ratingFilter === 'low' && feedback.stars <= 2);
     
     return matchesSearch && matchesRating;
   }).sort((a, b) => {
     if (sortBy === 'date') {
-      return b.date.getTime() - a.date.getTime();
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     }
-    return b.rating - a.rating;
+    return b.stars - a.stars;
   });
 
-  const averageRating = mockFeedbacks.reduce((acc, feedback) => acc + feedback.rating, 0) / mockFeedbacks.length;
-  const highRatings = mockFeedbacks.filter(f => f.rating >= 4).length;
-  const lowRatings = mockFeedbacks.filter(f => f.rating <= 2).length;
+  const averageRating = allFeedbacks.length > 0 
+    ? allFeedbacks.reduce((acc, feedback) => acc + feedback.stars, 0) / allFeedbacks.length 
+    : 0;
+  const highRatings = allFeedbacks.filter(f => f.stars >= 4).length;
+  const lowRatings = allFeedbacks.filter(f => f.stars <= 2).length;
 
   const getRatingColor = (rating: number) => {
     if (rating >= 4) return 'text-green-600';
@@ -93,9 +43,9 @@ const FeedbackDashboard = () => {
     return 'text-red-600';
   };
 
-  const getRatingBadge = (rating: number) => {
-    if (rating >= 4) return <Badge className="bg-green-100 text-green-800">Positivo</Badge>;
-    if (rating >= 3) return <Badge className="bg-yellow-100 text-yellow-800">Neutro</Badge>;
+  const getRatingBadge = (stars: number) => {
+    if (stars >= 4) return <Badge className="bg-green-100 text-green-800">Positivo</Badge>;
+    if (stars >= 3) return <Badge className="bg-yellow-100 text-yellow-800">Neutro</Badge>;
     return <Badge className="bg-red-100 text-red-800">Negativo</Badge>;
   };
 
@@ -206,7 +156,7 @@ const FeedbackDashboard = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h4 className="font-medium">{feedback.courtName}</h4>
-                      {getRatingBadge(feedback.rating)}
+                      {getRatingBadge(feedback.stars)}
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
@@ -214,22 +164,23 @@ const FeedbackDashboard = () => {
                           <Star
                             key={i}
                             className={`w-4 h-4 ${
-                              i < feedback.rating
+                              i < feedback.stars
                                 ? 'text-yellow-500 fill-current'
                                 : 'text-gray-300'
                             }`}
                           />
                         ))}
                       </div>
-                      <span className={`text-sm font-medium ${getRatingColor(feedback.rating)}`}>
-                        {feedback.rating}/5
+                      <span className={`text-sm font-medium ${getRatingColor(feedback.stars)}`}>
+                        {feedback.stars}/5
                       </span>
                     </div>
                     <p className="text-muted-foreground mb-2">{feedback.comment}</p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>Por: {feedback.userName}</span>
-                      <span>Em: {feedback.date.toLocaleDateString()}</span>
-                      <span>Gestor: {feedback.managerName}</span>
+                      <span>Em: {new Date(feedback.createdAt).toLocaleDateString()}</span>
+                      <span>Agendamento: {feedback.date} às {feedback.startTime}</span>
+                      <span>Gestor: {feedback.managerId}</span>
                     </div>
                   </div>
                   <div className="flex gap-2">

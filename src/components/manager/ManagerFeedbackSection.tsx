@@ -4,70 +4,49 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, MessageSquare, TrendingUp, TrendingDown, Calendar, Filter } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-interface FeedbackItem {
-  id: string;
-  courtName: string;
-  userName: string;
-  userEmail: string;
-  rating: number;
-  comment: string;
-  date: Date;
-  bookingId: string;
-}
+import { useBookings } from "@/hooks/useBookings";
 
 interface ManagerFeedbackSectionProps {
   managerId: string;
 }
 
-const mockFeedbacks: FeedbackItem[] = [
-  {
-    id: '1',
-    courtName: 'Quadra Arena Sports',
-    userName: 'João Silva',
-    userEmail: 'joao@email.com',
-    rating: 5,
-    comment: 'Excelente quadra! Muito bem mantida e com ótima localização.',
-    date: new Date('2024-12-20'),
-    bookingId: 'booking-1'
-  },
-  {
-    id: '2',
-    courtName: 'Complexo Esportivo Central',
-    userName: 'Maria Santos',
-    userEmail: 'maria@email.com',
-    rating: 4,
-    comment: 'Boa estrutura, mas poderia melhorar a iluminação.',
-    date: new Date('2024-12-19'),
-    bookingId: 'booking-2'
-  },
-  {
-    id: '3',
-    courtName: 'Quadra do Parque',
-    userName: 'Carlos Oliveira',
-    userEmail: 'carlos@email.com',
-    rating: 2,
-    comment: 'Quadra em mal estado, precisa de manutenção urgente.',
-    date: new Date('2024-12-18'),
-    bookingId: 'booking-3'
-  }
-];
-
 const ManagerFeedbackSection = ({ managerId }: ManagerFeedbackSectionProps) => {
   const [periodFilter, setPeriodFilter] = useState<'7d' | '30d' | '90d'>('30d');
   const [ratingFilter, setRatingFilter] = useState<'all' | 'positive' | 'negative'>('all');
+  const { getRatingsByManager } = useBookings();
 
-  const filteredFeedbacks = mockFeedbacks.filter(feedback => {
+  const managerFeedbacks = getRatingsByManager(managerId);
+
+  const filteredFeedbacks = managerFeedbacks.filter(feedback => {
     const matchesRating = ratingFilter === 'all' || 
-                         (ratingFilter === 'positive' && feedback.rating >= 4) ||
-                         (ratingFilter === 'negative' && feedback.rating <= 2);
+                         (ratingFilter === 'positive' && feedback.stars >= 4) ||
+                         (ratingFilter === 'negative' && feedback.stars <= 2);
     
-    return matchesRating;
+    const now = new Date();
+    const feedbackDate = new Date(feedback.createdAt);
+    const daysDiff = Math.floor((now.getTime() - feedbackDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    let matchesPeriod = false;
+    switch(periodFilter) {
+      case '7d':
+        matchesPeriod = daysDiff <= 7;
+        break;
+      case '30d':
+        matchesPeriod = daysDiff <= 30;
+        break;
+      case '90d':
+        matchesPeriod = daysDiff <= 90;
+        break;
+    }
+    
+    return matchesRating && matchesPeriod;
   });
 
-  const averageRating = filteredFeedbacks.reduce((acc, feedback) => acc + feedback.rating, 0) / filteredFeedbacks.length;
-  const positiveRatings = filteredFeedbacks.filter(f => f.rating >= 4).length;
-  const negativeRatings = filteredFeedbacks.filter(f => f.rating <= 2).length;
+  const averageRating = filteredFeedbacks.length > 0 
+    ? filteredFeedbacks.reduce((acc, feedback) => acc + feedback.stars, 0) / filteredFeedbacks.length 
+    : 0;
+  const positiveRatings = filteredFeedbacks.filter(f => f.stars >= 4).length;
+  const negativeRatings = filteredFeedbacks.filter(f => f.stars <= 2).length;
 
   const getRatingColor = (rating: number) => {
     if (rating >= 4) return 'text-green-600';
@@ -75,9 +54,9 @@ const ManagerFeedbackSection = ({ managerId }: ManagerFeedbackSectionProps) => {
     return 'text-red-600';
   };
 
-  const getRatingBadge = (rating: number) => {
-    if (rating >= 4) return <Badge className="bg-green-100 text-green-800">Positivo</Badge>;
-    if (rating >= 3) return <Badge className="bg-yellow-100 text-yellow-800">Neutro</Badge>;
+  const getRatingBadge = (stars: number) => {
+    if (stars >= 4) return <Badge className="bg-green-100 text-green-800">Positivo</Badge>;
+    if (stars >= 3) return <Badge className="bg-yellow-100 text-yellow-800">Neutro</Badge>;
     return <Badge className="bg-red-100 text-red-800">Negativo</Badge>;
   };
 
@@ -169,7 +148,7 @@ const ManagerFeedbackSection = ({ managerId }: ManagerFeedbackSectionProps) => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h4 className="font-medium">{feedback.courtName}</h4>
-                      {getRatingBadge(feedback.rating)}
+                      {getRatingBadge(feedback.stars)}
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex">
@@ -177,21 +156,22 @@ const ManagerFeedbackSection = ({ managerId }: ManagerFeedbackSectionProps) => {
                           <Star
                             key={i}
                             className={`w-4 h-4 ${
-                              i < feedback.rating
+                              i < feedback.stars
                                 ? 'text-yellow-500 fill-current'
                                 : 'text-gray-300'
                             }`}
                           />
                         ))}
                       </div>
-                      <span className={`text-sm font-medium ${getRatingColor(feedback.rating)}`}>
-                        {feedback.rating}/5
+                      <span className={`text-sm font-medium ${getRatingColor(feedback.stars)}`}>
+                        {feedback.stars}/5
                       </span>
                     </div>
                     <p className="text-muted-foreground mb-2">{feedback.comment}</p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>Por: {feedback.userName}</span>
-                      <span>Em: {feedback.date.toLocaleDateString()}</span>
+                      <span>Em: {new Date(feedback.createdAt).toLocaleDateString()}</span>
+                      <span>Agendamento: {feedback.date} às {feedback.startTime}</span>
                     </div>
                   </div>
                   <div className="flex gap-2">

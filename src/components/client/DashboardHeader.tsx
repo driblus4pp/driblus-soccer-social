@@ -47,9 +47,9 @@ const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: Das
             variant="ghost"
             size="icon"
             onClick={onNotificationClick}
-            className="text-white hover:bg-white/20 relative transition-all duration-200"
+            className="text-white hover:bg-white/20 relative"
           >
-            <Bell className={`w-5 h-5 transition-all duration-200 ${
+            <Bell className={`w-5 h-5 ${
               unreadCount > 0 ? 'text-orange-300' : 'text-white'
             }`} />
             {unreadCount > 0 && (

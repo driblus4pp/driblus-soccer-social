@@ -20,7 +20,9 @@ const RatingModal = ({ isOpen, onClose, booking, onSubmit }: RatingModalProps) =
 
   const handleSubmit = () => {
     if (booking && stars > 0) {
-      onSubmit(booking.id, stars, comment);
+      // Limitar comentário a 140 caracteres
+      const trimmedComment = comment.slice(0, 140);
+      onSubmit(booking.id, stars, trimmedComment);
       setStars(0);
       setComment('');
       onClose();
@@ -98,11 +100,7 @@ const RatingModal = ({ isOpen, onClose, booking, onSubmit }: RatingModalProps) =
             </label>
             <Textarea
               value={comment}
-              onChange={(e) => {
-                if (e.target.value.length <= 140) {
-                  setComment(e.target.value);
-                }
-              }}
+              onChange={(e) => setComment(e.target.value)}
               placeholder="Compartilhe sua opinião sobre a quadra, atendimento, instalações..."
               className="bg-white/10 border-white/20 text-white placeholder:text-white/60 resize-none h-20"
               maxLength={140}
