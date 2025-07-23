@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 interface DashboardHeaderProps {
   searchTerm: string;
@@ -15,7 +16,10 @@ interface DashboardHeaderProps {
 
 const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: DashboardHeaderProps) => {
   const { user } = useAuth();
-  const { unreadCount } = useNotifications();
+  const { notifications, unreadCount } = useNotifications();
+  
+  // Ativar notificações push
+  usePushNotifications(notifications);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -43,15 +47,19 @@ const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: Das
             variant="ghost"
             size="icon"
             onClick={onNotificationClick}
-            className="text-white hover:bg-white/20 relative"
+            className={`text-white hover:bg-white/20 relative transition-all duration-200 ${
+              unreadCount > 0 ? 'animate-pulse' : ''
+            }`}
           >
-            <Bell className="w-5 h-5" />
+            <Bell className={`w-5 h-5 transition-all duration-200 ${
+              unreadCount > 0 ? 'text-orange-300' : 'text-white'
+            }`} />
             {unreadCount > 0 && (
               <Badge 
                 variant="destructive" 
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-[#F35410] border-2 border-white animate-bounce"
               >
-                {unreadCount}
+                {unreadCount > 9 ? '9+' : unreadCount}
               </Badge>
             )}
           </Button>
