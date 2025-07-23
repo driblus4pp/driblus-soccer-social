@@ -47,9 +47,7 @@ const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: Das
             variant="ghost"
             size="icon"
             onClick={onNotificationClick}
-            className={`text-white hover:bg-white/20 relative transition-all duration-200 ${
-              unreadCount > 0 ? 'animate-pulse' : ''
-            }`}
+            className="text-white hover:bg-white/20 relative transition-all duration-200"
           >
             <Bell className={`w-5 h-5 transition-all duration-200 ${
               unreadCount > 0 ? 'text-orange-300' : 'text-white'
@@ -57,7 +55,7 @@ const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: Das
             {unreadCount > 0 && (
               <Badge 
                 variant="destructive" 
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-[#F35410] border-2 border-white animate-bounce"
+                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-[#F35410] border-2 border-white"
               >
                 {unreadCount > 9 ? '9+' : unreadCount}
               </Badge>

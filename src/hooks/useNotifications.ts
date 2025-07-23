@@ -2,15 +2,19 @@
 import { useState, useEffect } from 'react';
 import { Notification } from '@/types';
 import { useBookings } from './useBookings';
+import { useAuth } from '@/contexts/AuthContext';
 import { BookingStatus } from '@/types';
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { bookings } = useBookings();
+  const { user } = useAuth();
 
   // Gerar notificações baseadas nos agendamentos do usuário logado
   useEffect(() => {
-    const currentUserId = 'user_1'; // Em produção, pegar do contexto de auth
+    if (!user) return;
+    
+    const currentUserId = user.id;
     const userBookings = bookings.filter(booking => booking.userId === currentUserId);
     
     const bookingNotifications: Notification[] = [];
@@ -71,7 +75,7 @@ export const useNotifications = () => {
     bookingNotifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
     
     setNotifications(bookingNotifications);
-  }, [bookings]);
+  }, [bookings, user]);
 
   const markAsRead = (notificationId: string) => {
     setNotifications(prev =>
