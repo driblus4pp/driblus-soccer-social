@@ -22,7 +22,7 @@ const ClientSchedule = () => {
   const [selectedBookingForRating, setSelectedBookingForRating] = useState<any>(null);
   
   const { user } = useAuth();
-  const { bookings, addRating } = useBookings();
+  const { bookings, addRating, cancelBooking } = useBookings();
   
   // Filter bookings for current user only
   const userBookings = bookings.filter(booking => booking.userId === user?.id || booking.userId === 'user_1');
@@ -249,7 +249,37 @@ const ClientSchedule = () => {
               </div>
 
               <div className="pt-2 border-t border-white/10">
-                <span className="font-bold text-[#F35410] text-lg">R$ {selectedBooking.totalPrice}</span>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-bold text-[#F35410] text-lg">R$ {selectedBooking.totalPrice}</span>
+                </div>
+                
+                {/* Ações para agendamentos confirmados */}
+                {selectedBooking.status === BookingStatus.CONFIRMED && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 border-white/20 text-white hover:bg-white/10"
+                      onClick={() => {
+                        // TODO: Implementar alteração de data/horário
+                        console.log('Alterar data/horário para booking:', selectedBooking.id);
+                      }}
+                    >
+                      Alterar Data/Horário
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        cancelBooking(selectedBooking.id, 'Cancelado pelo cliente');
+                        setShowStatusDialog(false);
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>}
         </DialogContent>
