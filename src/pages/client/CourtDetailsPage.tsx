@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,15 +8,17 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { ArrowLeft, MapPin, Star, Clock, Calendar, AlertTriangle, Car, Shirt, Droplets, Coffee, Lightbulb } from "lucide-react";
 import { useCourts } from "@/hooks/useCourts";
 import { SportType } from "@/types";
-
 const CourtDetailsPage = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
   const navigate = useNavigate();
-  const { getCourtById, getActiveCourts } = useCourts();
-  
+  const {
+    getCourtById,
+    getActiveCourts
+  } = useCourts();
   const court = getCourtById(id || '');
   const alternativeCourts = getActiveCourts().filter(c => c.id !== id).slice(0, 2);
-
   const facilityIcons = {
     'Estacionamento': Car,
     'Vestiário': Shirt,
@@ -25,29 +26,18 @@ const CourtDetailsPage = () => {
     'Bar': Coffee,
     'Iluminação': Lightbulb
   };
-
   if (!court) {
-    return (
-      <div className="min-h-screen bg-[#062B4B] flex items-center justify-center">
+    return <div className="min-h-screen bg-[#062B4B] flex items-center justify-center">
         <div className="text-white">Quadra não encontrada</div>
-      </div>
-    );
+      </div>;
   }
-
   const isAvailable = court.status === 'active';
   const workingHoursText = `${court.workingHours.monday.openTime} - ${court.workingHours.monday.closeTime}`;
-
-  return (
-    <div className="min-h-screen bg-[#062B4B]">
+  return <div className="min-h-screen bg-[#062B4B]">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-md border-b border-white/20 p-4">
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/cliente/dashboard')}
-            className="text-white hover:bg-white/20"
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate('/cliente/dashboard')} className="text-white hover:bg-white/20">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-white">Detalhes da Quadra</h1>
@@ -59,45 +49,33 @@ const CourtDetailsPage = () => {
         <div className="relative">
           <Carousel className="w-full">
             <CarouselContent>
-              {court.images.map((image, index) => (
-                <CarouselItem key={index}>
+              {court.images.map((image, index) => <CarouselItem key={index}>
                   <div className="relative">
-                    <img
-                      src={image}
-                      alt={`${court.name} - Imagem ${index + 1}`}
-                      className="w-full h-64 object-cover rounded-2xl"
-                    />
+                    <img src={image} alt={`${court.name} - Imagem ${index + 1}`} className="w-full h-64 object-cover rounded-2xl" />
                   </div>
-                </CarouselItem>
-              ))}
+                </CarouselItem>)}
             </CarouselContent>
 
             {/* Navigation arrows - only show if more than 1 image */}
-            {court.images.length > 1 && (
-              <>
+            {court.images.length > 1 && <>
                 <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white border-none hover:bg-black/70" />
                 <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white border-none hover:bg-black/70" />
-              </>
-            )}
+              </>}
           </Carousel>
         </div>
 
         {/* Availability Status Alert */}
-        {!isAvailable && (
-          <Card className="bg-red-500/20 border-red-500/30">
+        {!isAvailable && <Card className="bg-red-500/20 border-red-500/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="w-5 h-5 text-red-400" />
                 <div>
                   <p className="text-white font-medium">Quadra Indisponível</p>
-                  {court.unavailabilityReason && (
-                    <p className="text-white/70 text-sm">{court.unavailabilityReason}</p>
-                  )}
+                  {court.unavailabilityReason && <p className="text-white/70 text-sm">{court.unavailabilityReason}</p>}
                 </div>
               </div>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
 
         {/* Court Name and Price */}
         <div className="flex items-center justify-between">
@@ -126,16 +104,10 @@ const CourtDetailsPage = () => {
         {/* Tabs */}
         <Tabs defaultValue="details" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-white/10 border-white/20">
-            <TabsTrigger
-              value="details"
-              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
-            >
+            <TabsTrigger value="details" className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Detalhes
             </TabsTrigger>
-            <TabsTrigger
-              value="reviews"
-              className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white"
-            >
+            <TabsTrigger value="reviews" className="text-white data-[state=active]:bg-[#F35410] data-[state=active]:text-white">
               Avaliações
             </TabsTrigger>
           </TabsList>
@@ -176,23 +148,7 @@ const CourtDetailsPage = () => {
             </Card>
 
             {/* Sports */}
-            <Card className="bg-white/10 border-white/20">
-              <CardContent className="flex justify-center py-0">
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {court.sports.map((sport, index) => (
-                    <Badge
-                      key={index}
-                      className="bg-[#F35410] text-white hover:bg-[#BA2D0B] py-0 my-[13px] rounded-xl"
-                    >
-                      {sport === SportType.FOOTBALL ? 'Futebol' : 
-                       sport === SportType.BASKETBALL ? 'Basquete' : 
-                       sport === SportType.VOLLEYBALL ? 'Vôlei' : 
-                       sport === SportType.TENNIS ? 'Tênis' : sport}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            
 
             {/* Amenities */}
             <Card className="bg-white/10 border-white/20">
@@ -202,40 +158,25 @@ const CourtDetailsPage = () => {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   {court.amenities.map((amenity, index) => {
-                    const IconComponent = facilityIcons[amenity as keyof typeof facilityIcons];
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center gap-3 p-3 rounded-lg bg-green-600/20 text-green-400"
-                      >
+                  const IconComponent = facilityIcons[amenity as keyof typeof facilityIcons];
+                  return <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-green-600/20 text-green-400">
                         {IconComponent && <IconComponent className="w-4 h-4" />}
                         <span className="text-white text-sm">{amenity}</span>
-                      </div>
-                    );
-                  })}
+                      </div>;
+                })}
                 </div>
               </CardContent>
             </Card>
 
             {/* Alternative Courts for Unavailable Courts */}
-            {!isAvailable && alternativeCourts.length > 0 && (
-              <Card className="bg-white/10 border-white/20">
+            {!isAvailable && alternativeCourts.length > 0 && <Card className="bg-white/10 border-white/20">
                 <CardHeader>
                   <CardTitle className="text-white text-lg">Quadras Alternativas</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {alternativeCourts.map((altCourt) => (
-                    <div
-                      key={altCourt.id}
-                      className="flex items-center justify-between p-3 bg-white/5 rounded-lg cursor-pointer hover:bg-white/10"
-                      onClick={() => navigate(`/cliente/quadra/${altCourt.id}`)}
-                    >
+                  {alternativeCourts.map(altCourt => <div key={altCourt.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg cursor-pointer hover:bg-white/10" onClick={() => navigate(`/cliente/quadra/${altCourt.id}`)}>
                       <div className="flex items-center gap-3">
-                        <img
-                          src={altCourt.images[0]}
-                          alt={altCourt.name}
-                          className="w-12 h-12 object-cover rounded-lg"
-                        />
+                        <img src={altCourt.images[0]} alt={altCourt.name} className="w-12 h-12 object-cover rounded-lg" />
                         <div>
                           <h4 className="text-white font-medium">{altCourt.name}</h4>
                           <div className="flex items-center gap-1">
@@ -248,11 +189,9 @@ const CourtDetailsPage = () => {
                         <span className="text-[#F35410] font-bold">R$ {altCourt.hourlyRate}</span>
                         <Badge className="bg-green-500 text-white text-xs ml-2">Disponível</Badge>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </CardContent>
-              </Card>
-            )}
+              </Card>}
           </TabsContent>
 
           <TabsContent value="reviews" className="space-y-4 mt-6">
@@ -265,25 +204,13 @@ const CourtDetailsPage = () => {
         </Tabs>
 
         {/* Book Button */}
-        {isAvailable ? (
-          <Button
-            onClick={() => navigate(`/cliente/quadra/${court.id}/agendar`)}
-            className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl"
-          >
+        {isAvailable ? <Button onClick={() => navigate(`/cliente/quadra/${court.id}/agendar`)} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-4 text-lg font-semibold rounded-2xl">
             <Calendar className="w-5 h-5 mr-2" />
             Agendar Horário
-          </Button>
-        ) : (
-          <Button
-            disabled
-            className="w-full bg-gray-600 text-white py-4 text-lg font-semibold rounded-2xl opacity-50 cursor-not-allowed"
-          >
+          </Button> : <Button disabled className="w-full bg-gray-600 text-white py-4 text-lg font-semibold rounded-2xl opacity-50 cursor-not-allowed">
             Quadra Indisponível
-          </Button>
-        )}
+          </Button>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default CourtDetailsPage;
