@@ -22,9 +22,6 @@ const GameToolsSection = ({ onTeamSorter, onScoreRecorder }: GameToolsSectionPro
             <div className="text-4xl">🎲</div>
             <div>
               <h3 className="text-white font-semibold text-lg">Sortear Times</h3>
-              <p className="text-slate-300 text-sm mt-1">
-                Divida os jogadores em times equilibrados automaticamente
-              </p>
             </div>
           </CardContent>
         </Card>
@@ -37,10 +34,7 @@ const GameToolsSection = ({ onTeamSorter, onScoreRecorder }: GameToolsSectionPro
           <CardContent className="p-6 text-center space-y-4">
             <div className="text-4xl">⚽</div>
             <div>
-              <h3 className="text-white font-semibold text-lg">Registrar Pontuação</h3>
-              <p className="text-slate-300 text-sm mt-1">
-                Acompanhe o placar e estatísticas da partida
-              </p>
+              <h3 className="text-white font-semibold text-lg">Registrar Pontuações</h3>
             </div>
           </CardContent>
         </Card>

@@ -12,28 +12,9 @@ interface TeamSorterProps {
 const TeamSorter = ({
   onBack
 }: TeamSorterProps) => {
-  const [players, setPlayers] = useState<Player[]>([{
-    id: '1',
-    name: 'João',
-    skill: 8,
-    position: 'Atacante'
-  }, {
-    id: '2',
-    name: 'Pedro',
-    skill: 7,
-    position: 'Meio-campo'
-  }, {
-    id: '3',
-    name: 'Lucas',
-    skill: 9,
-    position: 'Defesa'
-  }, {
-    id: '4',
-    name: 'Carlos',
-    skill: 6,
-    position: 'Goleiro'
-  }]);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [newPlayerName, setNewPlayerName] = useState('');
+  const [newPlayerPosition, setNewPlayerPosition] = useState('Jogador');
   const [teams, setTeams] = useState<Team[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const addPlayer = () => {
@@ -41,12 +22,12 @@ const TeamSorter = ({
       const newPlayer: Player = {
         id: Date.now().toString(),
         name: newPlayerName.trim(),
-        skill: Math.floor(Math.random() * 5) + 5,
-        // Skill entre 5-10
-        position: 'Jogador'
+        skill: 7,
+        position: newPlayerPosition
       };
       setPlayers([...players, newPlayer]);
       setNewPlayerName('');
+      setNewPlayerPosition('Jogador');
     }
   };
   const removePlayer = (id: string) => {
@@ -67,23 +48,47 @@ const TeamSorter = ({
 
     // Algoritmo simples de balanceamento
     const shuffled = [...players].sort(() => Math.random() - 0.5);
-    const teamSize = Math.ceil(shuffled.length / 2);
-    const teamA: Team = {
-      name: 'Time A',
-      players: shuffled.slice(0, teamSize).map(p => p.name),
-      score: 0,
-      color: '#F35410'
-    };
-    const teamB: Team = {
-      name: 'Time B',
-      players: shuffled.slice(teamSize).map(p => p.name),
-      score: 0,
-      color: '#FDB600'
-    };
-    setTeams([teamA, teamB]);
+    
+    // Se mais de 30 jogadores, dividir em 3 times
+    if (players.length > 30) {
+      const teamSize = Math.ceil(shuffled.length / 3);
+      const teamA: Team = {
+        name: 'Time A',
+        players: shuffled.slice(0, teamSize).map(p => `${p.name} (${p.position})`),
+        score: 0,
+        color: '#F35410'
+      };
+      const teamB: Team = {
+        name: 'Time B',
+        players: shuffled.slice(teamSize, teamSize * 2).map(p => `${p.name} (${p.position})`),
+        score: 0,
+        color: '#FDB600'
+      };
+      const teamC: Team = {
+        name: 'Time C',
+        players: shuffled.slice(teamSize * 2).map(p => `${p.name} (${p.position})`),
+        score: 0,
+        color: '#10B981'
+      };
+      setTeams([teamA, teamB, teamC]);
+    } else {
+      // Dividir em 2 times
+      const teamSize = Math.ceil(shuffled.length / 2);
+      const teamA: Team = {
+        name: 'Time A',
+        players: shuffled.slice(0, teamSize).map(p => `${p.name} (${p.position})`),
+        score: 0,
+        color: '#F35410'
+      };
+      const teamB: Team = {
+        name: 'Time B',
+        players: shuffled.slice(teamSize).map(p => `${p.name} (${p.position})`),
+        score: 0,
+        color: '#FDB600'
+      };
+      setTeams([teamA, teamB]);
+    }
     setIsAnimating(false);
-
-    // TODO: Implementar salvamento da partida rápida no futuro
   };
   const getSkillColor = (skill: number) => {
     if (skill >= 9) return 'bg-red-500 text-white';
@@ -105,37 +110,45 @@ const TeamSorter = ({
           <CardTitle>Gerenciar Jogadores</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Input placeholder="Nome do jogador" value={newPlayerName} onChange={e => setNewPlayerName(e.target.value)} onKeyPress={e => e.key === 'Enter' && addPlayer()} />
-            <Button onClick={addPlayer}>
-              <Plus className="w-4 h-4" />
-            </Button>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Input 
+                placeholder="Nome do jogador" 
+                value={newPlayerName} 
+                onChange={e => setNewPlayerName(e.target.value)} 
+                onKeyPress={e => e.key === 'Enter' && addPlayer()} 
+                className="flex-1"
+              />
+              <select 
+                value={newPlayerPosition}
+                onChange={e => setNewPlayerPosition(e.target.value)}
+                className="px-3 py-2 rounded-md border border-gray-300 bg-white text-black min-w-[120px]"
+              >
+                <option value="Jogador">Jogador</option>
+                <option value="Goleiro">Goleiro</option>
+                <option value="Defesa">Defesa</option>
+                <option value="Meio-campo">Meio-campo</option>
+                <option value="Atacante">Atacante</option>
+              </select>
+              <Button onClick={addPlayer}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">
-            {players.map(player => <div key={player.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+            {players.map(player => (
+              <div key={player.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                 <div className="flex-1">
-                  <span className="font-semibold">{player.name}</span>
+                  <span className="font-semibold text-black">{player.name}</span>
                   <span className="text-sm text-gray-500 ml-2">{player.position}</span>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm">Skill:</Label>
-                  <Button size="sm" variant="ghost" onClick={() => updatePlayerSkill(player.id, player.skill - 1)}>
-                    <Minus className="w-3 h-3" />
-                  </Button>
-                  <Badge className={getSkillColor(player.skill)}>
-                    {player.skill}
-                  </Badge>
-                  <Button size="sm" variant="ghost" onClick={() => updatePlayerSkill(player.id, player.skill + 1)}>
-                    <Plus className="w-3 h-3" />
-                  </Button>
-                </div>
-
                 <Button size="sm" variant="ghost" onClick={() => removePlayer(player.id)}>
                   <Minus className="w-4 h-4" />
                 </Button>
-              </div>)}
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -149,31 +162,50 @@ const TeamSorter = ({
       </div>
 
       {/* Resultado do Sorteio */}
-      {teams.length > 0 && <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {teams.map((team, index) => <Card key={index} className={`border-2 ${index === 0 ? 'border-blue-300 bg-blue-50' : 'border-red-300 bg-red-50'}`}>
-              <CardHeader>
-                <CardTitle className={`text-center ${index === 0 ? 'text-blue-700' : 'text-red-700'}`}>
-                  {team.name} 🏆
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {team.players.map((playerName, playerIndex) => <div key={playerIndex} className="p-2 bg-white rounded flex items-center justify-between">
-                      <span className="font-medium">{playerName}</span>
-                      <Badge variant="secondary">
-                        Skill: {players.find(p => p.name === playerName)?.skill || 5}
-                      </Badge>
-                    </div>)}
-                </div>
-                
-                <div className="mt-4 text-center">
-                  <Badge className={index === 0 ? 'bg-blue-500' : 'bg-red-500'}>
-                    Skill Total: {team.players.reduce((total, playerName) => total + (players.find(p => p.name === playerName)?.skill || 5), 0)}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>)}
-        </div>}
+      {teams.length > 0 && (
+        <div className={`grid gap-6 ${teams.length === 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'}`}>
+          {teams.map((team, index) => {
+            const getTeamColor = () => {
+              if (team.color === '#F35410') return 'border-orange-300 bg-orange-50';
+              if (team.color === '#FDB600') return 'border-yellow-300 bg-yellow-50';
+              if (team.color === '#10B981') return 'border-green-300 bg-green-50';
+              return 'border-blue-300 bg-blue-50';
+            };
+            
+            const getTextColor = () => {
+              if (team.color === '#F35410') return 'text-orange-700';
+              if (team.color === '#FDB600') return 'text-yellow-700';
+              if (team.color === '#10B981') return 'text-green-700';
+              return 'text-blue-700';
+            };
+
+            return (
+              <Card key={index} className={`border-2 ${getTeamColor()}`}>
+                <CardHeader>
+                  <CardTitle className={`text-center ${getTextColor()}`}>
+                    {team.name} 🏆
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {team.players.map((playerInfo, playerIndex) => (
+                      <div key={playerIndex} className="p-2 bg-white rounded">
+                        <span className="font-medium text-black">{playerInfo}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-4 text-center">
+                    <Badge style={{ backgroundColor: team.color }} className="text-white">
+                      Total de jogadores: {team.players.length}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>;
 };
 export default TeamSorter;

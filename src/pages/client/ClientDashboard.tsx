@@ -87,17 +87,17 @@ const ClientDashboard = () => {
       </div>
 
       <div className="px-4 py-6 space-y-6">
+        {/* Game Tools Section */}
+        <GameToolsSection 
+          onTeamSorter={() => setCurrentView('team-sorter')}
+          onScoreRecorder={() => setCurrentView('score-recorder')}
+        />
+
         {/* Recommended Courts */}
         <CourtsList 
           courts={recommendedCourts}
           title="Recomendados para você"
           variant="recommended"
-        />
-
-        {/* Game Tools Section */}
-        <GameToolsSection 
-          onTeamSorter={() => setCurrentView('team-sorter')}
-          onScoreRecorder={() => setCurrentView('score-recorder')}
         />
 
         {/* Other Courts */}

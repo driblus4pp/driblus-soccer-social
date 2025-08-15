@@ -2,8 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, Calendar, MapPin, Edit, LogOut, Settings } from "lucide-react";
+import { User, Calendar, MapPin, Edit, LogOut, Settings, Trophy } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuickMatches } from "@/hooks/useQuickMatches";
 import BottomNavigation from "@/components/navigation/BottomNavigation";
 const ClientProfile = () => {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const ClientProfile = () => {
     user,
     logout
   } = useAuth();
+  const { getRecentMatches } = useQuickMatches();
+  const recentMatches = getRecentMatches(5);
   const handleLogout = () => {
     if (window.confirm('Tem certeza que deseja sair da sua conta?')) {
       logout();
@@ -81,6 +84,40 @@ const ClientProfile = () => {
                 <p className="text-sm text-white/70">Gol de Placa • Há 1 semana</p>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Histórico de Partidas */}
+        <Card className="bg-white/10 border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Trophy className="w-5 h-5" />
+              Histórico de Partidas
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {recentMatches.length > 0 ? (
+              recentMatches.map((match, index) => (
+                <div key={match.id} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                  <div className="w-10 h-10 bg-[#F35410] rounded-full flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white">
+                      {match.teamA.name} {match.teamA.score} x {match.teamB.score} {match.teamB.name}
+                    </p>
+                    <p className="text-sm text-white/70">
+                      {match.createdAt.toLocaleDateString('pt-BR')} • {match.players.length} jogadores
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-white/70">Nenhuma partida registrada ainda</p>
+                <p className="text-sm text-white/50 mt-1">Use as ferramentas de jogo para começar!</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
