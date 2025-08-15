@@ -8,6 +8,9 @@ import RatingModal from "@/components/RatingModal";
 import DashboardHeader from "@/components/client/DashboardHeader";
 import CourtsList from "@/components/client/CourtsList";
 import FeedbackReminders from "@/components/client/FeedbackReminders";
+import GameToolsSection from "@/components/client/GameToolsSection";
+import TeamSorter from "@/components/athlete/TeamSorter";
+import ScoreRecorder from "@/components/athlete/ScoreRecorder";
 import { mockCourts } from "@/data/mockCourts";
 import { Booking } from "@/types";
 
@@ -16,6 +19,7 @@ const ClientDashboard = () => {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [selectedBookingForRating, setSelectedBookingForRating] = useState<Booking | null>(null);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'team-sorter' | 'score-recorder'>('dashboard');
   
   const { bookings, addRating } = useBookings();
   const { dismissReminder } = useFeedbackReminder(bookings);
@@ -46,6 +50,26 @@ const ClientDashboard = () => {
     dismissReminder(bookingId);
   };
 
+  if (currentView === 'team-sorter') {
+    return (
+      <div className="min-h-screen bg-[#093758] pb-20">
+        <div className="px-4 py-6">
+          <TeamSorter onBack={() => setCurrentView('dashboard')} />
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === 'score-recorder') {
+    return (
+      <div className="min-h-screen bg-[#093758] pb-20">
+        <div className="px-4 py-6">
+          <ScoreRecorder onBack={() => setCurrentView('dashboard')} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#093758] pb-20">
       <DashboardHeader 
@@ -68,6 +92,12 @@ const ClientDashboard = () => {
           courts={recommendedCourts}
           title="Recomendados para você"
           variant="recommended"
+        />
+
+        {/* Game Tools Section */}
+        <GameToolsSection 
+          onTeamSorter={() => setCurrentView('team-sorter')}
+          onScoreRecorder={() => setCurrentView('score-recorder')}
         />
 
         {/* Other Courts */}

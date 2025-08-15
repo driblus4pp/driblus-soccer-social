@@ -72,16 +72,18 @@ const TeamSorter = ({
       name: 'Time A',
       players: shuffled.slice(0, teamSize).map(p => p.name),
       score: 0,
-      color: '#3B82F6'
+      color: '#F35410'
     };
     const teamB: Team = {
       name: 'Time B',
       players: shuffled.slice(teamSize).map(p => p.name),
       score: 0,
-      color: '#EF4444'
+      color: '#FDB600'
     };
     setTeams([teamA, teamB]);
     setIsAnimating(false);
+
+    // TODO: Implementar salvamento da partida rápida no futuro
   };
   const getSkillColor = (skill: number) => {
     if (skill >= 9) return 'bg-red-500 text-white';
