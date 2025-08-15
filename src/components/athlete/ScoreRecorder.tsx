@@ -104,66 +104,50 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
         <Button variant="ghost" size="icon" onClick={onBack} className="text-slate-50">
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <h1 className="text-2xl font-bold text-slate-50">Registrar Pontuação</h1>
+        <h1 className="text-xl font-bold text-slate-50">Registrar Pontuação</h1>
       </div>
 
       {/* Placar */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* Time A */}
-        <Card className="border-2" style={{ borderColor: teamA.color, backgroundColor: `${teamA.color}10` }}>
-          <CardHeader className="text-center">
-            <CardTitle style={{ color: teamA.color }}>{teamA.name}</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <div className="text-6xl font-bold text-white bg-black/20 rounded-lg py-4">
-              {teamA.score}
-            </div>
-            <div className="flex justify-center gap-2">
-              <Button
-                size="lg"
-                onClick={() => updateScore('A', false)}
-                className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 text-white"
-              >
-                <Minus className="w-6 h-6" />
-              </Button>
-              <Button
-                size="lg"
-                onClick={() => updateScore('A', true)}
-                className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 text-white"
-              >
-                <Plus className="w-6 h-6" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 gap-3">
+        {/* Time 1 */}
+        <div className="bg-[#F35410] rounded-2xl p-6 text-center text-white">
+          <div className="text-sm font-medium mb-2">Time 1</div>
+          <div className="text-5xl font-bold mb-4">{teamA.score.toString().padStart(2, '0')}</div>
+          <div className="flex justify-center gap-3">
+            <Button
+              onClick={() => updateScore('A', true)}
+              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
+            >
+              +
+            </Button>
+            <Button
+              onClick={() => updateScore('A', false)}
+              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
+            >
+              -1
+            </Button>
+          </div>
+        </div>
 
-        {/* Time B */}
-        <Card className="border-2" style={{ borderColor: teamB.color, backgroundColor: `${teamB.color}10` }}>
-          <CardHeader className="text-center">
-            <CardTitle style={{ color: teamB.color }}>{teamB.name}</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <div className="text-6xl font-bold text-white bg-black/20 rounded-lg py-4">
-              {teamB.score}
-            </div>
-            <div className="flex justify-center gap-2">
-              <Button
-                size="lg"
-                onClick={() => updateScore('B', false)}
-                className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 text-white"
-              >
-                <Minus className="w-6 h-6" />
-              </Button>
-              <Button
-                size="lg"
-                onClick={() => updateScore('B', true)}
-                className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 text-white"
-              >
-                <Plus className="w-6 h-6" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Time 2 */}
+        <div className="bg-[#FDB600] rounded-2xl p-6 text-center text-white">
+          <div className="text-sm font-medium mb-2">Time 2</div>
+          <div className="text-5xl font-bold mb-4">{teamB.score.toString().padStart(2, '0')}</div>
+          <div className="flex justify-center gap-3">
+            <Button
+              onClick={() => updateScore('B', true)}
+              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
+            >
+              +
+            </Button>
+            <Button
+              onClick={() => updateScore('B', false)}
+              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
+            >
+              -1
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Adicionar Jogadores */}
@@ -199,134 +183,39 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
 
       {/* Estatísticas dos Jogadores */}
       {players.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Time A Players */}
-          <Card className="border-2" style={{ borderColor: teamA.color }}>
-            <CardHeader>
-              <CardTitle style={{ color: teamA.color }}>{teamA.name} - Estatísticas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {getTeamPlayers('A').map(player => (
-                <div key={player.id} className="p-3 bg-gray-50 rounded-lg space-y-2">
-                  <div className="font-semibold">{player.name}</div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span>Gols:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'goals', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.goals}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'goals', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Assist:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'assists', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.assists}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'assists', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>🟨:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'yellowCards', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.yellowCards}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'yellowCards', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>🟥:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'redCards', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.redCards}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'redCards', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
+        <div className="space-y-4">
+          <h2 className="text-lg font-bold text-white">Estatísticas</h2>
+          <div className="space-y-3">
+            {players.map((player, index) => {
+              const playerNumber = (index + 1).toString().padStart(2, '0');
+              const hasGoals = player.goals > 0;
+              const hasAssists = player.assists > 0;
+              const hasCards = player.yellowCards > 0 || player.redCards > 0;
+              
+              return (
+                <div key={player.id} className="text-white">
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-sm">{playerNumber}. {player.name}</span>
+                    <div className="flex items-center gap-4 text-sm">
+                      {hasGoals && <span>Gols {player.goals}</span>}
+                      {hasAssists && <span>Assistências {player.assists}</span>}
+                      {hasCards && <span>Cartões {player.yellowCards + player.redCards}</span>}
+                      {!hasGoals && !hasAssists && !hasCards && (
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'goals', true)} className="text-white hover:bg-white/10">
+                            + Gol
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'assists', true)} className="text-white hover:bg-white/10">
+                            + Assist
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Time B Players */}
-          <Card className="border-2" style={{ borderColor: teamB.color }}>
-            <CardHeader>
-              <CardTitle style={{ color: teamB.color }}>{teamB.name} - Estatísticas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {getTeamPlayers('B').map(player => (
-                <div key={player.id} className="p-3 bg-gray-50 rounded-lg space-y-2">
-                  <div className="font-semibold">{player.name}</div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span>Gols:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'goals', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.goals}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'goals', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Assist:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'assists', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.assists}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'assists', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>🟨:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'yellowCards', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.yellowCards}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'yellowCards', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>🟥:</span>
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'redCards', false)}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Badge>{player.redCards}</Badge>
-                        <Button size="sm" variant="ghost" onClick={() => updatePlayerStat(player.id, 'redCards', true)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -334,11 +223,9 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
       <div className="text-center">
         <Button 
           onClick={handleSave} 
-          disabled={players.length === 0}
-          className="bg-[#F35410] hover:bg-[#BA2D0B] text-white px-8 py-4 text-lg"
+          className="bg-[#F35410] hover:bg-[#BA2D0B] text-white w-full py-4 text-lg font-medium rounded-2xl"
         >
-          <Save className="w-5 h-5 mr-2" />
-          Salvar Partida
+          Salvar
         </Button>
       </div>
     </div>
