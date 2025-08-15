@@ -115,16 +115,16 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
           <div className="text-5xl font-bold mb-4">{teamA.score.toString().padStart(2, '0')}</div>
           <div className="flex justify-center gap-3">
             <Button
+              onClick={() => updateScore('A', false)}
+              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
+            >
+              -
+            </Button>
+            <Button
               onClick={() => updateScore('A', true)}
               className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
             >
               +
-            </Button>
-            <Button
-              onClick={() => updateScore('A', false)}
-              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
-            >
-              -1
             </Button>
           </div>
         </div>
@@ -135,16 +135,16 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
           <div className="text-5xl font-bold mb-4">{teamB.score.toString().padStart(2, '0')}</div>
           <div className="flex justify-center gap-3">
             <Button
+              onClick={() => updateScore('B', false)}
+              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
+            >
+              -
+            </Button>
+            <Button
               onClick={() => updateScore('B', true)}
               className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
             >
               +
-            </Button>
-            <Button
-              onClick={() => updateScore('B', false)}
-              className="w-10 h-10 rounded-lg bg-white/20 hover:bg-white/30 text-white text-lg font-bold"
-            >
-              -1
             </Button>
           </div>
         </div>
