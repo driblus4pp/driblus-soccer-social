@@ -171,8 +171,8 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
               onChange={e => setSelectedTeam(e.target.value as 'A' | 'B')}
               className="px-3 py-2 border border-input bg-background rounded-md"
             >
-              <option value="A">Time A</option>
-              <option value="B">Time B</option>
+              <option value="A">Time 1</option>
+              <option value="B">Time 2</option>
             </select>
             <Button onClick={addPlayer}>
               <Plus className="w-4 h-4" />
