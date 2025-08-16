@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { QuickMatch, QuickMatchPlayer, PlayerStats } from '@/types/quickMatch';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useQuickMatches = () => {
   const { user } = useAuth();
@@ -10,71 +11,127 @@ export const useQuickMatches = () => {
   const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Mock data para demonstração
+  // Carregar partidas do Supabase
   useEffect(() => {
     if (user) {
-      setLoading(true);
-      // Simular carregamento de dados
-      setTimeout(() => {
-        setMatches([]);
-        setPlayerStats([]);
-        setLoading(false);
-      }, 500);
+      loadQuickMatches();
     }
   }, [user]);
+
+  const loadQuickMatches = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('quick_matches')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+
+      const formattedMatches: QuickMatch[] = (data || []).map(match => ({
+        id: match.id,
+        userId: match.user_id,
+        type: match.type as 'team_sort' | 'score_record',
+        teamA: match.team_a as any,
+        teamB: match.team_b as any,
+        players: (match.players as any) || [],
+        createdAt: new Date(match.created_at),
+        updatedAt: new Date(match.updated_at)
+      }));
+
+      setMatches(formattedMatches);
+      updatePlayerStatsFromMatches(formattedMatches);
+    } catch (error) {
+      console.error('Erro ao carregar partidas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const saveQuickMatch = async (match: Omit<QuickMatch, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
     if (!user) return;
 
-    const newMatch: QuickMatch = {
-      ...match,
-      id: Date.now().toString(),
-      userId: user.id,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    try {
+      const { data, error } = await supabase
+        .from('quick_matches')
+        .insert([{
+          user_id: user.id,
+          type: match.type,
+          team_a: match.teamA as any,
+          team_b: match.teamB as any,
+          players: match.players as any
+        }])
+        .select()
+        .single();
 
-    setMatches(prev => [newMatch, ...prev]);
-    updatePlayerStats(newMatch.players);
-    
-    toast({
-      title: "Partida salva com sucesso!",
-      description: "A partida foi registrada e as estatísticas dos jogadores foram atualizadas.",
-    });
+      if (error) throw error;
 
-    return newMatch;
+      const newMatch: QuickMatch = {
+        id: data.id,
+        userId: data.user_id,
+        type: data.type as 'team_sort' | 'score_record',
+        teamA: data.team_a as any,
+        teamB: data.team_b as any,
+        players: (data.players as any) || [],
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at)
+      };
+
+      // Atualizar estado local
+      await loadQuickMatches();
+      
+      toast({
+        title: "Partida salva com sucesso!",
+        description: "A partida foi registrada e as estatísticas dos jogadores foram atualizadas.",
+      });
+
+      return newMatch;
+    } catch (error) {
+      console.error('Erro ao salvar partida:', error);
+      toast({
+        title: "Erro ao salvar partida",
+        description: "Ocorreu um erro ao salvar a partida. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const updatePlayerStats = (players: QuickMatchPlayer[]) => {
-    const updatedStats = [...playerStats];
+  const updatePlayerStatsFromMatches = (matches: QuickMatch[]) => {
+    const statsMap = new Map<string, PlayerStats>();
     
-    players.forEach(player => {
-      const existingStats = updatedStats.find(s => s.playerName === player.name);
-      
-      if (existingStats) {
-        existingStats.totalMatches += 1;
-        existingStats.totalGoals += player.goals;
-        existingStats.totalAssists += player.assists;
-        existingStats.totalYellowCards += player.yellowCards;
-        existingStats.totalRedCards += player.redCards;
-      } else {
-        const newStats: PlayerStats = {
-          playerId: player.id,
-          playerName: player.name,
-          totalMatches: 1,
-          totalGoals: player.goals,
-          totalAssists: player.assists,
-          totalYellowCards: player.yellowCards,
-          totalRedCards: player.redCards,
-          wins: 0,
-          losses: 0,
-          draws: 0
-        };
-        updatedStats.push(newStats);
-      }
+    matches.forEach(match => {
+      match.players.forEach(player => {
+        const existingStats = statsMap.get(player.name);
+        
+        if (existingStats) {
+          existingStats.totalMatches += 1;
+          existingStats.totalGoals += player.goals;
+          existingStats.totalAssists += player.assists;
+          existingStats.totalYellowCards += player.yellowCards;
+          existingStats.totalRedCards += player.redCards;
+        } else {
+          const newStats: PlayerStats = {
+            playerId: player.id,
+            playerName: player.name,
+            totalMatches: 1,
+            totalGoals: player.goals,
+            totalAssists: player.assists,
+            totalYellowCards: player.yellowCards,
+            totalRedCards: player.redCards,
+            wins: 0,
+            losses: 0,
+            draws: 0
+          };
+          statsMap.set(player.name, newStats);
+        }
+      });
     });
 
-    setPlayerStats(updatedStats);
+    setPlayerStats(Array.from(statsMap.values()));
   };
 
   const getPlayerStats = (playerName: string): PlayerStats | undefined => {
@@ -91,6 +148,7 @@ export const useQuickMatches = () => {
     loading,
     saveQuickMatch,
     getPlayerStats,
-    getRecentMatches
+    getRecentMatches,
+    loadQuickMatches
   };
 };
