@@ -137,3 +137,49 @@
 .filter-modal-drop.closing {
   animation: dropOut 0.3s ease-in forwards;
 }
+
+/* Driblus Calendar Custom Styles */
+.driblus-calendar td,
+.driblus-calendar button,
+.driblus-calendar .rdp-day,
+.driblus-calendar .react-datepicker__day,
+.driblus-calendar .react-calendar__tile {
+  width: 2rem !important;
+  height: 2rem !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 9999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border: 0 !important;
+}
+
+/* Selecionado — cobre DayPicker, react-datepicker e react-calendar */
+.driblus-calendar td[aria-selected="true"],
+.driblus-calendar button[aria-selected="true"],
+.driblus-calendar .rdp-day_selected,
+.driblus-calendar .react-datepicker__day--selected,
+.driblus-calendar .react-datepicker__day--keyboard-selected,
+.driblus-calendar .react-calendar__tile--active {
+  background-color: #E4510F !important;
+  color: #ffffff !important;
+  border-radius: 9999px !important;
+}
+
+/* Remove camadas/pseudo-elementos que criam o quadrado branco */
+.driblus-calendar .rdp-day_selected::before,
+.driblus-calendar .rdp-day_selected::after,
+.driblus-calendar .react-datepicker__day--selected::before,
+.driblus-calendar .react-datepicker__day--keyboard-selected::before,
+.driblus-calendar .react-calendar__tile--active::before,
+.driblus-calendar .react-calendar__tile--active::after {
+  content: none !important;
+  background: none !important;
+}
+
+/* Hover/focus sem reintroduzir fundo branco */
+.driblus-calendar td:hover,
+.driblus-calendar button:hover {
+  background: rgba(228,81,15,0.12) !important;
+}
