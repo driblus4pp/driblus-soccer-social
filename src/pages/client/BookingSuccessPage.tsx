@@ -82,6 +82,23 @@ Realizado!</h1>
                 <p className="text-white/70 text-sm">Participantes esperados</p>
               </div>
             </div>
+
+            {/* Status da Ordem */}
+            <div className="mt-6 pt-4 border-t border-white/20">
+              <h4 className="text-green-200 font-semibold mb-3">Status da Ordem</h4>
+              <div className="space-y-2">
+                <p className="text-green-200 text-sm">
+                  ✅ Ordem de agendamento enviada ao gestor da quadra
+                </p>
+                
+                <p className="text-green-200 text-sm">
+                  ✅ Horário reservado com sucesso
+                </p>
+                <p className="text-green-200 text-sm">
+                  ✅ Você pode acompanhar o status no seu painel
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -122,24 +139,6 @@ Realizado!</h1>
           </CardContent>
         </Card>
 
-        {/* Status Info */}
-        <Card className="bg-green-500/20 border-green-500/30">
-          <CardHeader>
-            <CardTitle className="text-green-200">Status da Ordem</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-green-200 text-sm">
-              ✅ Ordem de agendamento enviada ao gestor da quadra
-            </p>
-            
-            <p className="text-green-200 text-sm">
-              ✅ Horário reservado com sucesso
-            </p>
-            <p className="text-green-200 text-sm">
-              ✅ Você pode acompanhar o status no seu painel
-            </p>
-          </CardContent>
-        </Card>
 
         {/* Action Buttons */}
         <div className="space-y-3">
