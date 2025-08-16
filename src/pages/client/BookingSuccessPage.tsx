@@ -102,28 +102,6 @@ Realizado!</h1>
           </CardContent>
         </Card>
 
-        {/* Client Data */}
-        <Card className="bg-white/10 border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white">Dados Enviados ao Gestor</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3 text-white">
-              <User className="w-5 h-5 text-[#F35410]" />
-              <span>{booking.userName}</span>
-            </div>
-            
-            <div className="flex items-center gap-3 text-white">
-              <Phone className="w-5 h-5 text-[#F35410]" />
-              <span>{booking.userPhone}</span>
-            </div>
-            
-            <div className="flex items-center gap-3 text-white">
-              <Mail className="w-5 h-5 text-[#F35410]" />
-              <span>{booking.userEmail}</span>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Payment Info */}
         <Card className="bg-white/10 border-white/20">
