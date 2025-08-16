@@ -23,22 +23,26 @@ const DateSelectionCard = ({ selectedDate, onDateChange, error }: DateSelectionC
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="driblus-calendar">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={onDateChange}
-            disabled={(date) => date < new Date() || date.getDay() === 0}
-            className="bg-white/10 border-white/20 text-white"
-            locale={ptBR}
-            classNames={{
-              day: "w-8 h-8 grid place-items-center rounded-full text-white hover:bg-white/20 hover:text-slate-900",
-              day_today: "bg-white/20 text-white hover:bg-white/30 hover:text-slate-900",
-              head_cell: "text-white/70",
-              caption_label: "text-white",
-              nav_button: "text-white hover:bg-white/20 hover:text-slate-900 border-white/20"
-            }}
-          />
+        <div className="w-full flex justify-center">
+          <div className="w-fit">
+            <div className="driblus-calendar">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={onDateChange}
+                disabled={(date) => date < new Date() || date.getDay() === 0}
+                className="bg-white/10 border-white/20 text-white"
+                locale={ptBR}
+                classNames={{
+                  day: "w-8 h-8 grid place-items-center rounded-full text-white hover:bg-white/20 hover:text-slate-900",
+                  day_today: "bg-white/20 text-white hover:bg-white/30 hover:text-slate-900",
+                  head_cell: "text-white/70",
+                  caption_label: "text-white",
+                  nav_button: "text-white hover:bg-white/20 hover:text-slate-900 border-white/20"
+                }}
+              />
+            </div>
+          </div>
         </div>
         {error && (
           <div className="flex items-center gap-2 mt-2 text-red-400 text-sm">
