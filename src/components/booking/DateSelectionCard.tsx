@@ -31,7 +31,7 @@ const DateSelectionCard = ({ selectedDate, onDateChange, error }: DateSelectionC
           className="bg-white/10 border-white/20 text-white"
           locale={ptBR}
           classNames={{
-            day_selected: "bg-[#E4510F] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#E4510F] hover:text-white focus:bg-[#E4510F] focus:text-white",
+            day_selected: "!w-8 !h-8 !flex !items-center !justify-center !rounded-full !bg-[#E4510F] !text-white !border-0 hover:!bg-[#E4510F] hover:!text-white focus:!bg-[#E4510F] focus:!text-white",
             day_today: "bg-white/20 text-white hover:bg-white/30 hover:text-slate-900",
             day: "text-white hover:bg-white/20 hover:text-slate-900",
             head_cell: "text-white/70",
