@@ -7,6 +7,7 @@ import { Search, Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import PWAInstallButton from "@/components/PWAInstallButton";
 
 interface DashboardHeaderProps {
   searchTerm: string;
@@ -41,7 +42,10 @@ const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: Das
             {getGreeting()}, {user?.name?.split(' ')[0] || 'Janderson'}!
           </h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* PWA Install Button */}
+          <PWAInstallButton variant="ghost" size="sm" className="text-white hover:bg-white/20" />
+          
           {/* Notification Bell */}
           <Button
             variant="ghost"
@@ -62,7 +66,7 @@ const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: Das
             )}
           </Button>
           
-          <img 
+          <img
             src="/lovable-uploads/0e6fb8a5-a6de-4b38-955c-58e7bcef94bb.png" 
             alt="Driblus" 
             className="h-8"
