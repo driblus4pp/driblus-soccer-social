@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Clock, Save, Building } from "lucide-react";
+import { ArrowLeft, Clock, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface DaySchedule {
@@ -29,13 +28,6 @@ interface WeekSchedule {
 const ConfigureCourt = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const [courtInfo, setCourtInfo] = useState({
-    name: 'Arena Cangaço',
-    description: 'Quadra esportiva completa com excelente estrutura',
-    isActive: true,
-    unavailabilityReason: ''
-  });
   
   const [schedule, setSchedule] = useState<WeekSchedule>({
     monday: { isOpen: true, openTime: '06:00', closeTime: '22:00' },
@@ -67,17 +59,10 @@ const ConfigureCourt = () => {
     }));
   };
 
-  const handleCourtInfoChange = (field: string, value: string | boolean) => {
-    setCourtInfo(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
   const handleSave = () => {
     toast({
       title: "Configurações Salvas",
-      description: "Informações da quadra e horários atualizados com sucesso"
+      description: "Horários de funcionamento atualizados com sucesso"
     });
   };
 
@@ -99,58 +84,6 @@ const ConfigureCourt = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        <Card className="bg-white border-gray-200 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-gray-800 flex items-center gap-2">
-              <Building className="w-5 h-5" />
-              Informações da Quadra
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-gray-800">Nome da Quadra</Label>
-              <Input
-                value={courtInfo.name}
-                onChange={(e) => handleCourtInfoChange('name', e.target.value)}
-                className="bg-white border-gray-300 text-gray-800"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-gray-800">Descrição</Label>
-              <Textarea
-                value={courtInfo.description}
-                onChange={(e) => handleCourtInfoChange('description', e.target.value)}
-                className="bg-white border-gray-300 text-gray-800"
-                placeholder="Descreva sua quadra..."
-              />
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div>
-                <Label className="text-gray-800 font-semibold">Quadra Ativa</Label>
-                <p className="text-gray-600 text-sm">
-                  {courtInfo.isActive ? 'Disponível para agendamentos' : 'Indisponível para agendamentos'}
-                </p>
-              </div>
-              <Switch 
-                checked={courtInfo.isActive} 
-                onCheckedChange={(checked) => handleCourtInfoChange('isActive', checked)}
-              />
-            </div>
-            
-            {!courtInfo.isActive && (
-              <div className="space-y-2">
-                <Label className="text-gray-800">Motivo da Indisponibilidade</Label>
-                <Textarea
-                  value={courtInfo.unavailabilityReason}
-                  onChange={(e) => handleCourtInfoChange('unavailabilityReason', e.target.value)}
-                  placeholder="Ex: Manutenção preventiva, reforma em andamento..."
-                  className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-500"
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
         <Card className="bg-white border-gray-200 shadow-sm">
           <CardHeader>
             <CardTitle className="text-gray-800 flex items-center gap-2">

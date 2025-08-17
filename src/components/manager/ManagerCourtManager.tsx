@@ -19,7 +19,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import CourtStatusCard from "./CourtStatusCard";
-import CourtConfigurationModal from "./CourtConfigurationModal";
 
 interface ManagerCourtManagerProps {
   managerId: string;
@@ -28,7 +27,6 @@ interface ManagerCourtManagerProps {
 const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [configModalOpen, setConfigModalOpen] = useState(false);
 
   const [courtInfo, setCourtInfo] = useState({
     name: 'Arena Central',
@@ -92,7 +90,7 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
         monthlyRevenue={2240}
         averageRating={4.8}
         totalReviews={47}
-        onConfigureSettings={() => setConfigModalOpen(true)}
+        onConfigureSettings={() => console.log('Configure settings')}
       />
 
       {/* Informações Gerais da Quadra */}
@@ -238,12 +236,6 @@ const ManagerCourtManager = ({ managerId }: ManagerCourtManagerProps) => {
           </Button>
         </CardContent>
       </Card>
-
-      {/* Modal de Configuração */}
-      <CourtConfigurationModal 
-        open={configModalOpen}
-        onOpenChange={setConfigModalOpen}
-      />
     </div>
   );
 };

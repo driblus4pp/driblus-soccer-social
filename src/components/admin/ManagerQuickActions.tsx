@@ -1,7 +1,25 @@
+
 import React from 'react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Eye, UserCheck, UserX, BarChart3, Building2, Phone, Trash2, Shield, AlertTriangle } from "lucide-react";
+import { 
+  MoreVertical, 
+  Eye, 
+  UserCheck, 
+  UserX, 
+  BarChart3, 
+  Building2, 
+  Phone, 
+  Trash2, 
+  Shield, 
+  AlertTriangle 
+} from "lucide-react";
 
 // Import the Manager type from useManagers to avoid conflicts
 type Manager = {
@@ -17,6 +35,7 @@ type Manager = {
   lastActivity?: Date;
   totalComplaints: number;
 };
+
 interface ManagerQuickActionsProps {
   manager: Manager;
   onViewDetails: () => void;
@@ -28,6 +47,7 @@ interface ManagerQuickActionsProps {
   onContact: () => void;
   onRemove: () => void;
 }
+
 const ManagerQuickActions = ({
   manager,
   onViewDetails,
@@ -39,7 +59,8 @@ const ManagerQuickActions = ({
   onContact,
   onRemove
 }: ManagerQuickActionsProps) => {
-  return <DropdownMenu>
+  return (
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <MoreVertical className="h-4 w-4" />
@@ -61,11 +82,15 @@ const ManagerQuickActions = ({
           Gerenciar Quadras
         </DropdownMenuItem>
         
-        
+        <DropdownMenuItem onClick={onContact}>
+          <Phone className="mr-2 h-4 w-4 text-green-600" />
+          Contato Direto
+        </DropdownMenuItem>
         
         <DropdownMenuSeparator />
         
-        {manager.status === 'active' ? <>
+        {manager.status === 'active' ? (
+          <>
             <DropdownMenuItem onClick={onDeactivate}>
               <UserX className="mr-2 h-4 w-4 text-orange-600" />
               Desativar
@@ -74,16 +99,23 @@ const ManagerQuickActions = ({
               <Shield className="mr-2 h-4 w-4 text-yellow-600" />
               Suspender
             </DropdownMenuItem>
-          </> : manager.status === 'inactive' ? <DropdownMenuItem onClick={onActivate}>
+          </>
+        ) : manager.status === 'inactive' ? (
+          <DropdownMenuItem onClick={onActivate}>
             <UserCheck className="mr-2 h-4 w-4 text-green-600" />
             Ativar
-          </DropdownMenuItem> : manager.status === 'suspended' ? <DropdownMenuItem onClick={onActivate}>
+          </DropdownMenuItem>
+        ) : manager.status === 'suspended' ? (
+          <DropdownMenuItem onClick={onActivate}>
             <UserCheck className="mr-2 h-4 w-4 text-green-600" />
             Reativar
-          </DropdownMenuItem> : <DropdownMenuItem onClick={onActivate}>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem onClick={onActivate}>
             <UserCheck className="mr-2 h-4 w-4 text-green-600" />
             Aprovar
-          </DropdownMenuItem>}
+          </DropdownMenuItem>
+        )}
         
         <DropdownMenuSeparator />
         
@@ -92,6 +124,8 @@ const ManagerQuickActions = ({
           Remover Gestor
         </DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>;
+    </DropdownMenu>
+  );
 };
+
 export default ManagerQuickActions;

@@ -1,12 +1,11 @@
 
-const CACHE_NAME = 'driblus-v1.0.0';
+const CACHE_NAME = 'driblus-v1';
 const urlsToCache = [
   '/',
   '/static/css/main.css',
   '/static/js/main.js',
-  '/lovable-uploads/driblus-icon-192.png',
-  '/lovable-uploads/driblus-icon-420.png',
-  '/lovable-uploads/driblus-icon-512.png'
+  '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png',
+  '/lovable-uploads/6a0f382f-4f6a-4afd-a007-454b98a5807a.png'
 ];
 
 // Install event
@@ -49,8 +48,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'Nova reserva confirmada!',
-    icon: '/lovable-uploads/driblus-icon-192.png',
-    badge: '/lovable-uploads/driblus-icon-192.png',
+    icon: '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png',
+    badge: '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -60,12 +59,12 @@ self.addEventListener('push', (event) => {
       {
         action: 'explore',
         title: 'Ver Detalhes',
-        icon: '/lovable-uploads/driblus-icon-192.png'
+        icon: '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png'
       },
       {
         action: 'close',
         title: 'Fechar',
-        icon: '/lovable-uploads/driblus-icon-192.png'
+        icon: '/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png'
       }
     ]
   };
