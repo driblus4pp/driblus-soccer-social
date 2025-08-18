@@ -211,25 +211,43 @@ export type Database = {
       }
       profiles: {
         Row: {
+          altura: number | null
+          bairro: string | null
+          cidade: string | null
           created_at: string | null
+          foto_perfil: string | null
           id: string
           nome: string
+          peso: number | null
+          preferencias_esportivas: string[] | null
           role: Database["public"]["Enums"]["user_role"] | null
           telefone: string | null
           updated_at: string | null
         }
         Insert: {
+          altura?: number | null
+          bairro?: string | null
+          cidade?: string | null
           created_at?: string | null
+          foto_perfil?: string | null
           id: string
           nome: string
+          peso?: number | null
+          preferencias_esportivas?: string[] | null
           role?: Database["public"]["Enums"]["user_role"] | null
           telefone?: string | null
           updated_at?: string | null
         }
         Update: {
+          altura?: number | null
+          bairro?: string | null
+          cidade?: string | null
           created_at?: string | null
+          foto_perfil?: string | null
           id?: string
           nome?: string
+          peso?: number | null
+          preferencias_esportivas?: string[] | null
           role?: Database["public"]["Enums"]["user_role"] | null
           telefone?: string | null
           updated_at?: string | null
@@ -239,33 +257,45 @@ export type Database = {
       quadras: {
         Row: {
           ativa: boolean | null
+          bairro: string
+          cidade: string
           created_at: string | null
           descricao: string | null
+          endereco: string
           gestor_id: string | null
           id: string
           imagens: string[] | null
+          modalidade: string
           nome: string
           servicos: string[] | null
           updated_at: string | null
         }
         Insert: {
           ativa?: boolean | null
+          bairro: string
+          cidade: string
           created_at?: string | null
           descricao?: string | null
+          endereco: string
           gestor_id?: string | null
           id?: string
           imagens?: string[] | null
+          modalidade: string
           nome: string
           servicos?: string[] | null
           updated_at?: string | null
         }
         Update: {
           ativa?: boolean | null
+          bairro?: string
+          cidade?: string
           created_at?: string | null
           descricao?: string | null
+          endereco?: string
           gestor_id?: string | null
           id?: string
           imagens?: string[] | null
+          modalidade?: string
           nome?: string
           servicos?: string[] | null
           updated_at?: string | null
@@ -279,39 +309,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      quick_matches: {
-        Row: {
-          created_at: string
-          id: string
-          players: Json
-          team_a: Json
-          team_b: Json
-          type: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          players?: Json
-          team_a: Json
-          team_b: Json
-          type: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          players?: Json
-          team_a?: Json
-          team_b?: Json
-          type?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
       }
     }
     Views: {
@@ -333,6 +330,7 @@ export type Database = {
         | "novo_agendamento"
         | "agendamento_aprovado"
         | "reagendamento_sugerido"
+        | "lembrete_avaliacao"
       user_role: "admin" | "gestor" | "cliente"
     }
     CompositeTypes: {
@@ -466,6 +464,7 @@ export const Constants = {
         "novo_agendamento",
         "agendamento_aprovado",
         "reagendamento_sugerido",
+        "lembrete_avaliacao",
       ],
       user_role: ["admin", "gestor", "cliente"],
     },
