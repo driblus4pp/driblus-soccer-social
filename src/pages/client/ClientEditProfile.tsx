@@ -13,18 +13,15 @@ import BottomNavigation from "@/components/navigation/BottomNavigation";
 
 const ClientEditProfile = () => {
   const navigate = useNavigate();
-  const { user, updateUserProfile } = useAuth();
+  const { user, profile, updateUserProfile } = useAuth();
   
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    nome: profile?.nome || '',
     email: user?.email || '',
-    phone: user?.phone || '',
-    location: user?.preferences?.favoriteLocations?.[0] || ''
+    telefone: profile?.telefone || ''
   });
 
-  const [selectedSports, setSelectedSports] = useState<SportType[]>(
-    user?.preferences?.preferredSports || []
-  );
+  const [selectedSports, setSelectedSports] = useState<SportType[]>([]);
 
   // Mapping of SportType enum to Portuguese display names
   const sportDisplayNames: Record<SportType, string> = {
@@ -55,16 +52,14 @@ const ClientEditProfile = () => {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      const success = await updateUserProfile({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        preferences: {
-          ...user?.preferences,
-          favoriteLocations: [formData.location],
-          preferredSports: selectedSports
-        }
-      });
+    const success = await updateUserProfile({
+      nome: formData.nome,
+      telefone: formData.telefone
+    });
+    
+    if (success) {
+      navigate('/cliente/perfil');
+    }
 
       if (success) {
         navigate('/cliente/perfil');
@@ -136,8 +131,8 @@ const ClientEditProfile = () => {
               <Label htmlFor="name" className="text-white mb-2 block">Nome Completo</Label>
               <Input
                 id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                value={formData.nome}
+                onChange={(e) => handleInputChange('nome', e.target.value)}
                 className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                 placeholder="Seu nome completo"
               />
@@ -157,20 +152,10 @@ const ClientEditProfile = () => {
               <Label htmlFor="phone" className="text-white mb-2 block">Telefone</Label>
               <Input
                 id="phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
+                value={formData.telefone}
+                onChange={(e) => handleInputChange('telefone', e.target.value)}
                 className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                 placeholder="(85) 99999-9999"
-              />
-            </div>
-            <div>
-              <Label htmlFor="location" className="text-white mb-2 block">Localização</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                placeholder="Sua cidade/bairro"
               />
             </div>
           </CardContent>

@@ -21,6 +21,9 @@ interface AuthContextType {
   register: (userData: RegisterData) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  updateUserProfile: (data: Partial<Profile>) => Promise<boolean>;
+  getPlatformStats: () => Promise<any>;
+  connectGoogleCalendar: () => Promise<boolean>;
 }
 
 interface RegisterData {
@@ -223,6 +226,69 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserProfile = async (data: Partial<Profile>): Promise<boolean> => {
+    if (!user || !profile) return false;
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(data)
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Profile update error:', error);
+        toast({
+          title: "Erro ao atualizar",
+          description: error.message,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // Update local profile state
+      const updatedProfile = { ...profile, ...data };
+      setProfile(updatedProfile);
+      
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações foram atualizadas com sucesso.",
+      });
+      return true;
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return false;
+    }
+  };
+
+  const getPlatformStats = async () => {
+    // Mock platform statistics for admin dashboard
+    return {
+      totalUsers: 1247,
+      totalCourts: 89,
+      totalBookings: 3421,
+      monthlyRevenue: 245600,
+      activeUsers: 892,
+      pendingApprovals: 12,
+      averageRating: 4.6,
+      growthRate: 23.5
+    };
+  };
+
+  const connectGoogleCalendar = async (): Promise<boolean> => {
+    try {
+      // Mock Google Calendar connection
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Google Calendar conectado",
+        description: "Sua agenda foi sincronizada com sucesso.",
+      });
+      return true;
+    } catch (error) {
+      console.error('Google Calendar connection error:', error);
+      return false;
+    }
+  };
   // Debug current state
   console.log('AuthContext - Current user:', user);
   console.log('AuthContext - Current profile:', profile);
@@ -237,6 +303,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       register,
       logout,
       isLoading,
+      updateUserProfile,
+      getPlatformStats,
+      connectGoogleCalendar,
     }}>
       {children}
     </AuthContext.Provider>
