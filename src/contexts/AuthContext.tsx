@@ -1,16 +1,26 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserRole, PlatformStats, SportType } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import { toast } from '@/components/ui/use-toast';
+
+interface Profile {
+  id: string;
+  nome: string;
+  telefone?: string;
+  role: 'admin' | 'gestor' | 'cliente';
+  created_at: string;
+  updated_at: string;
+}
 
 interface AuthContextType {
-  user: User | null;
+  user: SupabaseUser | null;
+  profile: Profile | null;
+  session: Session | null;
   login: (email: string, password: string) => Promise<boolean>;
   register: (userData: RegisterData) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
-  connectGoogleCalendar: () => Promise<boolean>;
-  updateUserProfile: (data: Partial<User>) => Promise<boolean>;
-  getPlatformStats: () => Promise<PlatformStats>;
 }
 
 interface RegisterData {
@@ -18,7 +28,6 @@ interface RegisterData {
   email: string;
   password: string;
   phone: string;
-  role: UserRole;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,27 +41,63 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    console.log('AuthContext - Initializing...');
-    // Check for stored user session
-    const storedUser = localStorage.getItem('driblus_user');
-    console.log('AuthContext - Stored user raw:', storedUser);
-    
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        console.log('AuthContext - Parsed stored user:', parsedUser);
-        console.log('AuthContext - Stored user role:', parsedUser.role);
-        setUser(parsedUser);
-      } catch (error) {
-        console.error('AuthContext - Error parsing stored user, clearing localStorage:', error);
-        localStorage.removeItem('driblus_user');
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
       }
+
+      return data;
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      return null;
     }
-    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session);
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Defer profile fetch to avoid deadlock
+          setTimeout(async () => {
+            const profileData = await fetchProfile(session.user.id);
+            setProfile(profileData);
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+        
+        setIsLoading(false);
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchProfile(session.user.id).then(setProfile);
+      }
+      setIsLoading(false);
+    });
 
     // Register service worker for PWA
     if ('serviceWorker' in navigator) {
@@ -64,136 +109,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log('SW registration failed: ', registrationError);
         });
     }
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    console.log('AuthContext - Starting login for:', email);
     setIsLoading(true);
     
     try {
-      // CRITICAL: Clear any existing user data first
-      console.log('AuthContext - Clearing existing user data');
-      localStorage.removeItem('driblus_user');
-      setUser(null);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user data based on email for different roles
-      let mockUser: User;
-      
-      if (email === 'admin@driblus.com') {
-        console.log('AuthContext - Creating ADMIN user');
-        mockUser = {
-          id: 'admin-1',
-          name: 'Administrador Driblus',
-          email,
-          role: UserRole.ADMIN,
-          isVerified: true,
-          createdAt: new Date('2024-01-01'),
-          lastLogin: new Date(),
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face',
-          googleCalendarConnected: false
-        };
-        console.log('AuthContext - Admin user created with role:', mockUser.role);
-        console.log('AuthContext - UserRole.ADMIN constant:', UserRole.ADMIN);
-      } else if (email === 'gestor.alvo@driblus.com' && password === 'dida') {
-        console.log('AuthContext - Creating No Alvo Society manager user');
-        mockUser = {
-          id: 'manager-alvo',
-          name: 'No Alvo Society',
-          email,
-          phone: '+55 85 99999-9999',
-          role: UserRole.COURT_MANAGER,
-          isVerified: true,
-          createdAt: new Date('2024-01-15'),
-          lastLogin: new Date(),
-          avatar: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face',
-          googleCalendarConnected: false,
-          stats: {
-            totalBookings: 234,
-            completedGames: 220,
-            cancelledGames: 14,
-            averageRating: 4.7,
-            totalSpent: 45780,
-          }
-        };
-      } else if (email === 'gestor.arena@driblus.com' && password === 'dida') {
-        console.log('AuthContext - Creating Arena Cangaço manager user');
-        mockUser = {
-          id: 'manager-arena',
-          name: 'Arena Cangaço',
-          email,
-          phone: '+55 85 88888-8888',
-          role: UserRole.COURT_MANAGER,
-          isVerified: true,
-          createdAt: new Date('2024-02-10'),
-          lastLogin: new Date(),
-          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=face',
-          googleCalendarConnected: false,
-          stats: {
-            totalBookings: 156,
-            completedGames: 148,
-            cancelledGames: 8,
-            averageRating: 4.7,
-            totalSpent: 32150,
-          }
-        };
-      } else {
-        mockUser = {
-          id: 'user-1',
-          name: 'Maria Santos',
-          email,
-          phone: '+55 85 88888-8888',
-          role: UserRole.USER,
-          isVerified: true,
-          createdAt: new Date('2024-03-01'),
-          lastLogin: new Date(),
-          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b436?w=80&h=80&fit=crop&crop=face',
-          googleCalendarConnected: false,
-          preferences: {
-            favoriteLocations: ['Fortaleza, CE'],
-            preferredSports: [SportType.FOOTBALL, SportType.FUTSAL],
-            maxDistance: 10,
-            notifications: {
-              email: true,
-              push: true,
-              sms: false
-            },
-            privacy: {
-              showProfile: true,
-              allowReviews: true
-            }
-          },
-          stats: {
-            totalBookings: 15,
-            completedGames: 12,
-            cancelledGames: 3,
-            averageRating: 4.5,
-            totalSpent: 1800,
-            favoriteCourtId: 'court-1'
-          }
-        };
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Login error:', error);
+        toast({
+          title: "Erro no login",
+          description: error.message,
+          variant: "destructive",
+        });
+        return false;
       }
 
-      console.log('AuthContext - Setting user state:', mockUser);
-      console.log('AuthContext - User role being set:', mockUser.role);
-      
-      setUser(mockUser);
-      
-      // Save to localStorage
-      const userToStore = JSON.stringify(mockUser);
-      console.log('AuthContext - Storing user in localStorage:', userToStore);
-      localStorage.setItem('driblus_user', userToStore);
-      
-      // Verify storage
-      const verifyStored = localStorage.getItem('driblus_user');
-      console.log('AuthContext - Verification - stored user:', verifyStored);
-      
-      console.log('AuthContext - Login successful for role:', mockUser.role);
-      return true;
+      if (data.user) {
+        const profileData = await fetchProfile(data.user.id);
+        setProfile(profileData);
+        
+        toast({
+          title: "Login realizado",
+          description: "Bem-vindo de volta!",
+        });
+        return true;
+      }
+
+      return false;
     } catch (error) {
-      console.error('AuthContext - Login error:', error);
+      console.error('Login error:', error);
+      toast({
+        title: "Erro no login",
+        description: "Erro interno. Tente novamente.",
+        variant: "destructive",
+      });
       return false;
     } finally {
       setIsLoading(false);
@@ -202,132 +159,88 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (userData: RegisterData): Promise<boolean> => {
     setIsLoading(true);
+    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const redirectUrl = `${window.location.origin}/`;
       
-      const newUser: User = {
-        id: Date.now().toString(),
-        name: userData.name,
+      const { data, error } = await supabase.auth.signUp({
         email: userData.email,
-        phone: userData.phone,
-        role: userData.role,
-        isVerified: false,
-        createdAt: new Date(),
-        googleCalendarConnected: false,
-        preferences: {
-          favoriteLocations: [],
-          preferredSports: [],
-          maxDistance: 5,
-          notifications: {
-            email: true,
-            push: true,
-            sms: false
-          },
-          privacy: {
-            showProfile: true,
-            allowReviews: true
+        password: userData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            nome: userData.name,
+            telefone: userData.phone,
           }
-        },
-        stats: {
-          totalBookings: 0,
-          completedGames: 0,
-          cancelledGames: 0,
-          averageRating: 0,
-          totalSpent: 0
         }
-      };
+      });
 
-      setUser(newUser);
-      localStorage.setItem('driblus_user', JSON.stringify(newUser));
-      return true;
+      if (error) {
+        console.error('Register error:', error);
+        toast({
+          title: "Erro no cadastro",
+          description: error.message,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Cadastro realizado",
+          description: "Confirme seu email para ativar a conta.",
+        });
+        return true;
+      }
+
+      return false;
     } catch (error) {
       console.error('Register error:', error);
+      toast({
+        title: "Erro no cadastro",
+        description: "Erro interno. Tente novamente.",
+        variant: "destructive",
+      });
       return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    console.log('AuthContext - Logging out, clearing all data');
-    setUser(null);
-    localStorage.removeItem('driblus_user');
-  };
-
-  const connectGoogleCalendar = async (): Promise<boolean> => {
-    setIsLoading(true);
+  const logout = async () => {
     try {
-      // Simulate Google OAuth flow
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await supabase.auth.signOut();
+      setUser(null);
+      setProfile(null);
+      setSession(null);
       
-      if (user) {
-        const updatedUser = { ...user, googleCalendarConnected: true };
-        setUser(updatedUser);
-        localStorage.setItem('driblus_user', JSON.stringify(updatedUser));
-      }
-      return true;
+      toast({
+        title: "Logout realizado",
+        description: "Até logo!",
+      });
     } catch (error) {
-      console.error('Google Calendar connection error:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
+      console.error('Logout error:', error);
     }
-  };
-
-  const updateUserProfile = async (data: Partial<User>): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      if (user) {
-        const updatedUser = { ...user, ...data };
-        setUser(updatedUser);
-        localStorage.setItem('driblus_user', JSON.stringify(updatedUser));
-      }
-      return true;
-    } catch (error) {
-      console.error('Profile update error:', error);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getPlatformStats = async (): Promise<PlatformStats> => {
-    // Mock platform statistics for admin dashboard
-    return {
-      totalUsers: 1247,
-      totalCourts: 89,
-      totalBookings: 3421,
-      monthlyRevenue: 245600,
-      activeUsers: 892,
-      pendingApprovals: 12,
-      averageRating: 4.6,
-      growthRate: 23.5
-    };
   };
 
   // Debug current state
-  console.log('AuthContext - Current user state:', user);
-  console.log('AuthContext - Current user role:', user?.role);
+  console.log('AuthContext - Current user:', user);
+  console.log('AuthContext - Current profile:', profile);
   console.log('AuthContext - Is loading:', isLoading);
 
   return (
     <AuthContext.Provider value={{
       user,
+      profile,
+      session,
       login,
       register,
       logout,
       isLoading,
-      connectGoogleCalendar,
-      updateUserProfile,
-      getPlatformStats
     }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export { UserRole };
-export type { User };
+export type { Profile };

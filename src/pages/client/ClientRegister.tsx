@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Mail, Lock, Phone, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { UserRole } from '@/types';
+
 const ClientRegister = () => {
   const navigate = useNavigate();
   const {
@@ -20,10 +20,7 @@ const ClientRegister = () => {
   });
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await register({
-      ...formData,
-      role: UserRole.USER
-    });
+    const success = await register(formData);
     if (success) {
       navigate('/cliente/dashboard');
     }

@@ -15,7 +15,7 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: DashboardHeaderProps) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { notifications, unreadCount } = useNotifications();
   
   // Ativar notificações push
@@ -38,7 +38,7 @@ const DashboardHeader = ({ searchTerm, setSearchTerm, onNotificationClick }: Das
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-xl font-medium text-white">
-            {getGreeting()}, {user?.name?.split(' ')[0] || 'Janderson'}!
+            {getGreeting()}, {profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Usuário'}!
           </h1>
         </div>
         <div className="flex items-center gap-3">

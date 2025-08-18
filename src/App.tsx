@@ -9,6 +9,9 @@ import { LoadingProvider, useLoading } from "@/contexts/LoadingContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Client Routes
 import ClientLogin from "./pages/client/ClientLogin";
@@ -57,11 +60,21 @@ const AppContent = () => {
       {isLoading && <LoadingScreen message={loadingMessage} />}
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
         
-        {/* Client Routes */}
+        {/* Legacy Client Routes - kept for compatibility */}
         <Route path="/cliente/login" element={<ClientLogin />} />
         <Route path="/cliente/cadastro" element={<ClientRegister />} />
-        <Route path="/cliente/dashboard" element={<ClientDashboard />} />
+        <Route path="/cliente/dashboard" element={
+          <ProtectedRoute requiredRole="cliente">
+            <ClientDashboard />
+          </ProtectedRoute>
+        } />
         <Route path="/cliente/quadras" element={<ClientCourts />} />
         <Route path="/cliente/agendamentos" element={<ClientSchedule />} />
         <Route path="/cliente/perfil" element={<ClientProfile />} />
