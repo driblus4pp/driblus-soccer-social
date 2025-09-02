@@ -14,7 +14,7 @@ const ClientProfile = () => {
     logout
   } = useAuth();
   const { getRecentMatches } = useQuickMatches();
-  const recentMatches = getRecentMatches(5);
+  const recentMatches = getRecentMatches();
   const handleLogout = () => {
     if (window.confirm('Tem certeza que deseja sair da sua conta?')) {
       logout();
