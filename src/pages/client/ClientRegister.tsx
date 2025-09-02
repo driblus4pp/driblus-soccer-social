@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Mail, Lock, Phone, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePasswordValidation } from "@/hooks/usePasswordValidation";
 
 const ClientRegister = () => {
   const navigate = useNavigate();
@@ -12,14 +13,30 @@ const ClientRegister = () => {
     register,
     isLoading
   } = useAuth();
+  const { validatePassword, getStrengthColor, getStrengthText } = usePasswordValidation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     password: ''
   });
+  const [passwordValidation, setPasswordValidation] = useState({ isValid: false, errors: [] as string[], strength: 'weak' as 'weak' | 'medium' | 'strong' });
+
+  const handlePasswordChange = (password: string) => {
+    setFormData(prev => ({ ...prev, password }));
+    const validation = validatePassword(password);
+    setPasswordValidation(validation);
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate password before submission
+    const validation = validatePassword(formData.password);
+    if (!validation.isValid) {
+      return; // Form validation will show errors
+    }
+
     const success = await register(formData);
     if (success) {
       navigate('/cliente/dashboard');
@@ -69,13 +86,38 @@ const ClientRegister = () => {
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                <Input placeholder="Senha" type="password" value={formData.password} onChange={e => setFormData(prev => ({
-                ...prev,
-                password: e.target.value
-              }))} className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" required />
+                <Input 
+                  placeholder="Senha" 
+                  type="password" 
+                  value={formData.password} 
+                  onChange={e => handlePasswordChange(e.target.value)}
+                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60" 
+                  required 
+                />
+                {formData.password && (
+                  <div className="mt-2 space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-white/70">Força da senha:</span>
+                      <span className={getStrengthColor(passwordValidation.strength)}>
+                        {getStrengthText(passwordValidation.strength)}
+                      </span>
+                    </div>
+                    {passwordValidation.errors.length > 0 && (
+                      <ul className="text-xs text-red-400 space-y-1">
+                        {passwordValidation.errors.map((error, index) => (
+                          <li key={index}>• {error}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
 
-              <Button type="submit" disabled={isLoading} className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3 rounded-xl font-semibold">
+              <Button 
+                type="submit" 
+                disabled={isLoading || !passwordValidation.isValid} 
+                className="w-full bg-[#F35410] hover:bg-[#BA2D0B] text-white py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {isLoading ? 'Criando conta...' : 'Criar conta'}
               </Button>
             </form>

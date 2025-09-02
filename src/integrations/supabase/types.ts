@@ -16,7 +16,7 @@ export type Database = {
     Tables: {
       agendamentos: {
         Row: {
-          cliente_id: string | null
+          cliente_id: string
           created_at: string | null
           data: string
           hora_fim: string
@@ -29,7 +29,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          cliente_id?: string | null
+          cliente_id: string
           created_at?: string | null
           data: string
           hora_fim: string
@@ -42,7 +42,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          cliente_id?: string | null
+          cliente_id?: string
           created_at?: string | null
           data?: string
           hora_fim?: string
@@ -74,7 +74,7 @@ export type Database = {
       avaliacoes: {
         Row: {
           agendamento_id: string | null
-          cliente_id: string | null
+          cliente_id: string
           comentario: string | null
           created_at: string | null
           estrelas: number
@@ -83,7 +83,7 @@ export type Database = {
         }
         Insert: {
           agendamento_id?: string | null
-          cliente_id?: string | null
+          cliente_id: string
           comentario?: string | null
           created_at?: string | null
           estrelas: number
@@ -92,7 +92,7 @@ export type Database = {
         }
         Update: {
           agendamento_id?: string | null
-          cliente_id?: string | null
+          cliente_id?: string
           comentario?: string | null
           created_at?: string | null
           estrelas?: number
@@ -170,7 +170,7 @@ export type Database = {
           mensagem: string
           tipo: Database["public"]["Enums"]["notificacao_tipo"]
           titulo: string
-          usuario_id: string | null
+          usuario_id: string
         }
         Insert: {
           agendamento_id?: string | null
@@ -180,7 +180,7 @@ export type Database = {
           mensagem: string
           tipo: Database["public"]["Enums"]["notificacao_tipo"]
           titulo: string
-          usuario_id?: string | null
+          usuario_id: string
         }
         Update: {
           agendamento_id?: string | null
@@ -190,7 +190,7 @@ export type Database = {
           mensagem?: string
           tipo?: Database["public"]["Enums"]["notificacao_tipo"]
           titulo?: string
-          usuario_id?: string | null
+          usuario_id?: string
         }
         Relationships: [
           {
