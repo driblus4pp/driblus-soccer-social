@@ -310,6 +310,48 @@ export type Database = {
           },
         ]
       }
+      quick_matches: {
+        Row: {
+          created_at: string
+          duration: number | null
+          id: string
+          location: string | null
+          notes: string | null
+          players: Json
+          team_a: Json
+          team_b: Json
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          players?: Json
+          team_a: Json
+          team_b: Json
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          players?: Json
+          team_a?: Json
+          team_b?: Json
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

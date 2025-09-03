@@ -85,7 +85,17 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
   };
 
   const handleSave = async () => {
-    await saveQuickMatch();
+    const matchData = {
+      userId: 'current-user-id', // This should come from auth context
+      type: 'score_record' as const,
+      teamA,
+      teamB,
+      players,
+      duration: 90,
+      location: undefined,
+      notes: undefined
+    };
+    await saveQuickMatch(matchData);
     onBack();
   };
 
