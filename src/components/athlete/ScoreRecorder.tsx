@@ -86,7 +86,6 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
 
   const handleSave = async () => {
     const matchData = {
-      userId: 'current-user-id', // This should come from auth context
       type: 'score_record' as const,
       teamA,
       teamB,

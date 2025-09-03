@@ -55,16 +55,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to handle no results
 
       if (error) {
         console.error('Error fetching profile:', error);
         return null;
       }
 
+      // If no profile exists, create one using user metadata
+      if (!data) {
+        console.log('No profile found, creating one...');
+        return await createProfileFromUserData(userId);
+      }
+
       return data;
     } catch (error) {
       console.error('Error fetching profile:', error);
+      return null;
+    }
+  };
+
+  const createProfileFromUserData = async (userId: string) => {
+    try {
+      // Get user data from auth
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+
+      if (!user) return null;
+
+      const profileData = {
+        id: userId,
+        nome: user.user_metadata?.nome || user.user_metadata?.name || user.email?.split('@')[0] || 'Usuário',
+        telefone: user.user_metadata?.telefone || null,
+        role: 'cliente' as const,
+        cidade: null,
+        bairro: null,
+        foto_perfil: null,
+        preferencias_esportivas: []
+      };
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert(profileData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating profile:', error);
+        return null;
+      }
+
+      console.log('Profile created successfully:', data);
+      return data;
+    } catch (error) {
+      console.error('Error creating profile from user data:', error);
       return null;
     }
   };

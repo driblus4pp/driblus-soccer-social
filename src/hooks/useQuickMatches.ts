@@ -46,13 +46,18 @@ export const useQuickMatches = () => {
     }
   };
 
-  const saveQuickMatch = async (matchData: Omit<QuickMatch, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const saveQuickMatch = async (matchData: Omit<QuickMatch, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
     try {
+      // Get current user ID from auth
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
       setLoading(true);
       const { data, error } = await supabase
         .from('quick_matches')
         .insert({
-          user_id: matchData.userId,
+          user_id: user.id,
           type: matchData.type,
           team_a: matchData.teamA as any,
           team_b: matchData.teamB as any,
