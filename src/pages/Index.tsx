@@ -36,7 +36,7 @@ const Index = () => {
           <h2 className="text-2xl font-bold text-white text-center mb-6">Como você quer acessar?</h2>
           
           {/* Client Access */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-colors cursor-pointer" onClick={() => navigate('/cliente/login')}>
+          <Card className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-colors cursor-pointer" onClick={() => navigate('/auth')}>
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-3">
                 <div className="p-2 bg-[#F35410] rounded-lg">

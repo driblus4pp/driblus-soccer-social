@@ -10,10 +10,11 @@ const ClientProfile = () => {
   const navigate = useNavigate();
   const {
     user,
+    profile,
     logout
   } = useAuth();
   const { getRecentMatches } = useQuickMatches();
-  const recentMatches = getRecentMatches(5);
+  const recentMatches = getRecentMatches();
   const handleLogout = () => {
     if (window.confirm('Tem certeza que deseja sair da sua conta?')) {
       logout();
@@ -47,7 +48,7 @@ const ClientProfile = () => {
               </div>
               <div className="flex-1">
                 <h2 className="text-xl font-bold text-white">
-                  {user?.name || 'Janderson Silva'}
+                  {profile?.nome || user?.email || 'Usuário'}
                 </h2>
                 <p className="text-white/70">{user?.email || 'janderson@email.com'}</p>
                 

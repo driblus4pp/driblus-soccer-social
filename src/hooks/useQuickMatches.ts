@@ -1,146 +1,148 @@
 import { useState, useEffect } from 'react';
-import { QuickMatch, QuickMatchPlayer, PlayerStats } from '@/types/quickMatch';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { QuickMatch, PlayerStats } from '@/types/quickMatch';
+import { useToast } from '@/hooks/use-toast';
 
 export const useQuickMatches = () => {
-  const { user } = useAuth();
-  const { toast } = useToast();
   const [matches, setMatches] = useState<QuickMatch[]>([]);
   const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // Carregar partidas do Supabase
-  useEffect(() => {
-    if (user) {
-      loadQuickMatches();
-    }
-  }, [user]);
+  const { toast } = useToast();
 
   const loadQuickMatches = async () => {
-    if (!user) return;
-    
-    setLoading(true);
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('quick_matches')
         .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(3);
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const formattedMatches: QuickMatch[] = (data || []).map(match => ({
+      const formattedMatches: QuickMatch[] = data?.map(match => ({
         id: match.id,
         userId: match.user_id,
         type: match.type as 'team_sort' | 'score_record',
         teamA: match.team_a as any,
         teamB: match.team_b as any,
-        players: (match.players as any) || [],
+        players: match.players as any,
+        duration: match.duration,
+        location: match.location,
+        notes: match.notes,
         createdAt: new Date(match.created_at),
         updatedAt: new Date(match.updated_at)
-      }));
+      })) || [];
 
       setMatches(formattedMatches);
-      updatePlayerStatsFromMatches(formattedMatches);
     } catch (error) {
-      console.error('Erro ao carregar partidas:', error);
+      console.error('Error loading quick matches:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar as partidas.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const saveQuickMatch = async (match: Omit<QuickMatch, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
-    if (!user) return;
-
+  const saveQuickMatch = async (matchData: Omit<QuickMatch, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
     try {
+      // Get current user ID from auth
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+      setLoading(true);
       const { data, error } = await supabase
         .from('quick_matches')
-        .insert([{
+        .insert({
           user_id: user.id,
-          type: match.type,
-          team_a: match.teamA as any,
-          team_b: match.teamB as any,
-          players: match.players as any
-        }])
+          type: matchData.type,
+          team_a: matchData.teamA as any,
+          team_b: matchData.teamB as any,
+          players: matchData.players as any,
+          duration: matchData.duration,
+          location: matchData.location,
+          notes: matchData.notes
+        })
         .select()
         .single();
 
       if (error) throw error;
 
-      const newMatch: QuickMatch = {
-        id: data.id,
-        userId: data.user_id,
-        type: data.type as 'team_sort' | 'score_record',
-        teamA: data.team_a as any,
-        teamB: data.team_b as any,
-        players: (data.players as any) || [],
-        createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at)
-      };
-
-      // Atualizar estado local
-      await loadQuickMatches();
-      
       toast({
-        title: "Partida salva com sucesso!",
-        description: "A partida foi registrada e as estatísticas dos jogadores foram atualizadas.",
+        title: "Sucesso",
+        description: "Partida salva com sucesso!",
+        variant: "default"
       });
 
-      return newMatch;
+      // Reload matches to include the new one
+      await loadQuickMatches();
     } catch (error) {
-      console.error('Erro ao salvar partida:', error);
+      console.error('Error saving quick match:', error);
       toast({
-        title: "Erro ao salvar partida",
-        description: "Ocorreu um erro ao salvar a partida. Tente novamente.",
+        title: "Erro",
+        description: "Não foi possível salvar a partida.",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const updatePlayerStatsFromMatches = (matches: QuickMatch[]) => {
-    const statsMap = new Map<string, PlayerStats>();
-    
-    matches.forEach(match => {
-      match.players.forEach(player => {
-        const existingStats = statsMap.get(player.name);
-        
-        if (existingStats) {
-          existingStats.totalMatches += 1;
-          existingStats.totalGoals += player.goals;
-          existingStats.totalAssists += player.assists;
-          existingStats.totalYellowCards += player.yellowCards;
-          existingStats.totalRedCards += player.redCards;
+  const getPlayerStats = (playerId: string): PlayerStats | undefined => {
+    const playerMatches = matches.filter(match => 
+      match.players.some(player => player.id === playerId)
+    );
+
+    if (playerMatches.length === 0) return undefined;
+
+    const stats: PlayerStats = {
+      playerId,
+      playerName: '',
+      totalMatches: playerMatches.length,
+      totalGoals: 0,
+      totalAssists: 0,
+      totalYellowCards: 0,
+      totalRedCards: 0,
+      wins: 0,
+      losses: 0,
+      draws: 0
+    };
+
+    playerMatches.forEach(match => {
+      const player = match.players.find(p => p.id === playerId);
+      if (player) {
+        stats.playerName = player.name;
+        stats.totalGoals += player.goals;
+        stats.totalAssists += player.assists;
+        stats.totalYellowCards += player.yellowCards;
+        stats.totalRedCards += player.redCards;
+
+        // Calculate wins/losses based on team scores
+        if (match.teamA.score > match.teamB.score) {
+          if (player.team === 'A') stats.wins++;
+          else stats.losses++;
+        } else if (match.teamB.score > match.teamA.score) {
+          if (player.team === 'B') stats.wins++;
+          else stats.losses++;
         } else {
-          const newStats: PlayerStats = {
-            playerId: player.id,
-            playerName: player.name,
-            totalMatches: 1,
-            totalGoals: player.goals,
-            totalAssists: player.assists,
-            totalYellowCards: player.yellowCards,
-            totalRedCards: player.redCards,
-            wins: 0,
-            losses: 0,
-            draws: 0
-          };
-          statsMap.set(player.name, newStats);
+          stats.draws++;
         }
-      });
+      }
     });
 
-    setPlayerStats(Array.from(statsMap.values()));
+    return stats;
   };
 
-  const getPlayerStats = (playerName: string): PlayerStats | undefined => {
-    return playerStats.find(stats => stats.playerName === playerName);
-  };
-
-  const getRecentMatches = (limit: number = 10): QuickMatch[] => {
+  const getRecentMatches = (limit: number = 5): QuickMatch[] => {
     return matches.slice(0, limit);
   };
+
+  useEffect(() => {
+    loadQuickMatches();
+  }, []);
 
   return {
     matches,

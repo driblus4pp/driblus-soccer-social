@@ -14,7 +14,7 @@ import LoyalCustomersModal from "@/components/manager/LoyalCustomersModal";
 
 const ManagerProfile = () => {
   const navigate = useNavigate();
-  const { user, logout, isLoading } = useAuth();
+  const { user, profile, logout, isLoading } = useAuth();
   
   // Verificação de autenticação
   useEffect(() => {
@@ -81,7 +81,7 @@ const ManagerProfile = () => {
                 <User className="w-10 h-10 text-white" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold">{user?.name || 'Carlos Silva'}</h2>
+                <h2 className="text-xl font-bold">{profile?.nome || user?.email || 'Gestor'}</h2>
                 <p className="text-gray-600">{user?.email || 'carlos@email.com'}</p>
                 <Badge className="bg-[#F35410] text-white mt-2">
                   Gestor Aprovado

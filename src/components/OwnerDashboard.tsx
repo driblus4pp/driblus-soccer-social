@@ -111,7 +111,7 @@ const OwnerDashboard = () => {
         </div>
 
         {/* Google Calendar Integration Alert */}
-        {!user?.googleCalendarConnected && (
+        {false && (
           <Card className="bg-yellow-50 border-yellow-200 mb-6">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">

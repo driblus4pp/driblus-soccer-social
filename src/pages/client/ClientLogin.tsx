@@ -103,6 +103,11 @@ const ClientLogin = () => {
                 Cadastre-se aqui
               </Link>
             </p>
+            <p className="text-white/70 text-sm mt-2">
+              <Link to="/cliente/esqueci-senha" className="text-[#F35410] hover:underline font-medium">
+                Esqueci minha senha
+              </Link>
+            </p>
           </div>
 
           {/* Demo Button */}

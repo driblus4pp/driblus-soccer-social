@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const ManagerEditProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, isLoading } = useAuth();
+  const { user, profile, isLoading } = useAuth();
   
   // Verificação de autenticação
   useEffect(() => {
@@ -21,7 +21,7 @@ const ManagerEditProfile = () => {
   }, [user, isLoading, navigate]);
 
   const [formData, setFormData] = useState({
-    name: user?.name || 'Carlos Silva',
+    name: profile?.nome || 'Gestor',
     email: user?.email || 'carlos@email.com',
     phone: '+55 85 99999-9999',
     currentPassword: '',

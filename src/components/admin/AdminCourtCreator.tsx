@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building, Plus, MapPin, DollarSign, User } from "lucide-react";
+import { Building, Plus, MapPin, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { SportType } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminCourtCreatorProps {
   onCourtCreated: () => void;
@@ -34,11 +35,38 @@ const AdminCourtCreator = ({ onCourtCreated }: AdminCourtCreatorProps) => {
     e.preventDefault();
     setIsCreating(true);
 
-    // Simular criação da quadra e gestor
-    setTimeout(() => {
+    try {
+      // 1. Criar gestor usando edge function
+      const { data: managerData, error: managerError } = await supabase.functions.invoke('create-manager', {
+        body: {
+          email: courtData.managerEmail,
+          password: '123456', // Senha temporária
+          nome: courtData.managerName,
+          telefone: courtData.managerPhone
+        }
+      });
+
+      if (managerError) throw managerError;
+
+      // 2. Criar quadra com gestor vinculado
+      const { error: courtError } = await supabase
+        .from('quadras')
+        .insert({
+          nome: courtData.name,
+          descricao: courtData.description,
+          endereco: courtData.address,
+          cidade: courtData.city,
+          bairro: courtData.state,
+          modalidade: courtData.sport,
+          gestor_id: managerData.userId,
+          ativa: true
+        });
+
+      if (courtError) throw courtError;
+
       toast({
         title: "Quadra e Gestor Criados!",
-        description: `${courtData.name} foi criada e as credenciais foram enviadas para ${courtData.managerEmail}`
+        description: `${courtData.name} foi criada. Credenciais enviadas para ${courtData.managerEmail}`
       });
       
       // Reset form
@@ -56,8 +84,16 @@ const AdminCourtCreator = ({ onCourtCreated }: AdminCourtCreatorProps) => {
       });
       
       onCourtCreated();
+    } catch (error: any) {
+      console.error('Error creating court:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao criar quadra e gestor",
+        variant: "destructive"
+      });
+    } finally {
       setIsCreating(false);
-    }, 2000);
+    }
   };
 
   return (

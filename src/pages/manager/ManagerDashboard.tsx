@@ -11,7 +11,7 @@ import ManagerSchedule from "@/components/manager/ManagerSchedule";
 import ManagerFeedbackSection from "@/components/manager/ManagerFeedbackSection";
 
 const ManagerDashboard = () => {
-  const { user, logout, isLoading } = useAuth();
+  const { user, profile, logout, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -95,7 +95,7 @@ const ManagerDashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">
-              Olá, {user?.name?.split(' ')[0] || 'Gestor'}! 👋
+              Olá, {profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Gestor'}! 👋
             </h1>
             <p className="text-white/90 mt-1">Como está sua quadra hoje?</p>
           </div>

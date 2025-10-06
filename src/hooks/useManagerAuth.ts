@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { User, UserRole } from '@/types';
-import { useManagers } from './useManagers';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ManagerCredentials {
   email: string;
@@ -10,39 +9,40 @@ interface ManagerCredentials {
 export const useManagerAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { getManagerById } = useManagers();
 
-  const validateManagerLogin = async (credentials: ManagerCredentials): Promise<User | null> => {
+  const validateManagerLogin = async (credentials: ManagerCredentials) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use Supabase authentication instead of hardcoded credentials
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password,
+      });
 
-      // Check if credentials match our manager accounts
-      if (credentials.email === 'gestor.alvo@driblus.com' && credentials.password === 'dida') {
-        const manager = getManagerById('manager-alvo');
-        if (manager) {
-          return {
-            ...manager,
-            role: UserRole.COURT_MANAGER
-          };
-        }
+      if (authError) {
+        setError('Email ou senha incorretos');
+        return null;
       }
 
-      if (credentials.email === 'gestor.arena@driblus.com' && credentials.password === 'dida') {
-        const manager = getManagerById('manager-arena');
-        if (manager) {
-          return {
-            ...manager,
-            role: UserRole.COURT_MANAGER
-          };
+      // Check if user has manager role
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profile?.role !== 'gestor') {
+          setError('Acesso não autorizado para gestores');
+          await supabase.auth.signOut();
+          return null;
         }
+
+        return data.user;
       }
 
-      // Invalid credentials
-      setError('Email ou senha incorretos');
       return null;
     } catch (err) {
       setError('Erro ao realizar login. Tente novamente.');

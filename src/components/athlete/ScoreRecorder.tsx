@@ -85,12 +85,16 @@ const ScoreRecorder = ({ onBack }: ScoreRecorderProps) => {
   };
 
   const handleSave = async () => {
-    await saveQuickMatch({
-      type: 'score_record',
+    const matchData = {
+      type: 'score_record' as const,
       teamA,
       teamB,
-      players
-    });
+      players,
+      duration: 90,
+      location: undefined,
+      notes: undefined
+    };
+    await saveQuickMatch(matchData);
     onBack();
   };
 

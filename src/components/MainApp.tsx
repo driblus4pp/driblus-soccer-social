@@ -233,7 +233,7 @@ const MainApp = () => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8"></div>
         <div className="relative z-10">
           <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-            Olá, {user?.name?.split(' ')[0] || 'Jogador'}! 
+            Olá, Jogador! 
             <img src="/lovable-uploads/cf887f3e-6da7-4137-b0d3-d752d0777b28.png" alt="Soccer ball" className="w-6 h-6 object-contain" />
           </h2>
           <p className="text-white/90">Pronto para sua próxima partida?</p>
@@ -499,12 +499,12 @@ const MainApp = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Avatar className="w-16 h-16 border-3 border-white/30">
-                  <AvatarImage src={user?.avatar || "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face"} />
-                  <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                  <AvatarImage src="https://images.unsplash.com/photo-1472396961693-142e6e269027?w=80&h=80&fit=crop&crop=face" />
+                  <AvatarFallback>U</AvatarFallback>
                 </Avatar>
               </div>
               <div>
-                <h3 className="text-xl font-bold">{user?.name || 'Usuário'}</h3>
+                <h3 className="text-xl font-bold">{user?.email || 'usuario@email.com'}</h3>
                 <p className="text-white/90 text-sm">{user?.email}</p>
                 <div className="flex items-center gap-1 text-white/90">
                   <MapPin className="w-4 h-4" />
