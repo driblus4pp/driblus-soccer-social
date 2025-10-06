@@ -92,12 +92,12 @@ const ManagerLogin = () => {
           <div className="text-center pt-8">
             <p className="text-white/70 text-sm">
               Não tem conta?{' '}
-              <Link to="/cliente/cadastro" className="text-[#F35410] hover:underline font-medium">
-                Solicite acesso aqui
+              <Link to="/admin/login" className="text-[#F35410] hover:underline font-medium">
+                Fale com o Administrador
               </Link>
             </p>
             <p className="text-white/70 text-sm mt-2">
-              <Link to="/cliente/esqueci-senha" className="text-[#F35410] hover:underline font-medium">
+              <Link to="/gestor/esqueci-senha" className="text-[#F35410] hover:underline font-medium">
                 Esqueci minha senha
               </Link>
             </p>

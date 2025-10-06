@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
@@ -100,8 +100,14 @@ const AdminLogin = () => {
             </Button>
           </form>
 
-          {/* Warning Message */}
-          
+          {/* Links */}
+          <div className="text-center pt-8">
+            <p className="text-white/70 text-sm">
+              <Link to="/admin/esqueci-senha" className="text-[#F35410] hover:underline font-medium">
+                Esqueci minha senha
+              </Link>
+            </p>
+          </div>
 
           {/* Debug Info */}
           <div className="mt-4 p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg">
